@@ -1,0 +1,8 @@
+__pycache__/
+.venv/
+.env
+*.pt
+*.onnx
+*.tflite
+*.task
+*.log

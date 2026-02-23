@@ -1,0 +1,29 @@
+[project]
+name = "modelo-prototipo"
+version = "0.1.0"
+description = "Proyecto Python para deteccion de manos"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "ultralytics",
+  "opencv-python",
+  "numpy",
+  "pandas",
+  "torch",
+  "torchvision",
+  "pyyaml",
+  "mediapipe",
+  "pyttsx3",
+  "scikit-learn",
+  "seaborn",
+]
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -1,0 +1,28 @@
+Metadata-Version: 2.4
+Name: modelo-prototipo
+Version: 0.1.0
+Summary: Proyecto Python para deteccion de manos
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: ultralytics
+Requires-Dist: opencv-python
+Requires-Dist: numpy
+Requires-Dist: pandas
+Requires-Dist: torch
+Requires-Dist: torchvision
+Requires-Dist: pyyaml
+Requires-Dist: mediapipe
+Requires-Dist: pyttsx3
+Requires-Dist: scikit-learn
+Requires-Dist: seaborn
+
+# ModeloPrototipo
+
+Proyecto Python para deteccion de manos con multiples modelos y exportacion optimizada.
+
+## Inicio rapido
+
+1. Crear un entorno virtual e instalar dependencias.
+2. Preparar el dataset en formato YOLO en `data/processed/`.
+3. Entrenar con `scripts/train_yolo.py`.
+4. Exportar con `scripts/export.py`.

@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir /s \"c:\\\\Users\\\\jeffe\\\\Documents\\\\Proyectos\\\\ModeloPrototipo\")",
+      "Bash(dir:*)",
+      "Bash(.venvScriptspip install pyttsx3 scikit-learn seaborn)",
+      "Bash(.venv/Scripts/pip install:*)",
+      "Bash(.venv/Scripts/python:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(pip:*)",
+      "Bash(curl:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(python download_models.py:*)",
+      "Bash(.venv/Scripts/python.exe:*)",
+      "Bash(\"c:/Users/jeffe/Documents/Proyectos/ModeloPrototipo/.venv/Scripts/python\" -c \"import pandas; print\\(''pandas'', pandas.__version__\\)\")"
+    ]
+  }
+}
