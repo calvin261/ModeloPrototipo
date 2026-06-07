@@ -6,3 +6,22 @@ __pycache__/
 *.tflite
 *.task
 *.log
+
+# Python/backend generated state
+.pytest_cache/
+logs/
+backend_stdout.log
+backend_stderr.log
+
+# Android/frontend generated state
+frontend/.gradle/
+frontend/build/
+frontend/app/build/
+frontend/local.properties
+frontend/.idea/
+frontend/.kotlin/
+frontend/*.jks
+frontend/*.keystore
+frontend/keystore.properties
+frontend/*.apk
+frontend/*.aab

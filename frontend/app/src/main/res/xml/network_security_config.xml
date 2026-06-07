@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!--
+        Permite HTTP para el backend local durante desarrollo.
+        El backend corre en la misma red WiFi (ej: 192.168.x.x:8000).
+        IMPORTANTE: Para produccion/release usar HTTPS exclusivamente.
+    -->
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

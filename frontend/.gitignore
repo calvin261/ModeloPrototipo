@@ -1,0 +1,65 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Android Studio
+.idea/
+*.iml
+local.properties
+.DS_Store
+
+# APK files
+*.apk
+*.aab
+*.ap_
+
+# Generated files
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Google Services
+google-services.json
+
+# TensorFlow Lite models (add them manually)
+*.tflite
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+env/
+.env
+
+# ML training outputs
+ml/models/
+ml/logs/
+*.h5
+*.keras
+*.ckpt
+
+# IDE
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Keystore (never commit!)
+*.jks
+*.keystore
+keystore.properties
+
+# Test outputs
+/reports/
+/test-results/
+
+# Temporary files
+*.tmp
+*.temp
+*.log

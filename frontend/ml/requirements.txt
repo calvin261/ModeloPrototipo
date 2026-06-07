@@ -1,0 +1,12 @@
+# ML Training Dependencies
+# Usar estas dependencias para entrenar los modelos de LSEC
+
+tensorflow>=2.14.0
+tensorflow-model-optimization>=0.7.5
+numpy>=1.24.0
+scikit-learn>=1.3.0
+matplotlib>=3.7.0
+pandas>=2.0.0
+opencv-python>=4.8.0
+mediapipe>=0.10.0
+tqdm>=4.65.0

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LSEC Translator</string>
+    
+    <!-- General -->
+    <string name="action_back">Volver</string>
+    <string name="action_settings">Configuración</string>
+    <string name="action_close">Cerrar</string>
+    <string name="action_save">Guardar</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="action_retry">Reintentar</string>
+    
+    <!-- Home -->
+    <string name="home_title">LSEC Translator</string>
+    <string name="home_subtitle">Traductor de Lengua de Señas Ecuatoriana</string>
+    <string name="home_description">Reconocimiento en tiempo real con voz sintetizada</string>
+    <string name="home_start_translation">Iniciar Traducción</string>
+    <string name="home_start_description">Captura señas LSEC en tiempo real</string>
+    <string name="home_dictionary">Diccionario LSEC</string>
+    <string name="home_dictionary_description">Explora el vocabulario disponible</string>
+    <string name="home_settings">Configuración</string>
+    <string name="home_settings_description">Ajusta preferencias y voz</string>
+    
+    <!-- Camera -->
+    <string name="camera_title">Traducción en Vivo</string>
+    <string name="camera_waiting">Esperando seña…</string>
+    <string name="camera_hands_detected">Manos detectadas</string>
+    <string name="camera_no_hands">Sin manos</string>
+    <string name="camera_toggle_voice">Alternar voz</string>
+    
+    <!-- Permissions -->
+    <string name="permission_camera_required">Permiso de Cámara Requerido</string>
+    <string name="permission_camera_rationale">Para reconocer señas LSEC necesitamos acceso a tu cámara frontal.</string>
+    <string name="permission_camera_essential">La cámara es esencial</string>
+    <string name="permission_camera_essential_rationale">Sin acceso a la cámara, no podemos detectar ni traducir las señas LSEC. Por favor, concede el permiso.</string>
+    <string name="permission_grant">Conceder Permiso</string>
+    
+    <!-- Dictionary -->
+    <string name="dictionary_title">Diccionario LSEC</string>
+    <string name="dictionary_search_hint">Buscar seña, palabra o frase…</string>
+    <string name="dictionary_tab_all">Todas</string>
+    <string name="dictionary_tab_favorites">Favoritas</string>
+    <string name="dictionary_tab_frequent">Frecuentes</string>
+    <string name="dictionary_empty">No hay señas en esta categoría</string>
+    <string name="dictionary_no_results">No se encontraron señas para \"%1$s\"</string>
+    <string name="dictionary_dynamic">Dinámica</string>
+    <string name="dictionary_static">Estática</string>
+    
+    <!-- Categories -->
+    <string name="category_alphabet">Abecedario</string>
+    <string name="category_numbers">Números</string>
+    <string name="category_greetings">Saludos</string>
+    <string name="category_family">Familia</string>
+    <string name="category_food">Comida</string>
+    <string name="category_health">Salud</string>
+    <string name="category_education">Educación</string>
+    <string name="category_emotions">Emociones</string>
+    <string name="category_time">Tiempo</string>
+    <string name="category_places">Lugares</string>
+    <string name="category_actions">Acciones</string>
+    <string name="category_questions">Preguntas</string>
+    <string name="category_common_phrases">Frases comunes</string>
+    <string name="category_emergency">Emergencias</string>
+    <string name="category_other">Otros</string>
+    
+    <!-- Settings -->
+    <string name="settings_title">Configuración</string>
+    <string name="settings_voice">Configuración de Voz</string>
+    <string name="settings_tts_enabled">Síntesis de voz</string>
+    <string name="settings_tts_enabled_subtitle">Habilitar traducción a voz</string>
+    <string name="settings_speech_rate">Velocidad del habla</string>
+    <string name="settings_speech_slow">Lento</string>
+    <string name="settings_speech_normal">Normal</string>
+    <string name="settings_speech_fast">Rápido</string>
+    <string name="settings_pitch">Tono de voz</string>
+    <string name="settings_pitch_low">Grave</string>
+    <string name="settings_pitch_normal">Normal</string>
+    <string name="settings_pitch_high">Agudo</string>
+    <string name="settings_ecuadorian">Usar ecuatorianismos</string>
+    <string name="settings_ecuadorian_subtitle">Preferir expresiones locales al hablar</string>
+    <string name="settings_camera">Configuración de Cámara</string>
+    <string name="settings_front_camera">Usar cámara frontal</string>
+    <string name="settings_front_camera_subtitle">Cambiar entre cámara frontal y trasera</string>
+    <string name="settings_confidence">Confianza mínima</string>
+    <string name="settings_battery_saver">Modo ahorro de batería</string>
+    <string name="settings_battery_saver_subtitle">Reduce la frecuencia de procesamiento</string>
+    <string name="settings_appearance">Apariencia</string>
+    <string name="settings_dark_mode">Modo oscuro</string>
+    <string name="settings_dark_mode_subtitle">Usar tema oscuro</string>
+    <string name="settings_data">Datos y Almacenamiento</string>
+    <string name="settings_dictionary_local">Diccionario local</string>
+    <string name="settings_signs_count">%1$d señas guardadas</string>
+    <string name="settings_update_dictionary">Actualizar diccionario</string>
+    <string name="settings_update_subtitle">Descargar nuevas señas LSEC</string>
+    <string name="settings_clear_cache">Limpiar caché</string>
+    <string name="settings_clear_cache_subtitle">Liberar espacio de almacenamiento</string>
+    <string name="settings_about">Acerca de</string>
+    <string name="settings_version">Versión</string>
+    <string name="settings_developed_for">Desarrollado para</string>
+    <string name="settings_community">Comunidad sorda ecuatoriana</string>
+    <string name="settings_help">Ayuda y soporte</string>
+    <string name="settings_help_subtitle">Guías de uso y contacto</string>
+    
+    <!-- Errors -->
+    <string name="error_generic">Ha ocurrido un error. Inténtalo de nuevo.</string>
+    <string name="error_camera">Error al acceder a la cámara</string>
+    <string name="error_model">Error al cargar el modelo de ML</string>
+    <string name="error_tts">Error en síntesis de voz</string>
+    
+    <!-- Content Descriptions -->
+    <string name="cd_camera_preview">Vista previa de cámara</string>
+    <string name="cd_toggle_favorite">Alternar favorito</string>
+    <string name="cd_play_audio">Reproducir audio</string>
+    <string name="cd_filter_category">Filtrar por categoría</string>
+    <string name="cd_search">Buscar</string>
+    <string name="cd_clear_search">Limpiar búsqueda</string>
+</resources>
