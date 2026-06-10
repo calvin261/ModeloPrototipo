@@ -79,6 +79,47 @@ class ModelDownloadManager @Inject constructor(
     }
 
     /**
+     * Descarga una version especifica de un modelo (no necesariamente la ultima).
+     *
+     * @param modelType "classifier" o "sequence"
+     * @param version   version exacta (e.g. "v20260607_010151")
+     */
+    suspend fun downloadModelVersion(modelType: String, version: String): Boolean {
+        return try {
+            val downloadResponse = apiService.downloadModel(modelType, version)
+            if (!downloadResponse.isSuccessful) {
+                Log.w(TAG, "Failed to download $modelType $version: ${downloadResponse.code()}")
+                return false
+            }
+            val body = downloadResponse.body() ?: return false
+
+            val formatHeader = downloadResponse.headers()["X-Model-Format"] ?: "onnx"
+            val ext = if (formatHeader == "tflite") "tflite" else "onnx"
+            val filename = when (modelType) {
+                "classifier" -> "sign_mlp.$ext"
+                "sequence" -> "sign_gru.$ext"
+                else -> return false
+            }
+
+            val targetFile = File(modelsDir, filename)
+            val tempFile = File(modelsDir, "$filename.tmp")
+            FileOutputStream(tempFile).use { out ->
+                body.byteStream().use { input -> input.copyTo(out) }
+            }
+            tempFile.renameTo(targetFile)
+
+            // Para versiones no-latest, también bajamos los labels por si cambiaron
+            downloadLabels(modelType)
+
+            Log.i(TAG, "Downloaded $modelType model $version (${targetFile.length() / 1024}KB)")
+            true
+        } catch (e: Exception) {
+            Log.e(TAG, "Error downloading $modelType $version", e)
+            false
+        }
+    }
+
+    /**
      * Descarga el label map para un tipo de modelo.
      */
     suspend fun downloadLabels(modelType: String): Boolean {

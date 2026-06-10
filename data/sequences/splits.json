@@ -1,0 +1,96 @@
+{
+  "created_at": "2026-06-07T00:48:50",
+  "method": "signer-stratified (held-out by signer)",
+  "seed": 42,
+  "test_fraction": 0.3,
+  "val_fraction": 0.15,
+  "n_total_signers": 18,
+  "train_signers": [
+    "27",
+    "34",
+    "23",
+    "29",
+    "19",
+    "33",
+    "31",
+    "17",
+    "1",
+    "22"
+  ],
+  "val_signers": [
+    "3",
+    "28",
+    "21"
+  ],
+  "test_signers": [
+    "32",
+    "30",
+    "24",
+    "26",
+    "25"
+  ],
+  "vocabulary": {
+    "adios": 0,
+    "ayuda": 1,
+    "bano": 2,
+    "bien": 3,
+    "como_estas": 4,
+    "gracias": 5,
+    "hola": 6,
+    "mal": 7,
+    "no": 8,
+    "perdon": 9,
+    "por_favor": 10,
+    "si": 11
+  },
+  "per_split_counts": {
+    "train": 274,
+    "val": 85,
+    "test": 133
+  },
+  "per_split_per_class": {
+    "train": {
+      "adios": 31,
+      "ayuda": 30,
+      "bano": 14,
+      "bien": 30,
+      "como_estas": 17,
+      "gracias": 14,
+      "hola": 25,
+      "mal": 27,
+      "no": 16,
+      "perdon": 29,
+      "por_favor": 27,
+      "si": 14
+    },
+    "val": {
+      "adios": 9,
+      "ayuda": 9,
+      "bano": 6,
+      "bien": 8,
+      "como_estas": 6,
+      "gracias": 6,
+      "hola": 6,
+      "mal": 8,
+      "no": 6,
+      "perdon": 9,
+      "por_favor": 6,
+      "si": 6
+    },
+    "test": {
+      "adios": 15,
+      "ayuda": 15,
+      "bano": 6,
+      "bien": 15,
+      "como_estas": 6,
+      "gracias": 6,
+      "hola": 13,
+      "mal": 15,
+      "no": 6,
+      "perdon": 15,
+      "por_favor": 15,
+      "si": 6
+    }
+  },
+  "notes": "Test signers are NEVER seen during training. This is a realistic evaluation for sign-language recognition. For full leave-one-signer-out, repeat the experiment with each signer held out and average metrics."
+}

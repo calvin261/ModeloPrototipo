@@ -7,6 +7,8 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -30,10 +32,16 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
+import com.lsec.translator.ml.DynamicSignClassifier
 import java.util.concurrent.Executors
 
 /**
  * Pantalla de cámara para captura y reconocimiento de señas LSEC en tiempo real.
+ *
+ * Dos modos:
+ *   - "static":  clasifica cada frame con el MLP (rápido, una letra a la vez)
+ *   - "dynamic": clasifica cuando termina la seña usando la state machine
+ *                (detecta movimiento→quietud, mejor para señas con recorrido)
  */
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -43,17 +51,14 @@ fun CameraScreen(
 ) {
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Traducción en Vivo") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Volver"
-                        )
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
                     }
                 },
                 actions = {
@@ -93,7 +98,6 @@ fun CameraScreen(
             when {
                 cameraPermissionState.status.isGranted -> {
                     CameraPreviewContent(
-                        uiState = uiState,
                         useFrontCamera = uiState.useFrontCamera,
                         onFrameAnalyzed = { viewModel.processFrame(it) }
                     )
@@ -109,15 +113,30 @@ fun CameraScreen(
                     )
                 }
             }
-            
-            // Overlay de resultados
+
             if (cameraPermissionState.status.isGranted) {
-                ResultsOverlay(
-                    uiState = uiState,
-                    modifier = Modifier.align(Alignment.BottomCenter)
-                )
-                
-                // Indicador de confianza
+                Column(modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth()) {
+                    RecognitionModeSelector(
+                        currentMode = uiState.recognitionMode,
+                        onSelect = { viewModel.setRecognitionMode(it) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+                    DynamicStateIndicator(
+                        uiState = uiState,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 4.dp)
+                    )
+                    ResultsOverlay(
+                        uiState = uiState,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    )
+                }
+
                 ConfidenceIndicator(
                     confidence = uiState.confidence,
                     modifier = Modifier
@@ -131,7 +150,6 @@ fun CameraScreen(
 
 @Composable
 private fun CameraPreviewContent(
-    uiState: CameraUiState,
     useFrontCamera: Boolean,
     onFrameAnalyzed: (android.media.Image?) -> Unit
 ) {
@@ -145,7 +163,6 @@ private fun CameraPreviewContent(
         onDispose { cameraExecutor.shutdown() }
     }
 
-    // Re-bindear la cámara cada vez que cambia useFrontCamera
     LaunchedEffect(useFrontCamera) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
         cameraProviderFuture.addListener({
@@ -196,14 +213,164 @@ private fun CameraPreviewContent(
 }
 
 @Composable
+private fun RecognitionModeSelector(
+    currentMode: String,
+    onSelect: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.Black.copy(alpha = 0.7f)),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            ModeChip(
+                label = "Estático (letras)",
+                icon = Icons.Default.TextFields,
+                selected = currentMode == "static",
+                onClick = { onSelect("static") },
+                modifier = Modifier.weight(1f),
+            )
+            ModeChip(
+                label = "Dinámico (palabras)",
+                icon = Icons.Default.Timeline,
+                selected = currentMode == "dynamic",
+                onClick = { onSelect("dynamic") },
+                modifier = Modifier.weight(1f),
+            )
+        }
+    }
+}
+
+@Composable
+private fun ModeChip(
+    label: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val bg = if (selected) MaterialTheme.colorScheme.primary else Color.Transparent
+    val fg = if (selected) MaterialTheme.colorScheme.onPrimary else Color.White
+    Surface(
+        modifier = modifier
+            .clip(RoundedCornerShape(20.dp))
+            .background(bg),
+        color = Color.Transparent,
+        onClick = onClick,
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Icon(icon, contentDescription = null, tint = fg, modifier = Modifier.size(18.dp))
+            Spacer(Modifier.width(6.dp))
+            Text(
+                label,
+                style = MaterialTheme.typography.labelMedium,
+                color = fg,
+                fontWeight = if (selected) androidx.compose.ui.text.font.FontWeight.Bold else androidx.compose.ui.text.font.FontWeight.Normal,
+            )
+        }
+    }
+}
+
+@Composable
+private fun DynamicStateIndicator(
+    uiState: CameraUiState,
+    modifier: Modifier = Modifier
+) {
+    if (uiState.recognitionMode != "dynamic") return
+
+    val state = uiState.dynamicState
+    val stateLabel = when (state) {
+        DynamicSignClassifier.State.IDLE -> "Escuchando"
+        DynamicSignClassifier.State.BUFFERING -> "Capturando seña"
+        DynamicSignClassifier.State.COOLDOWN -> "Listo"
+    }
+    val stateColor = when (state) {
+        DynamicSignClassifier.State.IDLE -> Color(0xFF80CBC4)
+        DynamicSignClassifier.State.BUFFERING -> Color(0xFFFFB74D)
+        DynamicSignClassifier.State.COOLDOWN -> Color(0xFFA5D6A7)
+    }
+
+    // Animación del motion level para que se sienta "vivo"
+    val animatedMotion by animateFloatAsState(
+        targetValue = uiState.motionLevel.coerceIn(0f, 1f) * 4f,
+        animationSpec = tween(durationMillis = 120),
+        label = "motion",
+    )
+
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.Black.copy(alpha = 0.7f)),
+    ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                // Punto pulsante según estado
+                Box(
+                    modifier = Modifier
+                        .size(10.dp)
+                        .clip(CircleShape)
+                        .background(stateColor)
+                )
+                Text(
+                    stateLabel,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color.White,
+                )
+                Spacer(Modifier.weight(1f))
+                Text(
+                    "buffer ${(uiState.bufferFill * 60).toInt()}/60",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.White.copy(alpha = 0.6f),
+                )
+            }
+            Spacer(Modifier.height(6.dp))
+            // Barra de movimiento
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    "Movimiento",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.White.copy(alpha = 0.7f),
+                    modifier = Modifier.width(80.dp),
+                )
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(6.dp)
+                        .clip(RoundedCornerShape(3.dp))
+                        .background(Color.White.copy(alpha = 0.2f)),
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth(animatedMotion.coerceIn(0f, 1f))
+                            .background(stateColor),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun ResultsOverlay(
     uiState: CameraUiState,
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+        modifier = modifier,
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.Black.copy(alpha = 0.8f)
@@ -215,30 +382,26 @@ private fun ResultsOverlay(
                 .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Seña detectada
             Text(
-                text = if (uiState.detectedSign.isNotEmpty()) 
-                    uiState.detectedSign 
-                else 
-                    "Esperando seña...",
+                text = if (uiState.detectedSign.isNotEmpty())
+                    uiState.detectedSign
+                else
+                    uiState.statusMessage,
                 style = MaterialTheme.typography.headlineMedium,
                 color = Color.White
             )
-            
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            // Traducción ecuatoriana
+
             if (uiState.ecuadorianTranslation.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "\"${uiState.ecuadorianTranslation}\"",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(12.dp))
-            
-            // Indicadores de estado
+
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -248,7 +411,7 @@ private fun ResultsOverlay(
                     text = "${uiState.latencyMs}ms",
                     isActive = uiState.latencyMs < 500
                 )
-                
+
                 StatusChip(
                     icon = Icons.Default.Visibility,
                     text = if (uiState.handsDetected) "Manos detectadas" else "Sin manos",
@@ -267,9 +430,9 @@ private fun StatusChip(
 ) {
     Surface(
         shape = RoundedCornerShape(8.dp),
-        color = if (isActive) 
-            MaterialTheme.colorScheme.primaryContainer 
-        else 
+        color = if (isActive)
+            MaterialTheme.colorScheme.primaryContainer
+        else
             MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f)
     ) {
         Row(
@@ -280,18 +443,18 @@ private fun StatusChip(
                 imageVector = icon,
                 contentDescription = null,
                 modifier = Modifier.size(16.dp),
-                tint = if (isActive) 
-                    MaterialTheme.colorScheme.onPrimaryContainer 
-                else 
+                tint = if (isActive)
+                    MaterialTheme.colorScheme.onPrimaryContainer
+                else
                     MaterialTheme.colorScheme.onErrorContainer
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = text,
                 style = MaterialTheme.typography.labelSmall,
-                color = if (isActive) 
-                    MaterialTheme.colorScheme.onPrimaryContainer 
-                else 
+                color = if (isActive)
+                    MaterialTheme.colorScheme.onPrimaryContainer
+                else
                     MaterialTheme.colorScheme.onErrorContainer
             )
         }
@@ -308,7 +471,7 @@ private fun ConfidenceIndicator(
         confidence >= 0.6f -> MaterialTheme.colorScheme.tertiary
         else -> MaterialTheme.colorScheme.error
     }
-    
+
     Box(
         modifier = modifier
             .size(60.dp)
@@ -347,24 +510,24 @@ private fun PermissionRequest(
             modifier = Modifier.size(80.dp),
             tint = MaterialTheme.colorScheme.primary
         )
-        
+
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         Text(
             text = "Permiso de Cámara Requerido",
             style = MaterialTheme.typography.titleLarge
         )
-        
+
         Spacer(modifier = Modifier.height(8.dp))
-        
+
         Text(
             text = "Para reconocer señas LSEC necesitamos acceso a tu cámara frontal.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        
+
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         Button(onClick = onRequestPermission) {
             Text("Conceder Permiso")
         }
@@ -388,24 +551,24 @@ private fun PermissionRationale(
             modifier = Modifier.size(80.dp),
             tint = MaterialTheme.colorScheme.error
         )
-        
+
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         Text(
             text = "La cámara es esencial",
             style = MaterialTheme.typography.titleLarge
         )
-        
+
         Spacer(modifier = Modifier.height(8.dp))
-        
+
         Text(
             text = "Sin acceso a la cámara, no podemos detectar ni traducir las señas LSEC. Por favor, concede el permiso.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        
+
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         Button(onClick = onRequestPermission) {
             Text("Reintentar")
         }

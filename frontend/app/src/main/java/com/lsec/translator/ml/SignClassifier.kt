@@ -54,7 +54,14 @@ class SignClassifier @Inject constructor(
     )
 
     init {
-        initialize()
+        try {
+            initialize()
+        } catch (e: Throwable) {
+            // Cualquier fallo en la carga del modelo (OOM, formato incompatible, etc.)
+            // no debe crashear la app entera. Loggeamos y continuamos con
+            // ambos clasificadores vacíos (clasificar devolverá null).
+            Log.e(TAG, "SignClassifier init failed: ${e.javaClass.simpleName}: ${e.message}", e)
+        }
     }
 
     private fun initialize() {
@@ -122,6 +129,22 @@ class SignClassifier @Inject constructor(
     fun processDynamicFrame(landmarks: FloatArray?): SignClassificationResult? {
         val result = dynamicClassifier?.processFrame(landmarks) ?: return null
         return enrichWithEcuadorianVariant(result)
+    }
+
+    /**
+     * Snapshot del estado de la state machine dinámica (para que la UI muestre
+     * indicadores: "escuchando", "detectando movimiento", "clasificando", etc.).
+     */
+    fun dynamicStateInfo(): DynamicSignClassifier.StateInfo {
+        return dynamicClassifier?.getStateInfo()
+            ?: DynamicSignClassifier.StateInfo(
+                state = DynamicSignClassifier.State.IDLE,
+                bufferSize = 0,
+                motionLevel = 0f,
+                lastSign = null,
+                lastConfidence = 0f,
+                msSinceLastResult = -1L,
+            )
     }
 
     /**

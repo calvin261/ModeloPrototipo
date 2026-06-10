@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.lsec.translator.data.remote.ModelInfoDto
 
 private fun sampleText(count: Int) = if (count == 1) "1 muestra" else "$count muestras"
 
@@ -28,17 +29,13 @@ fun TrainingScreen(
     viewModel: TrainingViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    // Pair<label, type> where type = "static" or "sequence"
     var labelDeleteConfirm by remember { mutableStateOf<Pair<String, String>?>(null) }
 
-    // Confirmation dialog for label deletion
     labelDeleteConfirm?.let { (label, type) ->
         AlertDialog(
             onDismissRequest = { labelDeleteConfirm = null },
             title = { Text("Eliminar \"$label\"") },
-            text = {
-                Text("¿Eliminar todas las muestras de \"$label\"? Esta acción no se puede deshacer.")
-            },
+            text = { Text("¿Eliminar todas las muestras de \"$label\"? Esta acción no se puede deshacer.") },
             confirmButton = {
                 Button(
                     onClick = {
@@ -79,17 +76,20 @@ fun TrainingScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Estado de conexion
+            // === Estado de conexión ===
             item {
                 Card(
                     colors = CardDefaults.cardColors(
                         containerColor = if (uiState.isConnected)
                             MaterialTheme.colorScheme.primaryContainer
-                        else MaterialTheme.colorScheme.errorContainer
+                        else
+                            MaterialTheme.colorScheme.errorContainer
                     )
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(12.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
@@ -99,13 +99,13 @@ fun TrainingScreen(
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             if (uiState.isConnected) "Conectado al servidor"
-                            else "Sin conexion al servidor"
+                            else "Sin conexión al servidor"
                         )
                     }
                 }
             }
 
-            // === Señas estáticas ===
+            // === Resumen de datos capturados ===
             uiState.dataStats?.let { stats ->
                 if (stats.staticLabels.isNotEmpty()) {
                     item {
@@ -117,15 +117,7 @@ fun TrainingScreen(
                             onDelete = { label -> labelDeleteConfirm = Pair(label, "static") }
                         )
                     }
-                } else if (uiState.isConnected) {
-                    item {
-                        EmptyDataCard(
-                            message = "Sin señas estáticas capturadas. Ve a la pantalla de Captura de Datos para comenzar."
-                        )
-                    }
                 }
-
-                // === Secuencias ===
                 if (stats.sequenceLabels.isNotEmpty()) {
                     item {
                         LabelManagementCard(
@@ -136,77 +128,78 @@ fun TrainingScreen(
                             onDelete = { label -> labelDeleteConfirm = Pair(label, "sequence") }
                         )
                     }
-                } else if (uiState.isConnected) {
-                    item {
-                        EmptyDataCard(
-                            message = "Sin secuencias capturadas. Graba señas dinámicas desde la pantalla de Captura."
-                        )
-                    }
                 }
             }
 
-            // Descargar modelos (siempre visible cuando hay conexión)
+            // === Sección de Modelos (mejorada) ===
             if (uiState.isConnected) {
                 item {
-                    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
-                        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-                            Text("Descargar modelos", style = MaterialTheme.typography.titleSmall)
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                "Descarga el modelo entrenado al dispositivo para usar en traducción en vivo.",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Spacer(modifier = Modifier.height(12.dp))
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Button(
-                                    onClick = { viewModel.downloadModel("classifier") },
-                                    modifier = Modifier.weight(1f),
-                                    enabled = !uiState.isDownloading
-                                ) {
-                                    Icon(Icons.Default.Download, contentDescription = null, modifier = Modifier.size(16.dp))
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text("Clasificador")
+                    Text("Modelos", style = MaterialTheme.typography.titleMedium)
+                }
+                // Modelos del clasificador
+                val classifierModels = uiState.serverModels.filter { it.name == "classifier" }
+                    .sortedByDescending { it.createdAt }
+                val sequenceModels = uiState.serverModels.filter { it.name == "sequence" }
+                    .sortedByDescending { it.createdAt }
+                item {
+                    ModelSectionCard(
+                        title = "Clasificador (alfabeto)",
+                        icon = Icons.Default.TextFields,
+                        iconTint = MaterialTheme.colorScheme.primary,
+                        serverModels = classifierModels,
+                        activeVersion = uiState.activeClassifierVersion,
+                        hasLocal = uiState.hasLocalClassifier,
+                        isDownloading = uiState.isDownloading && uiState.downloadingType == "classifier",
+                        onDownload = { viewModel.downloadLatest("classifier") },
+                        onDownloadVersion = { v -> viewModel.downloadVersion("classifier", v) },
+                    )
+                }
+                item {
+                    ModelSectionCard(
+                        title = "Vocabulario (palabras dinámicas)",
+                        icon = Icons.Default.Timeline,
+                        iconTint = MaterialTheme.colorScheme.tertiary,
+                        serverModels = sequenceModels,
+                        activeVersion = uiState.activeSequenceVersion,
+                        hasLocal = uiState.hasLocalSequence,
+                        isDownloading = uiState.isDownloading && uiState.downloadingType == "sequence",
+                        onDownload = { viewModel.downloadLatest("sequence") },
+                        onDownloadVersion = { v -> viewModel.downloadVersion("sequence", v) },
+                    )
+                }
+
+                // Mensaje de descarga activa
+                if (uiState.isDownloading) {
+                    item {
+                        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
+                            Column(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(18.dp),
+                                        strokeWidth = 2.dp,
+                                    )
+                                    Spacer(Modifier.width(12.dp))
+                                    Text(
+                                        uiState.downloadMessage ?: "Descargando...",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                    )
                                 }
-                                OutlinedButton(
-                                    onClick = { viewModel.downloadModel("sequence") },
-                                    modifier = Modifier.weight(1f),
-                                    enabled = !uiState.isDownloading
-                                ) {
-                                    Icon(Icons.Default.Download, contentDescription = null, modifier = Modifier.size(16.dp))
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text("Vocabulario")
-                                }
-                            }
-                            if (uiState.isDownloading) {
-                                Spacer(modifier = Modifier.height(8.dp))
-                                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    uiState.downloadMessage ?: "Descargando...",
-                                    style = MaterialTheme.typography.bodySmall
-                                )
                             }
                         }
                     }
                 }
             }
 
-            // Botones de entrenamiento
+            // === Entrenamiento ===
             item {
                 Text("Iniciar entrenamiento", style = MaterialTheme.typography.titleMedium)
             }
-
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     val isTraining = uiState.trainingStatus == "running" || uiState.trainingStatus == "pending"
-
                     OutlinedButton(
                         onClick = { viewModel.startClassifierTraining() },
                         modifier = Modifier.weight(1f),
@@ -216,7 +209,6 @@ fun TrainingScreen(
                         Spacer(modifier = Modifier.width(4.dp))
                         Text("Clasificador")
                     }
-
                     OutlinedButton(
                         onClick = { viewModel.startSequenceTraining() },
                         modifier = Modifier.weight(1f),
@@ -229,7 +221,7 @@ fun TrainingScreen(
                 }
             }
 
-            // Progreso de entrenamiento activo
+            // === Progreso del entrenamiento activo ===
             if (uiState.trainingStatus != "idle") {
                 item {
                     Card(
@@ -241,9 +233,7 @@ fun TrainingScreen(
                             }
                         )
                     ) {
-                        Column(
-                            modifier = Modifier.fillMaxWidth().padding(16.dp)
-                        ) {
+                        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -255,7 +245,6 @@ fun TrainingScreen(
                                 )
                                 AssistChip(onClick = {}, label = { Text(uiState.trainingStatus) })
                             }
-
                             if (uiState.trainingStatus == "running") {
                                 Spacer(modifier = Modifier.height(8.dp))
                                 LinearProgressIndicator(
@@ -268,11 +257,10 @@ fun TrainingScreen(
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    "Epoca ${uiState.epoch}/${uiState.totalEpochs}",
+                                    "Época ${uiState.epoch}/${uiState.totalEpochs}",
                                     style = MaterialTheme.typography.bodySmall
                                 )
                             }
-
                             Spacer(modifier = Modifier.height(8.dp))
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -282,31 +270,19 @@ fun TrainingScreen(
                                 Text("Acc: ${"%.1f".format(uiState.valAccuracy * 100)}%", style = MaterialTheme.typography.bodySmall)
                                 Text("Mejor: ${"%.1f".format(uiState.bestAccuracy * 100)}%", style = MaterialTheme.typography.bodySmall)
                             }
-
                             if (uiState.trainingStatus == "completed") {
                                 Spacer(modifier = Modifier.height(12.dp))
                                 Button(
-                                    onClick = { viewModel.downloadModel() },
+                                    onClick = {
+                                        val type = uiState.activeModelType ?: "classifier"
+                                        viewModel.downloadLatest(type)
+                                    },
                                     modifier = Modifier.fillMaxWidth(),
-                                    enabled = !uiState.isDownloading
+                                    enabled = !uiState.isDownloading,
                                 ) {
-                                    if (uiState.isDownloading) {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier.size(18.dp),
-                                            strokeWidth = 2.dp,
-                                            color = MaterialTheme.colorScheme.onPrimary
-                                        )
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                    } else {
-                                        Icon(Icons.Default.Download, contentDescription = null)
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                    }
-                                    Text(
-                                        if (uiState.isDownloading)
-                                            uiState.downloadMessage ?: "Descargando..."
-                                        else
-                                            "Descargar modelo actualizado"
-                                    )
+                                    Icon(Icons.Default.Download, contentDescription = null)
+                                    Spacer(Modifier.width(4.dp))
+                                    Text("Descargar modelo actualizado")
                                 }
                             }
                         }
@@ -314,7 +290,7 @@ fun TrainingScreen(
                 }
             }
 
-            // Mensaje de descarga (cuando no está descargando activamente)
+            // === Mensaje de descarga / error ===
             if (!uiState.isDownloading) {
                 uiState.downloadMessage?.let { message ->
                     item {
@@ -322,7 +298,8 @@ fun TrainingScreen(
                             colors = CardDefaults.cardColors(
                                 containerColor = if (message.startsWith("Error"))
                                     MaterialTheme.colorScheme.errorContainer
-                                else MaterialTheme.colorScheme.tertiaryContainer
+                                else
+                                    MaterialTheme.colorScheme.tertiaryContainer
                             )
                         ) {
                             Row(
@@ -349,8 +326,6 @@ fun TrainingScreen(
                     }
                 }
             }
-
-            // Error
             uiState.error?.let { error ->
                 item {
                     Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)) {
@@ -368,7 +343,7 @@ fun TrainingScreen(
                 }
             }
 
-            // Historial de entrenamientos
+            // === Historial ===
             if (uiState.history.isNotEmpty()) {
                 item {
                     Text("Historial", style = MaterialTheme.typography.titleMedium)
@@ -396,6 +371,219 @@ fun TrainingScreen(
     }
 }
 
+/**
+ * Card de sección de modelo. Muestra:
+ *  - Versión activa actual (local) con badge "ACTIVO"
+ *  - Versión más reciente del servidor con botón de descarga
+ *  - Lista de versiones históricas con su accuracy
+ */
+@Composable
+private fun ModelSectionCard(
+    title: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    iconTint: Color,
+    serverModels: List<ModelInfoDto>,
+    activeVersion: String,
+    hasLocal: Boolean,
+    isDownloading: Boolean,
+    onDownload: () -> Unit,
+    onDownloadVersion: (String) -> Unit,
+) {
+    val latest = serverModels.firstOrNull()
+    val isLatestActive = latest != null && activeVersion == latest.version
+    val showDownloadLatest = latest != null && !isLatestActive
+
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = if (isLatestActive)
+                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+            else
+                MaterialTheme.colorScheme.surfaceVariant
+        )
+    ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+            // Header
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(icon, contentDescription = null, tint = iconTint)
+                Spacer(Modifier.width(8.dp))
+                Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+            }
+            Spacer(Modifier.height(10.dp))
+
+            // ACTIVE
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    if (hasLocal) Icons.Default.CheckCircle else Icons.Default.CloudDownload,
+                    contentDescription = null,
+                    tint = if (hasLocal) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(18.dp),
+                )
+                Spacer(Modifier.width(8.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        if (hasLocal) "Activo" else "Sin modelo local",
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Text(
+                        activeVersion,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                if (isLatestActive) {
+                    AssistChip(
+                        onClick = {},
+                        label = { Text("AL DÍA") },
+                        leadingIcon = {
+                            Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(14.dp))
+                        },
+                    )
+                }
+            }
+
+            // LATEST ON SERVER
+            if (latest != null) {
+                Spacer(Modifier.height(8.dp))
+                HorizontalDivider()
+                Spacer(Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        Icons.Default.Cloud,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(18.dp),
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            "Última versión",
+                            style = MaterialTheme.typography.labelMedium,
+                        )
+                        Text(
+                            "${latest.version} · ${"%.1f".format(latest.accuracy * 100)}% · ${latest.numClasses} clases",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    if (showDownloadLatest) {
+                        Button(
+                            onClick = onDownload,
+                            enabled = !isDownloading,
+                        ) {
+                            if (isDownloading) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(16.dp),
+                                    strokeWidth = 2.dp,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                                Spacer(Modifier.width(6.dp))
+                            } else {
+                                Icon(Icons.Default.Download, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(Modifier.width(4.dp))
+                            }
+                            Text("Descargar", style = MaterialTheme.typography.labelMedium)
+                        }
+                    } else {
+                        Text(
+                            "✓ ya activo",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    }
+                }
+            } else {
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    "No hay versiones en el servidor.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+
+            // HISTORY
+            if (serverModels.size > 1) {
+                Spacer(Modifier.height(10.dp))
+                Text(
+                    "Otras versiones (${serverModels.size - 1})",
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.SemiBold,
+                )
+                Spacer(Modifier.height(4.dp))
+                serverModels.drop(1).forEach { m ->
+                    ModelHistoryRow(
+                        model = m,
+                        isActive = m.version == activeVersion,
+                        isDownloading = isDownloading,
+                        onDownload = { onDownloadVersion(m.version) },
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ModelHistoryRow(
+    model: ModelInfoDto,
+    isActive: Boolean,
+    isDownloading: Boolean,
+    onDownload: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            Icons.Default.History,
+            contentDescription = null,
+            modifier = Modifier.size(14.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(Modifier.width(8.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                model.version,
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Normal,
+                color = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+            )
+            Text(
+                "${"%.1f".format(model.accuracy * 100)}% · ${model.sizeKb.toInt()}KB · ${model.numClasses} clases",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        if (isActive) {
+            AssistChip(
+                onClick = {},
+                label = { Text("ACTIVO", style = MaterialTheme.typography.labelSmall) },
+            )
+        } else {
+            IconButton(
+                onClick = onDownload,
+                enabled = !isDownloading,
+                modifier = Modifier.size(32.dp),
+            ) {
+                Icon(
+                    Icons.Default.Download,
+                    contentDescription = "Descargar ${model.version}",
+                    modifier = Modifier.size(16.dp),
+                )
+            }
+        }
+    }
+}
+
 @Composable
 private fun LabelManagementCard(
     title: String,
@@ -409,7 +597,6 @@ private fun LabelManagementCard(
 
     Card {
         Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-            // Header row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -437,12 +624,9 @@ private fun LabelManagementCard(
                     }
                 }
             }
-
             Spacer(modifier = Modifier.height(8.dp))
             HorizontalDivider()
             Spacer(modifier = Modifier.height(4.dp))
-
-            // Label rows
             sortedLabels.forEach { (label, count) ->
                 LabelRow(
                     label = label,
@@ -451,13 +635,9 @@ private fun LabelManagementCard(
                     onDelete = { onDelete(label) }
                 )
             }
-
-            // Warning if some labels have few samples
             if (poorLabels > 0) {
                 Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         Icons.Default.Info,
                         contentDescription = null,
@@ -489,7 +669,6 @@ private fun LabelRow(
         count > 1 -> MaterialTheme.colorScheme.tertiary
         else -> MaterialTheme.colorScheme.error
     }
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -497,15 +676,12 @@ private fun LabelRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Label name
         Text(
             label,
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.weight(1f)
         )
-
-        // Count badge
         Surface(
             shape = RoundedCornerShape(12.dp),
             color = badgeColor.copy(alpha = 0.15f)
@@ -518,8 +694,6 @@ private fun LabelRow(
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
             )
         }
-
-        // Delete button
         IconButton(
             onClick = onDelete,
             modifier = Modifier.size(32.dp)
@@ -529,30 +703,6 @@ private fun LabelRow(
                 contentDescription = "Eliminar $label",
                 modifier = Modifier.size(16.dp),
                 tint = MaterialTheme.colorScheme.error.copy(alpha = 0.7f)
-            )
-        }
-    }
-}
-
-@Composable
-private fun EmptyDataCard(message: String) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                Icons.Default.Info,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Text(
-                message,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

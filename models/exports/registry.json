@@ -99,6 +99,16 @@
       "num_classes": 24,
       "created_at": "2026-02-22T18:19:58.015886",
       "accuracy": 1.0
+    },
+    {
+      "version": "v20260607_010151",
+      "format": "onnx",
+      "onnx_path": "C:\\Users\\jeffe\\Documents\\Proyectos\\ModeloPrototipo\\models\\exports\\sign_mlp_v20260607_010151.onnx",
+      "labels_path": "C:\\Users\\jeffe\\Documents\\Proyectos\\ModeloPrototipo\\models\\exports\\classifier_labels_v20260607_010151.json",
+      "size_kb": 212.08,
+      "num_classes": 24,
+      "created_at": "2026-06-07T01:01:51.949883",
+      "accuracy": 0.7925
     }
   ],
   "sequence": [
@@ -131,6 +141,16 @@
       "num_classes": 41,
       "created_at": "2026-02-22T16:07:23.124875",
       "accuracy": 1.0
+    },
+    {
+      "version": "v20260607_010151",
+      "format": "onnx",
+      "onnx_path": "C:\\Users\\jeffe\\Documents\\Proyectos\\ModeloPrototipo\\models\\exports\\sign_gru_v20260607_010151.onnx",
+      "labels_path": "C:\\Users\\jeffe\\Documents\\Proyectos\\ModeloPrototipo\\models\\exports\\sequence_labels_v20260607_010151.json",
+      "size_kb": 1809.55,
+      "num_classes": 12,
+      "created_at": "2026-06-07T01:01:52.213969",
+      "accuracy": 0.7519
     }
   ]
 }

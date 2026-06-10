@@ -50,9 +50,20 @@ class SequenceDataset(Dataset):
 
     Each .npy file has shape (T, 63) where T = number of frames.
     Sequences are padded/truncated to max_seq_len.
+
+    If `signers` is provided, only files whose name starts with one of the
+    given signer IDs are included. Filename convention produced by
+    `scripts/prepare_sequences_from_lsc50.py`:
+        <signer>_<word>_<idx>.npy   e.g. "1_gracias_001.npy"
     """
 
-    def __init__(self, sequences_dir: str, vocabulary: dict, max_seq_len: int = 60):
+    def __init__(
+        self,
+        sequences_dir: str,
+        vocabulary: dict,
+        max_seq_len: int = 60,
+        signers: set[str] | None = None,
+    ):
         self.max_seq_len = max_seq_len
         self.samples = []
         base = Path(sequences_dir)
@@ -61,6 +72,11 @@ class SequenceDataset(Dataset):
             if not word_dir.exists():
                 continue
             for f in word_dir.glob("*.npy"):
+                if signers is not None:
+                    # Filename starts with "<signer>_"
+                    fname_signer = f.stem.split("_", 1)[0]
+                    if fname_signer not in signers:
+                        continue
                 self.samples.append((str(f), idx))
 
     def __len__(self):

@@ -50,16 +50,19 @@ class StaticSignClassifier(
             try {
                 val env = OrtEnvironment.getEnvironment()
                 ortEnv = env
-                ortSession = env.createSession(
-                    onnxFile.absolutePath,
-                    OrtSession.SessionOptions()
-                )
+                val opts = OrtSession.SessionOptions().apply {
+                    setIntraOpNumThreads(2)
+                    setOptimizationLevel(ai.onnxruntime.OrtSession.SessionOptions.OptLevel.NO_OPT)
+                }
+                ortSession = env.createSession(onnxFile.absolutePath, opts)
                 Log.i(TAG, "Static classifier loaded via ONNX Runtime ($numClasses classes)")
                 return
-            } catch (e: Exception) {
-                Log.w(TAG, "ONNX load failed, falling back to TFLite", e)
-                ortSession?.close(); ortSession = null
-                ortEnv?.close(); ortEnv = null
+            } catch (e: Throwable) {
+                Log.w(TAG, "ONNX load failed (${e.javaClass.simpleName}: ${e.message}), falling back to TFLite", e)
+                runCatching { ortSession?.close() }
+                runCatching { ortEnv?.close() }
+                ortSession = null
+                ortEnv = null
             }
         }
 
@@ -73,8 +76,8 @@ class StaticSignClassifier(
                 )
                 Log.i(TAG, "Static classifier loaded via TFLite ($numClasses classes)")
             }
-        } catch (e: Exception) {
-            Log.w(TAG, "No static classifier available", e)
+        } catch (e: Throwable) {
+            Log.w(TAG, "No static classifier available (${e.javaClass.simpleName}: ${e.message})", e)
         }
     }
 

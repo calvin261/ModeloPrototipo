@@ -1,0 +1,85 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Backend: FastAPI (uvicorn)",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "backend.main:app",
+                "--host", "0.0.0.0",
+                "--port", "8000",
+                "--reload"
+            ],
+            "cwd": "${workspaceFolder}",
+            "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder};${workspaceFolder}/src"
+            }
+        },
+        {
+            "name": "Backend: start_backend.py",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/start_backend.py",
+            "cwd": "${workspaceFolder}",
+            "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder};${workspaceFolder}/src"
+            }
+        },
+        {
+            "name": "Train: Classifier",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/train_classifier.py",
+            "cwd": "${workspaceFolder}",
+            "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder};${workspaceFolder}/src"
+            }
+        },
+        {
+            "name": "Train: Sequence (LSTM)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/train_sequence.py",
+            "cwd": "${workspaceFolder}",
+            "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder};${workspaceFolder}/src"
+            }
+        },
+        {
+            "name": "Tests: pytest",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "-q",
+                "tests"
+            ],
+            "cwd": "${workspaceFolder}",
+            "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder};${workspaceFolder}/src"
+            }
+        },
+    ],
+    "compounds": [
+        {
+            "name": "Backend + Tests",
+            "configurations": [
+                "Backend: FastAPI (uvicorn)",
+                "Tests: pytest"
+            ]
+        }
+    ]
+}
