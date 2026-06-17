@@ -38,7 +38,11 @@ data class UserPreferencesData(
     val classifierModelVersion: String = "bundled",
     val sequenceModelVersion: String = "bundled",
     val autoUpdateModels: Boolean = false,
-    val recognitionMode: String = "static" // "static" o "dynamic"
+    val recognitionMode: String = "static", // "static" o "dynamic"
+
+    // LLM post-processor (opcional, off por defecto)
+    val llmEnabled: Boolean = false,
+    val llmAutoTrigger: Boolean = false,
 )
 
 /**
@@ -63,6 +67,8 @@ class UserPreferences @Inject constructor(
         val SEQUENCE_MODEL_VERSION = stringPreferencesKey("sequence_model_version")
         val AUTO_UPDATE_MODELS = booleanPreferencesKey("auto_update_models")
         val RECOGNITION_MODE = stringPreferencesKey("recognition_mode")
+        val LLM_ENABLED = booleanPreferencesKey("llm_enabled")
+        val LLM_AUTO_TRIGGER = booleanPreferencesKey("llm_auto_trigger")
     }
 
     /**
@@ -91,7 +97,9 @@ class UserPreferences @Inject constructor(
                 classifierModelVersion = preferences[PreferencesKeys.CLASSIFIER_MODEL_VERSION] ?: "bundled",
                 sequenceModelVersion = preferences[PreferencesKeys.SEQUENCE_MODEL_VERSION] ?: "bundled",
                 autoUpdateModels = preferences[PreferencesKeys.AUTO_UPDATE_MODELS] ?: false,
-                recognitionMode = preferences[PreferencesKeys.RECOGNITION_MODE] ?: "static"
+                recognitionMode = preferences[PreferencesKeys.RECOGNITION_MODE] ?: "static",
+                llmEnabled = preferences[PreferencesKeys.LLM_ENABLED] ?: false,
+                llmAutoTrigger = preferences[PreferencesKeys.LLM_AUTO_TRIGGER] ?: false,
             )
         }
 
@@ -178,6 +186,18 @@ class UserPreferences @Inject constructor(
     suspend fun setRecognitionMode(mode: String) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.RECOGNITION_MODE] = mode
+        }
+    }
+
+    suspend fun setLlmEnabled(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.LLM_ENABLED] = enabled
+        }
+    }
+
+    suspend fun setLlmAutoTrigger(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.LLM_AUTO_TRIGGER] = enabled
         }
     }
 }

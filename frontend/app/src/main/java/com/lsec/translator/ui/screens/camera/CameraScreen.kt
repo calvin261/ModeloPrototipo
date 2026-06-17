@@ -47,6 +47,7 @@ import java.util.concurrent.Executors
 @Composable
 fun CameraScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToCalibration: () -> Unit = {},
     viewModel: CameraViewModel = hiltViewModel()
 ) {
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
@@ -125,6 +126,19 @@ fun CameraScreen(
                     )
                     DynamicStateIndicator(
                         uiState = uiState,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 4.dp)
+                    )
+                    LiveConfidenceBar(
+                        confidence = uiState.confidence,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 4.dp)
+                    )
+                    ActionButtonsRow(
+                        onCalibrate = onNavigateToCalibration,
+                        onReformulate = { /* TODO(llm-subagent): wire to Phi3PostProcessor */ },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 4.dp)
@@ -400,6 +414,30 @@ private fun ResultsOverlay(
                 )
             }
 
+            if (uiState.detectedSign.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    onClick = {
+                        // TODO: invocar LlmPostProcessor.rephrase([uiState.detectedSign])
+                        //       y mostrar el resultado en una Snackbar o encima del boton.
+                        //       Mientras la JNI no este wireada, este onClick es no-op.
+                    },
+                    enabled = false,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    ),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AutoAwesome,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("Reformular")
+                }
+            }
+
             Spacer(modifier = Modifier.height(12.dp))
 
             Row(
@@ -530,6 +568,97 @@ private fun PermissionRequest(
 
         Button(onClick = onRequestPermission) {
             Text("Conceder Permiso")
+        }
+    }
+}
+
+@Composable
+private fun LiveConfidenceBar(
+    confidence: Float,
+    modifier: Modifier = Modifier,
+) {
+    val animated by animateFloatAsState(
+        targetValue = confidence.coerceIn(0f, 1f),
+        animationSpec = tween(durationMillis = 150),
+        label = "live_confidence",
+    )
+    val color = when {
+        confidence >= 0.85f -> MaterialTheme.colorScheme.primary
+        confidence >= 0.6f -> MaterialTheme.colorScheme.tertiary
+        else -> MaterialTheme.colorScheme.error
+    }
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.Black.copy(alpha = 0.65f)),
+    ) {
+        Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    "Confianza (live)",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.White.copy(alpha = 0.7f),
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    "${(confidence * 100).toInt()}%",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.White,
+                )
+            }
+            Spacer(Modifier.height(4.dp))
+            LinearProgressIndicator(
+                progress = { animated },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(6.dp)
+                    .clip(RoundedCornerShape(3.dp)),
+                color = color,
+                trackColor = Color.White.copy(alpha = 0.15f),
+            )
+        }
+    }
+}
+
+@Composable
+private fun ActionButtonsRow(
+    onCalibrate: () -> Unit,
+    onReformulate: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        OutlinedButton(
+            onClick = onCalibrate,
+            modifier = Modifier.weight(1f),
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = Color.White,
+            ),
+        ) {
+            Icon(
+                imageVector = Icons.Default.Tune,
+                contentDescription = null,
+                modifier = Modifier.size(18.dp),
+            )
+            Spacer(Modifier.width(6.dp))
+            Text("Calibrar (30s)", style = MaterialTheme.typography.labelMedium)
+        }
+        OutlinedButton(
+            onClick = onReformulate,
+            modifier = Modifier.weight(1f),
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = Color.White,
+            ),
+        ) {
+            Icon(
+                imageVector = Icons.Default.AutoAwesome,
+                contentDescription = null,
+                modifier = Modifier.size(18.dp),
+            )
+            Spacer(Modifier.width(6.dp))
+            Text("Reformular", style = MaterialTheme.typography.labelMedium)
         }
     }
 }

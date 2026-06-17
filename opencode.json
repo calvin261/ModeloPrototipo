@@ -1,0 +1,75 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "skills": {
+    "paths": [".opencode/skill"]
+  },
+
+  "agent": {
+    "lsc-baseline-trainer": {
+      "description": "Trains the legacy Bi-GRU on the new rotation+handedness-invariant landmark data for fair head-to-head comparison with the SignTransformer.",
+      "mode": "subagent",
+      "model": "anthropic/claude-sonnet-4-6",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "webfetch": "deny"
+      }
+    },
+    "lsc-android-integrator": {
+      "description": "Replaces the Android DynamicSignClassifier (Bi-GRU) with the new SignTransformer ONNX export. Integrates CentroidClassifier, AdaptiveThresholds, calibration flow, and live confidence UI.",
+      "mode": "subagent",
+      "model": "anthropic/claude-sonnet-4-6",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "webfetch": "deny"
+      }
+    },
+    "lsc-llm-postprocessor": {
+      "description": "Adds Phi-3-mini INT4 as an on-device post-processor (NOT a classifier replacement) for natural-language sentence rephrasing. Compares llama.cpp Android vs MLC LLM vs ONNX Runtime GenAI.",
+      "mode": "subagent",
+      "model": "anthropic/claude-sonnet-4-6",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "webfetch": "allow"
+      }
+    },
+    "lsc-user-validator": {
+      "description": "Authors the F7 test protocol, builds the Android data-collection helper, and analyzes 5-user real-world test results. Produces docs/F7_USER_TEST_REPORT.md with per-user/per-sign accuracy, confusion matrix, and latency.",
+      "mode": "subagent",
+      "model": "anthropic/claude-sonnet-4-6",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "webfetch": "deny"
+      }
+    },
+    "lsc-pipeline-engineer": {
+      "description": "Wraps the LSC pipeline (extract, augment, train, evaluate, export) in a single reproducible full_pipeline.sh/bat command. Adds smoke tests for augmentations, normalization, SignTransformer forward pass, and an end-to-end slow test.",
+      "mode": "subagent",
+      "model": "anthropic/claude-sonnet-4-6",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "webfetch": "deny"
+      }
+    }
+  }
+}

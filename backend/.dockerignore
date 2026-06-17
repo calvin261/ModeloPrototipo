@@ -1,0 +1,46 @@
+# Virtual environment — never copy into image
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+
+# Dev / CI artifacts
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+
+# Claude Code settings
+.claude/
+
+# Git
+.git/
+.gitignore
+
+# Windows artifacts
+nul
+Thumbs.db
+desktop.ini
+
+# Local logs and dev scripts (not needed in image)
+logs/
+
+# Large model artifacts (mounted at runtime via compose volumes)
+models/finetuned/
+models/pretrained/
+
+# Test datasets / raw images (mounted at runtime via compose volumes)
+data/

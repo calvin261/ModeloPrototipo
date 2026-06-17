@@ -1,0 +1,14 @@
+{
+  "adios": 0,
+  "ayuda": 1,
+  "bano": 2,
+  "bien": 3,
+  "como_estas": 4,
+  "gracias": 5,
+  "hola": 6,
+  "mal": 7,
+  "no": 8,
+  "perdon": 9,
+  "por_favor": 10,
+  "si": 11
+}

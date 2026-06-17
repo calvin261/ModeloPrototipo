@@ -1,0 +1,1437 @@
+{
+  "checkpoint": "C:\\Users\\jeffe\\Documents\\Proyectos\\ModeloPrototipo\\backend\\models\\sequence\\sign_gru.pth",
+  "vocabulary": {
+    "adios": 0,
+    "ayuda": 1,
+    "bano": 2,
+    "bien": 3,
+    "como_estas": 4,
+    "gracias": 5,
+    "hola": 6,
+    "mal": 7,
+    "no": 8,
+    "perdon": 9,
+    "por_favor": 10,
+    "si": 11
+  },
+  "test_signers": [
+    "24",
+    "25",
+    "26",
+    "30",
+    "32"
+  ],
+  "summary": {
+    "accuracy": 0.08270676691729323,
+    "n_samples": 133,
+    "n_correct": 11,
+    "mean_confidence": 0.37106114032125115,
+    "mean_entropy": 1.8022721181238504,
+    "latency_p50_ms": 30.161199999838573,
+    "latency_p95_ms": 37.67655999977251,
+    "latency_p99_ms": 38.344591999766635
+  },
+  "confusion_matrix": [
+    [
+      0,
+      1,
+      0,
+      3,
+      1,
+      0,
+      10,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      3,
+      6,
+      0,
+      1,
+      2,
+      0,
+      0,
+      0,
+      2
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      6,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      3,
+      0,
+      11,
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      5,
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      3,
+      0,
+      0,
+      10,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      2,
+      0,
+      5,
+      6,
+      0,
+      0,
+      0,
+      2,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      2,
+      0,
+      11,
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      14,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "confusion_pairs": [
+    {
+      "true": "por_favor",
+      "pred": "hola",
+      "n": 14
+    },
+    {
+      "true": "bien",
+      "pred": "hola",
+      "n": 11
+    },
+    {
+      "true": "perdon",
+      "pred": "hola",
+      "n": 11
+    },
+    {
+      "true": "adios",
+      "pred": "hola",
+      "n": 10
+    },
+    {
+      "true": "ayuda",
+      "pred": "como_estas",
+      "n": 6
+    },
+    {
+      "true": "bano",
+      "pred": "hola",
+      "n": 6
+    },
+    {
+      "true": "mal",
+      "pred": "hola",
+      "n": 6
+    },
+    {
+      "true": "gracias",
+      "pred": "hola",
+      "n": 5
+    },
+    {
+      "true": "mal",
+      "pred": "gracias",
+      "n": 5
+    },
+    {
+      "true": "no",
+      "pred": "hola",
+      "n": 4
+    },
+    {
+      "true": "si",
+      "pred": "gracias",
+      "n": 4
+    },
+    {
+      "true": "adios",
+      "pred": "bien",
+      "n": 3
+    },
+    {
+      "true": "ayuda",
+      "pred": "bien",
+      "n": 3
+    },
+    {
+      "true": "bien",
+      "pred": "como_estas",
+      "n": 3
+    },
+    {
+      "true": "como_estas",
+      "pred": "ayuda",
+      "n": 3
+    },
+    {
+      "true": "como_estas",
+      "pred": "hola",
+      "n": 3
+    },
+    {
+      "true": "hola",
+      "pred": "bien",
+      "n": 3
+    },
+    {
+      "true": "ayuda",
+      "pred": "mal",
+      "n": 2
+    },
+    {
+      "true": "ayuda",
+      "pred": "si",
+      "n": 2
+    },
+    {
+      "true": "mal",
+      "pred": "bien",
+      "n": 2
+    },
+    {
+      "true": "mal",
+      "pred": "por_favor",
+      "n": 2
+    },
+    {
+      "true": "perdon",
+      "pred": "como_estas",
+      "n": 2
+    },
+    {
+      "true": "si",
+      "pred": "hola",
+      "n": 2
+    },
+    {
+      "true": "adios",
+      "pred": "ayuda",
+      "n": 1
+    },
+    {
+      "true": "adios",
+      "pred": "como_estas",
+      "n": 1
+    },
+    {
+      "true": "ayuda",
+      "pred": "hola",
+      "n": 1
+    },
+    {
+      "true": "bien",
+      "pred": "mal",
+      "n": 1
+    },
+    {
+      "true": "gracias",
+      "pred": "mal",
+      "n": 1
+    },
+    {
+      "true": "no",
+      "pred": "ayuda",
+      "n": 1
+    },
+    {
+      "true": "no",
+      "pred": "como_estas",
+      "n": 1
+    },
+    {
+      "true": "perdon",
+      "pred": "bien",
+      "n": 1
+    },
+    {
+      "true": "perdon",
+      "pred": "mal",
+      "n": 1
+    },
+    {
+      "true": "por_favor",
+      "pred": "bien",
+      "n": 1
+    }
+  ],
+  "per_sample": [
+    {
+      "idx": 0,
+      "true": "adios",
+      "pred": "hola",
+      "conf": 0.4199126660823822,
+      "entropy": 1.66810142993927,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 1,
+      "true": "adios",
+      "pred": "hola",
+      "conf": 0.4175354242324829,
+      "entropy": 1.67359459400177,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 2,
+      "true": "adios",
+      "pred": "hola",
+      "conf": 0.40283381938934326,
+      "entropy": 1.717223882675171,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 3,
+      "true": "adios",
+      "pred": "hola",
+      "conf": 0.41626620292663574,
+      "entropy": 1.6723014116287231,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 4,
+      "true": "adios",
+      "pred": "hola",
+      "conf": 0.4182901084423065,
+      "entropy": 1.6686444282531738,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 5,
+      "true": "adios",
+      "pred": "hola",
+      "conf": 0.4187992811203003,
+      "entropy": 1.6672618389129639,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 6,
+      "true": "adios",
+      "pred": "hola",
+      "conf": 0.4350889325141907,
+      "entropy": 1.660340428352356,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 7,
+      "true": "adios",
+      "pred": "hola",
+      "conf": 0.4235156178474426,
+      "entropy": 1.6554937362670898,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 8,
+      "true": "adios",
+      "pred": "hola",
+      "conf": 0.4158950448036194,
+      "entropy": 1.6644660234451294,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 9,
+      "true": "adios",
+      "pred": "hola",
+      "conf": 0.41521385312080383,
+      "entropy": 1.6785962581634521,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 10,
+      "true": "adios",
+      "pred": "como_estas",
+      "conf": 0.29942402243614197,
+      "entropy": 2.1071956157684326,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 11,
+      "true": "adios",
+      "pred": "ayuda",
+      "conf": 0.513412356376648,
+      "entropy": 1.6962019205093384,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 12,
+      "true": "adios",
+      "pred": "bien",
+      "conf": 0.3319508731365204,
+      "entropy": 1.7512037754058838,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 13,
+      "true": "adios",
+      "pred": "bien",
+      "conf": 0.31280753016471863,
+      "entropy": 1.7623566389083862,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 14,
+      "true": "adios",
+      "pred": "bien",
+      "conf": 0.311752051115036,
+      "entropy": 1.8026642799377441,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 15,
+      "true": "ayuda",
+      "pred": "bien",
+      "conf": 0.18105822801589966,
+      "entropy": 2.219407320022583,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 16,
+      "true": "ayuda",
+      "pred": "si",
+      "conf": 0.20505337417125702,
+      "entropy": 2.188432455062866,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 17,
+      "true": "ayuda",
+      "pred": "hola",
+      "conf": 0.3167901039123535,
+      "entropy": 1.8201740980148315,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 18,
+      "true": "ayuda",
+      "pred": "si",
+      "conf": 0.19481772184371948,
+      "entropy": 2.2070841789245605,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 19,
+      "true": "ayuda",
+      "pred": "como_estas",
+      "conf": 0.22071073949337006,
+      "entropy": 2.229685068130493,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 20,
+      "true": "ayuda",
+      "pred": "como_estas",
+      "conf": 0.5986829400062561,
+      "entropy": 1.4027622938156128,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 21,
+      "true": "ayuda",
+      "pred": "ayuda",
+      "conf": 0.6300099492073059,
+      "entropy": 1.345172643661499,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 22,
+      "true": "ayuda",
+      "pred": "como_estas",
+      "conf": 0.35441088676452637,
+      "entropy": 1.7861146926879883,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 23,
+      "true": "ayuda",
+      "pred": "como_estas",
+      "conf": 0.7505659461021423,
+      "entropy": 1.0895951986312866,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 24,
+      "true": "ayuda",
+      "pred": "bien",
+      "conf": 0.29752227663993835,
+      "entropy": 1.9604862928390503,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 25,
+      "true": "ayuda",
+      "pred": "como_estas",
+      "conf": 0.4670810401439667,
+      "entropy": 1.6023298501968384,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 26,
+      "true": "ayuda",
+      "pred": "como_estas",
+      "conf": 0.2755630910396576,
+      "entropy": 2.0319278240203857,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 27,
+      "true": "ayuda",
+      "pred": "mal",
+      "conf": 0.3132403790950775,
+      "entropy": 1.7994312047958374,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 28,
+      "true": "ayuda",
+      "pred": "bien",
+      "conf": 0.20633743703365326,
+      "entropy": 2.112067222595215,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 29,
+      "true": "ayuda",
+      "pred": "mal",
+      "conf": 0.36071518063545227,
+      "entropy": 1.8164644241333008,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 30,
+      "true": "bano",
+      "pred": "hola",
+      "conf": 0.41696497797966003,
+      "entropy": 1.6765122413635254,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 31,
+      "true": "bano",
+      "pred": "hola",
+      "conf": 0.4168178141117096,
+      "entropy": 1.6816041469573975,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 32,
+      "true": "bano",
+      "pred": "hola",
+      "conf": 0.41743743419647217,
+      "entropy": 1.6807130575180054,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 33,
+      "true": "bano",
+      "pred": "hola",
+      "conf": 0.4323059916496277,
+      "entropy": 1.6649224758148193,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 34,
+      "true": "bano",
+      "pred": "hola",
+      "conf": 0.41753631830215454,
+      "entropy": 1.6686725616455078,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 35,
+      "true": "bano",
+      "pred": "hola",
+      "conf": 0.42466577887535095,
+      "entropy": 1.6766988039016724,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 36,
+      "true": "bien",
+      "pred": "hola",
+      "conf": 0.3719417452812195,
+      "entropy": 1.7741483449935913,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 37,
+      "true": "bien",
+      "pred": "mal",
+      "conf": 0.27502354979515076,
+      "entropy": 1.9574956893920898,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 38,
+      "true": "bien",
+      "pred": "hola",
+      "conf": 0.42495808005332947,
+      "entropy": 1.6954782009124756,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 39,
+      "true": "bien",
+      "pred": "hola",
+      "conf": 0.41809022426605225,
+      "entropy": 1.6778984069824219,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 40,
+      "true": "bien",
+      "pred": "como_estas",
+      "conf": 0.5210188031196594,
+      "entropy": 1.7670056819915771,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 41,
+      "true": "bien",
+      "pred": "hola",
+      "conf": 0.38390472531318665,
+      "entropy": 2.0229806900024414,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 42,
+      "true": "bien",
+      "pred": "hola",
+      "conf": 0.4113862216472626,
+      "entropy": 1.635096788406372,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 43,
+      "true": "bien",
+      "pred": "hola",
+      "conf": 0.3855136036872864,
+      "entropy": 1.8682782649993896,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 44,
+      "true": "bien",
+      "pred": "hola",
+      "conf": 0.40965139865875244,
+      "entropy": 1.8980505466461182,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 45,
+      "true": "bien",
+      "pred": "hola",
+      "conf": 0.5012410283088684,
+      "entropy": 1.591697096824646,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 46,
+      "true": "bien",
+      "pred": "hola",
+      "conf": 0.5255635976791382,
+      "entropy": 1.5483155250549316,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 47,
+      "true": "bien",
+      "pred": "hola",
+      "conf": 0.4554928243160248,
+      "entropy": 1.6044129133224487,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 48,
+      "true": "bien",
+      "pred": "como_estas",
+      "conf": 0.21977974474430084,
+      "entropy": 2.080655813217163,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 49,
+      "true": "bien",
+      "pred": "como_estas",
+      "conf": 0.32426586747169495,
+      "entropy": 2.0552825927734375,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 50,
+      "true": "bien",
+      "pred": "hola",
+      "conf": 0.2725776135921478,
+      "entropy": 2.246152400970459,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 51,
+      "true": "como_estas",
+      "pred": "hola",
+      "conf": 0.32201138138771057,
+      "entropy": 1.8432517051696777,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 52,
+      "true": "como_estas",
+      "pred": "hola",
+      "conf": 0.2767447829246521,
+      "entropy": 1.9891520738601685,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 53,
+      "true": "como_estas",
+      "pred": "hola",
+      "conf": 0.37993359565734863,
+      "entropy": 1.7451834678649902,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 54,
+      "true": "como_estas",
+      "pred": "ayuda",
+      "conf": 0.4900818169116974,
+      "entropy": 1.5456513166427612,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 55,
+      "true": "como_estas",
+      "pred": "ayuda",
+      "conf": 0.41411757469177246,
+      "entropy": 1.6350358724594116,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 56,
+      "true": "como_estas",
+      "pred": "ayuda",
+      "conf": 0.5686891674995422,
+      "entropy": 1.4831877946853638,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 57,
+      "true": "gracias",
+      "pred": "hola",
+      "conf": 0.3631109297275543,
+      "entropy": 1.7852094173431396,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 58,
+      "true": "gracias",
+      "pred": "hola",
+      "conf": 0.30985334515571594,
+      "entropy": 1.7479045391082764,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 59,
+      "true": "gracias",
+      "pred": "mal",
+      "conf": 0.260461688041687,
+      "entropy": 2.135234832763672,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 60,
+      "true": "gracias",
+      "pred": "hola",
+      "conf": 0.31721022725105286,
+      "entropy": 1.7147717475891113,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 61,
+      "true": "gracias",
+      "pred": "hola",
+      "conf": 0.3064911961555481,
+      "entropy": 1.7388498783111572,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 62,
+      "true": "gracias",
+      "pred": "hola",
+      "conf": 0.35350921750068665,
+      "entropy": 1.75754714012146,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 63,
+      "true": "hola",
+      "pred": "hola",
+      "conf": 0.4193236827850342,
+      "entropy": 1.661755084991455,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 64,
+      "true": "hola",
+      "pred": "hola",
+      "conf": 0.41931968927383423,
+      "entropy": 1.6610894203186035,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 65,
+      "true": "hola",
+      "pred": "hola",
+      "conf": 0.4191379249095917,
+      "entropy": 1.6682393550872803,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 66,
+      "true": "hola",
+      "pred": "hola",
+      "conf": 0.4202820062637329,
+      "entropy": 1.663571834564209,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 67,
+      "true": "hola",
+      "pred": "hola",
+      "conf": 0.4165591895580292,
+      "entropy": 1.7324773073196411,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 68,
+      "true": "hola",
+      "pred": "hola",
+      "conf": 0.41787123680114746,
+      "entropy": 1.6723864078521729,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 69,
+      "true": "hola",
+      "pred": "hola",
+      "conf": 0.41840821504592896,
+      "entropy": 1.6808685064315796,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 70,
+      "true": "hola",
+      "pred": "hola",
+      "conf": 0.285204142332077,
+      "entropy": 1.999419927597046,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 71,
+      "true": "hola",
+      "pred": "hola",
+      "conf": 0.4143875539302826,
+      "entropy": 1.684816598892212,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 72,
+      "true": "hola",
+      "pred": "hola",
+      "conf": 0.42387524247169495,
+      "entropy": 1.6592439413070679,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 73,
+      "true": "hola",
+      "pred": "bien",
+      "conf": 0.2508956789970398,
+      "entropy": 1.7909773588180542,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 74,
+      "true": "hola",
+      "pred": "bien",
+      "conf": 0.25615620613098145,
+      "entropy": 1.83446204662323,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 75,
+      "true": "hola",
+      "pred": "bien",
+      "conf": 0.30207645893096924,
+      "entropy": 1.786360502243042,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 76,
+      "true": "mal",
+      "pred": "hola",
+      "conf": 0.30570706725120544,
+      "entropy": 2.008380651473999,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 77,
+      "true": "mal",
+      "pred": "hola",
+      "conf": 0.21842950582504272,
+      "entropy": 2.358107089996338,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 78,
+      "true": "mal",
+      "pred": "gracias",
+      "conf": 0.14194944500923157,
+      "entropy": 2.441600799560547,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 79,
+      "true": "mal",
+      "pred": "hola",
+      "conf": 0.43726906180381775,
+      "entropy": 1.6613680124282837,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 80,
+      "true": "mal",
+      "pred": "hola",
+      "conf": 0.3926796019077301,
+      "entropy": 1.7575130462646484,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 81,
+      "true": "mal",
+      "pred": "hola",
+      "conf": 0.3885444700717926,
+      "entropy": 1.7643617391586304,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 82,
+      "true": "mal",
+      "pred": "gracias",
+      "conf": 0.38184502720832825,
+      "entropy": 2.019101142883301,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 83,
+      "true": "mal",
+      "pred": "gracias",
+      "conf": 0.3896603584289551,
+      "entropy": 2.0401909351348877,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 84,
+      "true": "mal",
+      "pred": "gracias",
+      "conf": 0.282005250453949,
+      "entropy": 2.1905055046081543,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 85,
+      "true": "mal",
+      "pred": "por_favor",
+      "conf": 0.26127439737319946,
+      "entropy": 2.181936264038086,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 86,
+      "true": "mal",
+      "pred": "hola",
+      "conf": 0.29371097683906555,
+      "entropy": 2.0775346755981445,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 87,
+      "true": "mal",
+      "pred": "por_favor",
+      "conf": 0.5806983709335327,
+      "entropy": 1.55184006690979,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 88,
+      "true": "mal",
+      "pred": "bien",
+      "conf": 0.30910250544548035,
+      "entropy": 1.7774279117584229,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 89,
+      "true": "mal",
+      "pred": "bien",
+      "conf": 0.28771913051605225,
+      "entropy": 1.831551194190979,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 90,
+      "true": "mal",
+      "pred": "gracias",
+      "conf": 0.5071154832839966,
+      "entropy": 1.5101654529571533,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 91,
+      "true": "no",
+      "pred": "hola",
+      "conf": 0.22463421523571014,
+      "entropy": 2.317230463027954,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 92,
+      "true": "no",
+      "pred": "ayuda",
+      "conf": 0.30960890650749207,
+      "entropy": 2.156270742416382,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 93,
+      "true": "no",
+      "pred": "hola",
+      "conf": 0.3590746521949768,
+      "entropy": 1.8231666088104248,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 94,
+      "true": "no",
+      "pred": "hola",
+      "conf": 0.34862443804740906,
+      "entropy": 1.832918643951416,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 95,
+      "true": "no",
+      "pred": "como_estas",
+      "conf": 0.20506790280342102,
+      "entropy": 2.2852554321289062,
+      "latency_ms": 0.0
+    },
+    {
+      "idx": 96,
+      "true": "no",
+      "pred": "hola",
+      "conf": 0.4084523320198059,
+      "entropy": 1.6912211179733276,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 97,
+      "true": "perdon",
+      "pred": "hola",
+      "conf": 0.36848780512809753,
+      "entropy": 1.7477933168411255,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 98,
+      "true": "perdon",
+      "pred": "hola",
+      "conf": 0.39708322286605835,
+      "entropy": 1.7009000778198242,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 99,
+      "true": "perdon",
+      "pred": "hola",
+      "conf": 0.3909422755241394,
+      "entropy": 1.7084827423095703,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 100,
+      "true": "perdon",
+      "pred": "hola",
+      "conf": 0.37496697902679443,
+      "entropy": 1.7420055866241455,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 101,
+      "true": "perdon",
+      "pred": "hola",
+      "conf": 0.3979882299900055,
+      "entropy": 1.7084847688674927,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 102,
+      "true": "perdon",
+      "pred": "hola",
+      "conf": 0.39388376474380493,
+      "entropy": 1.7023664712905884,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 103,
+      "true": "perdon",
+      "pred": "hola",
+      "conf": 0.2880212664604187,
+      "entropy": 1.8056516647338867,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 104,
+      "true": "perdon",
+      "pred": "hola",
+      "conf": 0.27210503816604614,
+      "entropy": 1.8609962463378906,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 105,
+      "true": "perdon",
+      "pred": "hola",
+      "conf": 0.30471816658973694,
+      "entropy": 1.7906889915466309,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 106,
+      "true": "perdon",
+      "pred": "hola",
+      "conf": 0.22757971286773682,
+      "entropy": 2.0038256645202637,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 107,
+      "true": "perdon",
+      "pred": "como_estas",
+      "conf": 0.7137129306793213,
+      "entropy": 1.189732551574707,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 108,
+      "true": "perdon",
+      "pred": "hola",
+      "conf": 0.3676880896091461,
+      "entropy": 1.7692185640335083,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 109,
+      "true": "perdon",
+      "pred": "como_estas",
+      "conf": 0.42035147547721863,
+      "entropy": 1.740568995475769,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 110,
+      "true": "perdon",
+      "pred": "mal",
+      "conf": 0.17499525845050812,
+      "entropy": 2.151620388031006,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 111,
+      "true": "perdon",
+      "pred": "bien",
+      "conf": 0.20517498254776,
+      "entropy": 1.9895734786987305,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 112,
+      "true": "por_favor",
+      "pred": "hola",
+      "conf": 0.4149855673313141,
+      "entropy": 1.673087477684021,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 113,
+      "true": "por_favor",
+      "pred": "hola",
+      "conf": 0.4190048575401306,
+      "entropy": 1.6657499074935913,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 114,
+      "true": "por_favor",
+      "pred": "hola",
+      "conf": 0.41855621337890625,
+      "entropy": 1.6666491031646729,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 115,
+      "true": "por_favor",
+      "pred": "hola",
+      "conf": 0.417525976896286,
+      "entropy": 1.6678977012634277,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 116,
+      "true": "por_favor",
+      "pred": "hola",
+      "conf": 0.4170139729976654,
+      "entropy": 1.6698527336120605,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 117,
+      "true": "por_favor",
+      "pred": "hola",
+      "conf": 0.4176364541053772,
+      "entropy": 1.6641952991485596,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 118,
+      "true": "por_favor",
+      "pred": "hola",
+      "conf": 0.36418330669403076,
+      "entropy": 1.636008858680725,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 119,
+      "true": "por_favor",
+      "pred": "hola",
+      "conf": 0.4075755774974823,
+      "entropy": 1.6894898414611816,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 120,
+      "true": "por_favor",
+      "pred": "hola",
+      "conf": 0.4057765603065491,
+      "entropy": 1.6951100826263428,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 121,
+      "true": "por_favor",
+      "pred": "hola",
+      "conf": 0.43441519141197205,
+      "entropy": 1.5738844871520996,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 122,
+      "true": "por_favor",
+      "pred": "hola",
+      "conf": 0.40108299255371094,
+      "entropy": 1.7057063579559326,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 123,
+      "true": "por_favor",
+      "pred": "hola",
+      "conf": 0.4394463002681732,
+      "entropy": 1.6246943473815918,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 124,
+      "true": "por_favor",
+      "pred": "bien",
+      "conf": 0.2970946729183197,
+      "entropy": 1.870957374572754,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 125,
+      "true": "por_favor",
+      "pred": "hola",
+      "conf": 0.3973343074321747,
+      "entropy": 1.63307523727417,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 126,
+      "true": "por_favor",
+      "pred": "hola",
+      "conf": 0.37650078535079956,
+      "entropy": 1.6500924825668335,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 127,
+      "true": "si",
+      "pred": "gracias",
+      "conf": 0.373437762260437,
+      "entropy": 2.1119508743286133,
+      "latency_ms": 1.2034874999926615
+    },
+    {
+      "idx": 128,
+      "true": "si",
+      "pred": "gracias",
+      "conf": 0.30588147044181824,
+      "entropy": 2.147390365600586,
+      "latency_ms": 4.362159999982396
+    },
+    {
+      "idx": 129,
+      "true": "si",
+      "pred": "gracias",
+      "conf": 0.4581396281719208,
+      "entropy": 1.8883719444274902,
+      "latency_ms": 4.362159999982396
+    },
+    {
+      "idx": 130,
+      "true": "si",
+      "pred": "hola",
+      "conf": 0.3613699674606323,
+      "entropy": 1.8488541841506958,
+      "latency_ms": 4.362159999982396
+    },
+    {
+      "idx": 131,
+      "true": "si",
+      "pred": "hola",
+      "conf": 0.39294248819351196,
+      "entropy": 1.7495384216308594,
+      "latency_ms": 4.362159999982396
+    },
+    {
+      "idx": 132,
+      "true": "si",
+      "pred": "gracias",
+      "conf": 0.12324874103069305,
+      "entropy": 2.4345762729644775,
+      "latency_ms": 4.362159999982396
+    }
+  ]
+}

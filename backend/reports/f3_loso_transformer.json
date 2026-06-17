@@ -1,0 +1,120 @@
+{
+  "checkpoint": "models\\sequence\\sign_transformer.pth",
+  "model_type": "transformer",
+  "per_fold": [
+    {
+      "signer": "1",
+      "n": 42,
+      "correct": 34,
+      "acc": 0.8095238095238095
+    },
+    {
+      "signer": "3",
+      "n": 31,
+      "correct": 22,
+      "acc": 0.7096774193548387
+    },
+    {
+      "signer": "17",
+      "n": 29,
+      "correct": 29,
+      "acc": 1.0
+    },
+    {
+      "signer": "19",
+      "n": 35,
+      "correct": 35,
+      "acc": 1.0
+    },
+    {
+      "signer": "21",
+      "n": 34,
+      "correct": 27,
+      "acc": 0.7941176470588235
+    },
+    {
+      "signer": "22",
+      "n": 35,
+      "correct": 34,
+      "acc": 0.9714285714285714
+    },
+    {
+      "signer": "23",
+      "n": 36,
+      "correct": 36,
+      "acc": 1.0
+    },
+    {
+      "signer": "24",
+      "n": 35,
+      "correct": 26,
+      "acc": 0.7428571428571429
+    },
+    {
+      "signer": "25",
+      "n": 35,
+      "correct": 25,
+      "acc": 0.7142857142857143
+    },
+    {
+      "signer": "26",
+      "n": 21,
+      "correct": 21,
+      "acc": 1.0
+    },
+    {
+      "signer": "27",
+      "n": 21,
+      "correct": 21,
+      "acc": 1.0
+    },
+    {
+      "signer": "28",
+      "n": 20,
+      "correct": 17,
+      "acc": 0.85
+    },
+    {
+      "signer": "29",
+      "n": 21,
+      "correct": 20,
+      "acc": 0.9523809523809523
+    },
+    {
+      "signer": "30",
+      "n": 21,
+      "correct": 17,
+      "acc": 0.8095238095238095
+    },
+    {
+      "signer": "31",
+      "n": 19,
+      "correct": 18,
+      "acc": 0.9473684210526315
+    },
+    {
+      "signer": "32",
+      "n": 21,
+      "correct": 11,
+      "acc": 0.5238095238095238
+    },
+    {
+      "signer": "33",
+      "n": 21,
+      "correct": 20,
+      "acc": 0.9523809523809523
+    },
+    {
+      "signer": "34",
+      "n": 21,
+      "correct": 20,
+      "acc": 0.9523809523809523
+    }
+  ],
+  "summary": {
+    "mean_acc": 0.8738741620020957,
+    "std_acc": 0.13726308328222891,
+    "min_acc": 0.5238095238095238,
+    "max_acc": 1.0
+  }
+}

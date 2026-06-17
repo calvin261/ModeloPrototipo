@@ -1,0 +1,36 @@
+[project]
+name = "lsec-backend"
+version = "0.1.0"
+description = "LSEC sign-language training backend (FastAPI + PyTorch)"
+readme = "../docs/README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "ultralytics",
+  "opencv-python",
+  "numpy",
+  "pandas",
+  "torch",
+  "torchvision",
+  "pyyaml",
+  "mediapipe",
+  "pyttsx3",
+  "scikit-learn",
+  "seaborn",
+]
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["api*", "hand_model*"]
+
+[tool.pytest.ini_options]
+markers = [
+  "slow: end-to-end / training tests; run with `pytest -m slow` (skipped in PR CI by `-m 'not slow'`)",
+]
+testpaths = ["tests"]

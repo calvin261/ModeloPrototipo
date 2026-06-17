@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.lsec.translator.ui.screens.camera.CameraScreen
+import com.lsec.translator.ui.screens.camera.CalibrationScreen
 import com.lsec.translator.ui.screens.capture.DataCaptureScreen
 import com.lsec.translator.ui.screens.dictionary.DictionaryScreen
 import com.lsec.translator.ui.screens.home.HomeScreen
@@ -18,6 +19,7 @@ import com.lsec.translator.ui.screens.training.TrainingScreen
 sealed class Screen(val route: String) {
     data object Home : Screen("home")
     data object Camera : Screen("camera")
+    data object Calibration : Screen("calibration")
     data object Dictionary : Screen("dictionary")
     data object Settings : Screen("settings")
     data object DataCapture : Screen("data_capture")
@@ -48,6 +50,13 @@ fun LSECNavHost(
         
         composable(Screen.Camera.route) {
             CameraScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToCalibration = { navController.navigate(Screen.Calibration.route) },
+            )
+        }
+
+        composable(Screen.Calibration.route) {
+            CalibrationScreen(
                 onNavigateBack = { navController.popBackStack() }
             )
         }

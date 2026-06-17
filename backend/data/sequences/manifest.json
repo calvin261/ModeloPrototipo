@@ -1,0 +1,3640 @@
+{
+  "created_at": "2026-06-14T23:43:13",
+  "input_dir": "data\\public\\LSC50\\Videos Courtesy",
+  "min_frames": 12,
+  "word_mapping_overrides": {
+    "Hola": "hola",
+    "Gracias": "gracias",
+    "Por favor": "por_favor",
+    "Si": "si",
+    "No": "no",
+    "Ayudar": "ayuda",
+    "Baño": "bano",
+    "Como esta": "como_estas",
+    "Bien": "bien",
+    "Mal": "mal",
+    "Perdon": "perdon",
+    "Chao": "adios"
+  },
+  "active_vocabulary": [
+    "adios",
+    "ayuda",
+    "bano",
+    "bien",
+    "como_estas",
+    "gracias",
+    "hola",
+    "mal",
+    "no",
+    "perdon",
+    "por_favor",
+    "si"
+  ],
+  "total_sequences": 510,
+  "by_word": {
+    "adios": 55,
+    "ayuda": 54,
+    "bano": 26,
+    "bien": 54,
+    "como_estas": 29,
+    "gracias": 26,
+    "hola": 53,
+    "mal": 51,
+    "no": 28,
+    "perdon": 53,
+    "por_favor": 55,
+    "si": 26
+  },
+  "by_signer": {
+    "1": 36,
+    "17": 35,
+    "19": 36,
+    "21": 36,
+    "22": 36,
+    "23": 36,
+    "24": 36,
+    "25": 36,
+    "26": 21,
+    "27": 21,
+    "28": 21,
+    "29": 21,
+    "3": 36,
+    "30": 21,
+    "31": 19,
+    "32": 21,
+    "33": 21,
+    "34": 21
+  },
+  "files": [
+    {
+      "file": "data\\sequences\\ayuda\\1_ayuda_001.npy",
+      "signer": "1",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Ayudar\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\1_ayuda_002.npy",
+      "signer": "1",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Ayudar\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\1_ayuda_003.npy",
+      "signer": "1",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Ayudar\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\1_bano_001.npy",
+      "signer": "1",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Baño\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\1_bano_002.npy",
+      "signer": "1",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Baño\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\1_bano_003.npy",
+      "signer": "1",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Baño\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\1_bien_001.npy",
+      "signer": "1",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Bien\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\1_bien_002.npy",
+      "signer": "1",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Bien\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\1_bien_003.npy",
+      "signer": "1",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Bien\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\1_adios_001.npy",
+      "signer": "1",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Chao\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\1_adios_002.npy",
+      "signer": "1",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Chao\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\1_adios_003.npy",
+      "signer": "1",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Chao\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\1_como_estas_001.npy",
+      "signer": "1",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Como esta\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\1_como_estas_002.npy",
+      "signer": "1",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Como esta\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\1_como_estas_003.npy",
+      "signer": "1",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Como esta\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\1_gracias_001.npy",
+      "signer": "1",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Gracias\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\1_gracias_002.npy",
+      "signer": "1",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Gracias\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\1_gracias_003.npy",
+      "signer": "1",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Gracias\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\1_hola_001.npy",
+      "signer": "1",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Hola\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\1_hola_002.npy",
+      "signer": "1",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Hola\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\1_hola_003.npy",
+      "signer": "1",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Hola\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\1_mal_001.npy",
+      "signer": "1",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Mal\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\1_mal_002.npy",
+      "signer": "1",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Mal\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\1_mal_003.npy",
+      "signer": "1",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Mal\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\1_no_001.npy",
+      "signer": "1",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\No\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\1_no_002.npy",
+      "signer": "1",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\No\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\1_no_003.npy",
+      "signer": "1",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\No\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\1_perdon_001.npy",
+      "signer": "1",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Perdon\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\1_perdon_002.npy",
+      "signer": "1",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Perdon\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\1_perdon_003.npy",
+      "signer": "1",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Perdon\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\1_por_favor_001.npy",
+      "signer": "1",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Por favor\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\1_por_favor_002.npy",
+      "signer": "1",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Por favor\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\1_por_favor_003.npy",
+      "signer": "1",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Por favor\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\1_si_001.npy",
+      "signer": "1",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Si\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\1_si_002.npy",
+      "signer": "1",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Si\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\1_si_003.npy",
+      "signer": "1",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\1\\Cordialidad\\Si\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\17_ayuda_004.npy",
+      "signer": "17",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Ayudar\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\17_ayuda_005.npy",
+      "signer": "17",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Ayudar\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\17_ayuda_006.npy",
+      "signer": "17",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Ayudar\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\17_bano_004.npy",
+      "signer": "17",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Baño\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\17_bano_005.npy",
+      "signer": "17",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Baño\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\17_bien_004.npy",
+      "signer": "17",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Bien\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\17_bien_005.npy",
+      "signer": "17",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Bien\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\17_bien_006.npy",
+      "signer": "17",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Bien\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\17_adios_004.npy",
+      "signer": "17",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Chao\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\17_adios_005.npy",
+      "signer": "17",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Chao\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\17_adios_006.npy",
+      "signer": "17",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Chao\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\17_adios_007.npy",
+      "signer": "17",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Chao\\3.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\17_como_estas_004.npy",
+      "signer": "17",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Como esta\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\17_como_estas_005.npy",
+      "signer": "17",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Como esta\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\17_como_estas_006.npy",
+      "signer": "17",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Como esta\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\17_como_estas_007.npy",
+      "signer": "17",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Como esta\\3.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\17_como_estas_008.npy",
+      "signer": "17",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Como esta\\4.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\17_gracias_004.npy",
+      "signer": "17",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Gracias\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\17_gracias_005.npy",
+      "signer": "17",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Gracias\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\17_hola_004.npy",
+      "signer": "17",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Hola\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\17_hola_005.npy",
+      "signer": "17",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Hola\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\17_mal_004.npy",
+      "signer": "17",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Mal\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\17_mal_005.npy",
+      "signer": "17",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Mal\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\17_no_004.npy",
+      "signer": "17",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\No\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\17_no_005.npy",
+      "signer": "17",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\No\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\17_no_006.npy",
+      "signer": "17",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\No\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\17_no_007.npy",
+      "signer": "17",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\No\\3.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\17_perdon_004.npy",
+      "signer": "17",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Perdon\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\17_perdon_005.npy",
+      "signer": "17",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Perdon\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\17_por_favor_004.npy",
+      "signer": "17",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Por favor\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\17_por_favor_005.npy",
+      "signer": "17",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Por favor\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\17_por_favor_006.npy",
+      "signer": "17",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Por favor\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\17_por_favor_007.npy",
+      "signer": "17",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Por favor\\3.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\17_si_004.npy",
+      "signer": "17",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Si\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\17_si_005.npy",
+      "signer": "17",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\17\\Cordialidad\\Si\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\19_ayuda_007.npy",
+      "signer": "19",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Ayudar\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\19_ayuda_008.npy",
+      "signer": "19",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Ayudar\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\19_ayuda_009.npy",
+      "signer": "19",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Ayudar\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\19_bano_006.npy",
+      "signer": "19",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Baño\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\19_bano_007.npy",
+      "signer": "19",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Baño\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\19_bano_008.npy",
+      "signer": "19",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Baño\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\19_bien_007.npy",
+      "signer": "19",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Bien\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\19_bien_008.npy",
+      "signer": "19",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Bien\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\19_bien_009.npy",
+      "signer": "19",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Bien\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\19_adios_008.npy",
+      "signer": "19",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Chao\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\19_adios_009.npy",
+      "signer": "19",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Chao\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\19_adios_010.npy",
+      "signer": "19",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Chao\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\19_como_estas_009.npy",
+      "signer": "19",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Como esta\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\19_como_estas_010.npy",
+      "signer": "19",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Como esta\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\19_como_estas_011.npy",
+      "signer": "19",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Como esta\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\19_gracias_006.npy",
+      "signer": "19",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Gracias\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\19_gracias_007.npy",
+      "signer": "19",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Gracias\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\19_gracias_008.npy",
+      "signer": "19",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Gracias\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\19_hola_006.npy",
+      "signer": "19",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Hola\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\19_hola_007.npy",
+      "signer": "19",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Hola\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\19_hola_008.npy",
+      "signer": "19",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Hola\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\19_mal_006.npy",
+      "signer": "19",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Mal\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\19_mal_007.npy",
+      "signer": "19",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Mal\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\19_mal_008.npy",
+      "signer": "19",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Mal\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\19_no_008.npy",
+      "signer": "19",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\No\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\19_no_009.npy",
+      "signer": "19",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\No\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\19_no_010.npy",
+      "signer": "19",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\No\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\19_perdon_006.npy",
+      "signer": "19",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Perdon\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\19_perdon_007.npy",
+      "signer": "19",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Perdon\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\19_perdon_008.npy",
+      "signer": "19",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Perdon\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\19_por_favor_008.npy",
+      "signer": "19",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Por favor\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\19_por_favor_009.npy",
+      "signer": "19",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Por favor\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\19_por_favor_010.npy",
+      "signer": "19",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Por favor\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\19_si_006.npy",
+      "signer": "19",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Si\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\19_si_007.npy",
+      "signer": "19",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Si\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\19_si_008.npy",
+      "signer": "19",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\19\\Cordialidad\\Si\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\21_ayuda_010.npy",
+      "signer": "21",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Ayudar\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\21_ayuda_011.npy",
+      "signer": "21",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Ayudar\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\21_ayuda_012.npy",
+      "signer": "21",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Ayudar\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\21_bano_009.npy",
+      "signer": "21",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Baño\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\21_bano_010.npy",
+      "signer": "21",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Baño\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\21_bano_011.npy",
+      "signer": "21",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Baño\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\21_bien_010.npy",
+      "signer": "21",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Bien\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\21_bien_011.npy",
+      "signer": "21",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Bien\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\21_bien_012.npy",
+      "signer": "21",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Bien\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\21_adios_011.npy",
+      "signer": "21",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Chao\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\21_adios_012.npy",
+      "signer": "21",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Chao\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\21_adios_013.npy",
+      "signer": "21",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Chao\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\21_como_estas_012.npy",
+      "signer": "21",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Como esta\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\21_como_estas_013.npy",
+      "signer": "21",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Como esta\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\21_como_estas_014.npy",
+      "signer": "21",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Como esta\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\21_gracias_009.npy",
+      "signer": "21",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Gracias\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\21_gracias_010.npy",
+      "signer": "21",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Gracias\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\21_gracias_011.npy",
+      "signer": "21",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Gracias\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\21_hola_009.npy",
+      "signer": "21",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Hola\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\21_hola_010.npy",
+      "signer": "21",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Hola\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\21_hola_011.npy",
+      "signer": "21",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Hola\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\21_mal_009.npy",
+      "signer": "21",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Mal\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\21_mal_010.npy",
+      "signer": "21",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Mal\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\21_mal_011.npy",
+      "signer": "21",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Mal\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\21_no_011.npy",
+      "signer": "21",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\No\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\21_no_012.npy",
+      "signer": "21",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\No\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\21_no_013.npy",
+      "signer": "21",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\No\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\21_perdon_009.npy",
+      "signer": "21",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Perdon\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\21_perdon_010.npy",
+      "signer": "21",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Perdon\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\21_perdon_011.npy",
+      "signer": "21",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Perdon\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\21_por_favor_011.npy",
+      "signer": "21",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Por favor\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\21_por_favor_012.npy",
+      "signer": "21",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Por favor\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\21_por_favor_013.npy",
+      "signer": "21",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Por favor\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\21_si_009.npy",
+      "signer": "21",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Si\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\21_si_010.npy",
+      "signer": "21",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Si\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\21_si_011.npy",
+      "signer": "21",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\21\\Cordialidad\\Si\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\22_ayuda_013.npy",
+      "signer": "22",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Ayudar\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\22_ayuda_014.npy",
+      "signer": "22",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Ayudar\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\22_ayuda_015.npy",
+      "signer": "22",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Ayudar\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\22_bano_012.npy",
+      "signer": "22",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Baño\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\22_bano_013.npy",
+      "signer": "22",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Baño\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\22_bano_014.npy",
+      "signer": "22",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Baño\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\22_bien_013.npy",
+      "signer": "22",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Bien\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\22_bien_014.npy",
+      "signer": "22",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Bien\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\22_bien_015.npy",
+      "signer": "22",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Bien\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\22_adios_014.npy",
+      "signer": "22",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Chao\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\22_adios_015.npy",
+      "signer": "22",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Chao\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\22_adios_016.npy",
+      "signer": "22",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Chao\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\22_como_estas_015.npy",
+      "signer": "22",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Como esta\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\22_como_estas_016.npy",
+      "signer": "22",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Como esta\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\22_como_estas_017.npy",
+      "signer": "22",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Como esta\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\22_gracias_012.npy",
+      "signer": "22",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Gracias\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\22_gracias_013.npy",
+      "signer": "22",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Gracias\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\22_gracias_014.npy",
+      "signer": "22",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Gracias\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\22_hola_012.npy",
+      "signer": "22",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Hola\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\22_hola_013.npy",
+      "signer": "22",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Hola\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\22_hola_014.npy",
+      "signer": "22",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Hola\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\22_mal_012.npy",
+      "signer": "22",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Mal\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\22_mal_013.npy",
+      "signer": "22",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Mal\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\22_mal_014.npy",
+      "signer": "22",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Mal\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\22_no_014.npy",
+      "signer": "22",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\No\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\22_no_015.npy",
+      "signer": "22",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\No\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\22_no_016.npy",
+      "signer": "22",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\No\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\22_perdon_012.npy",
+      "signer": "22",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Perdon\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\22_perdon_013.npy",
+      "signer": "22",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Perdon\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\22_perdon_014.npy",
+      "signer": "22",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Perdon\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\22_por_favor_014.npy",
+      "signer": "22",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Por favor\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\22_por_favor_015.npy",
+      "signer": "22",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Por favor\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\22_por_favor_016.npy",
+      "signer": "22",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Por favor\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\22_si_012.npy",
+      "signer": "22",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Si\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\22_si_013.npy",
+      "signer": "22",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Si\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\22_si_014.npy",
+      "signer": "22",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\22\\Cordialidad\\Si\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\23_ayuda_016.npy",
+      "signer": "23",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Ayudar\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\23_ayuda_017.npy",
+      "signer": "23",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Ayudar\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\23_ayuda_018.npy",
+      "signer": "23",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Ayudar\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\23_bano_015.npy",
+      "signer": "23",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Baño\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\23_bano_016.npy",
+      "signer": "23",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Baño\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\23_bano_017.npy",
+      "signer": "23",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Baño\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\23_bien_016.npy",
+      "signer": "23",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Bien\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\23_bien_017.npy",
+      "signer": "23",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Bien\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\23_bien_018.npy",
+      "signer": "23",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Bien\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\23_adios_017.npy",
+      "signer": "23",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Chao\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\23_adios_018.npy",
+      "signer": "23",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Chao\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\23_adios_019.npy",
+      "signer": "23",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Chao\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\23_como_estas_018.npy",
+      "signer": "23",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Como esta\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\23_como_estas_019.npy",
+      "signer": "23",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Como esta\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\23_como_estas_020.npy",
+      "signer": "23",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Como esta\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\23_gracias_015.npy",
+      "signer": "23",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Gracias\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\23_gracias_016.npy",
+      "signer": "23",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Gracias\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\23_gracias_017.npy",
+      "signer": "23",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Gracias\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\23_hola_015.npy",
+      "signer": "23",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Hola\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\23_hola_016.npy",
+      "signer": "23",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Hola\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\23_hola_017.npy",
+      "signer": "23",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Hola\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\23_mal_015.npy",
+      "signer": "23",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Mal\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\23_mal_016.npy",
+      "signer": "23",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Mal\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\23_mal_017.npy",
+      "signer": "23",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Mal\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\23_no_017.npy",
+      "signer": "23",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\No\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\23_no_018.npy",
+      "signer": "23",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\No\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\23_no_019.npy",
+      "signer": "23",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\No\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\23_perdon_015.npy",
+      "signer": "23",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Perdon\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\23_perdon_016.npy",
+      "signer": "23",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Perdon\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\23_perdon_017.npy",
+      "signer": "23",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Perdon\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\23_por_favor_017.npy",
+      "signer": "23",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Por favor\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\23_por_favor_018.npy",
+      "signer": "23",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Por favor\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\23_por_favor_019.npy",
+      "signer": "23",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Por favor\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\23_si_015.npy",
+      "signer": "23",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Si\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\23_si_016.npy",
+      "signer": "23",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Si\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\23_si_017.npy",
+      "signer": "23",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\23\\Cordialidad\\Si\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\24_ayuda_019.npy",
+      "signer": "24",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Ayudar\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\24_ayuda_020.npy",
+      "signer": "24",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Ayudar\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\24_ayuda_021.npy",
+      "signer": "24",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Ayudar\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\24_bano_018.npy",
+      "signer": "24",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Baño\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\24_bano_019.npy",
+      "signer": "24",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Baño\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\24_bano_020.npy",
+      "signer": "24",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Baño\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\24_bien_019.npy",
+      "signer": "24",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Bien\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\24_bien_020.npy",
+      "signer": "24",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Bien\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\24_bien_021.npy",
+      "signer": "24",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Bien\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\24_adios_020.npy",
+      "signer": "24",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Chao\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\24_adios_021.npy",
+      "signer": "24",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Chao\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\24_adios_022.npy",
+      "signer": "24",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Chao\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\24_como_estas_021.npy",
+      "signer": "24",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Como esta\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\24_como_estas_022.npy",
+      "signer": "24",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Como esta\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\24_como_estas_023.npy",
+      "signer": "24",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Como esta\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\24_gracias_018.npy",
+      "signer": "24",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Gracias\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\24_gracias_019.npy",
+      "signer": "24",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Gracias\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\24_gracias_020.npy",
+      "signer": "24",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Gracias\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\24_hola_018.npy",
+      "signer": "24",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Hola\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\24_hola_019.npy",
+      "signer": "24",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Hola\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\24_hola_020.npy",
+      "signer": "24",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Hola\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\24_mal_018.npy",
+      "signer": "24",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Mal\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\24_mal_019.npy",
+      "signer": "24",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Mal\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\24_mal_020.npy",
+      "signer": "24",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Mal\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\24_no_020.npy",
+      "signer": "24",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\No\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\24_no_021.npy",
+      "signer": "24",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\No\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\24_no_022.npy",
+      "signer": "24",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\No\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\24_perdon_018.npy",
+      "signer": "24",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Perdon\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\24_perdon_019.npy",
+      "signer": "24",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Perdon\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\24_perdon_020.npy",
+      "signer": "24",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Perdon\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\24_por_favor_020.npy",
+      "signer": "24",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Por favor\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\24_por_favor_021.npy",
+      "signer": "24",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Por favor\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\24_por_favor_022.npy",
+      "signer": "24",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Por favor\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\24_si_018.npy",
+      "signer": "24",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Si\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\24_si_019.npy",
+      "signer": "24",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Si\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\24_si_020.npy",
+      "signer": "24",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\24\\Cordialidad\\Si\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\25_ayuda_022.npy",
+      "signer": "25",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Ayudar\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\25_ayuda_023.npy",
+      "signer": "25",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Ayudar\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\25_ayuda_024.npy",
+      "signer": "25",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Ayudar\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\25_bano_021.npy",
+      "signer": "25",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Baño\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\25_bano_022.npy",
+      "signer": "25",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Baño\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\25_bano_023.npy",
+      "signer": "25",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Baño\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\25_bien_022.npy",
+      "signer": "25",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Bien\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\25_bien_023.npy",
+      "signer": "25",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Bien\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\25_bien_024.npy",
+      "signer": "25",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Bien\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\25_adios_023.npy",
+      "signer": "25",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Chao\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\25_adios_024.npy",
+      "signer": "25",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Chao\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\25_adios_025.npy",
+      "signer": "25",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Chao\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\25_como_estas_024.npy",
+      "signer": "25",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Como esta\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\25_como_estas_025.npy",
+      "signer": "25",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Como esta\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\25_como_estas_026.npy",
+      "signer": "25",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Como esta\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\25_gracias_021.npy",
+      "signer": "25",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Gracias\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\25_gracias_022.npy",
+      "signer": "25",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Gracias\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\25_gracias_023.npy",
+      "signer": "25",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Gracias\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\25_hola_021.npy",
+      "signer": "25",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Hola\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\25_hola_022.npy",
+      "signer": "25",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Hola\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\25_hola_023.npy",
+      "signer": "25",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Hola\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\25_mal_021.npy",
+      "signer": "25",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Mal\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\25_mal_022.npy",
+      "signer": "25",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Mal\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\25_mal_023.npy",
+      "signer": "25",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Mal\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\25_no_023.npy",
+      "signer": "25",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\No\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\25_no_024.npy",
+      "signer": "25",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\No\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\25_no_025.npy",
+      "signer": "25",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\No\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\25_perdon_021.npy",
+      "signer": "25",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Perdon\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\25_perdon_022.npy",
+      "signer": "25",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Perdon\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\25_perdon_023.npy",
+      "signer": "25",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Perdon\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\25_por_favor_023.npy",
+      "signer": "25",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Por favor\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\25_por_favor_024.npy",
+      "signer": "25",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Por favor\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\25_por_favor_025.npy",
+      "signer": "25",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Por favor\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\25_si_021.npy",
+      "signer": "25",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Si\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\25_si_022.npy",
+      "signer": "25",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Si\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\25_si_023.npy",
+      "signer": "25",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\25\\Cordialidad\\Si\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\26_ayuda_025.npy",
+      "signer": "26",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\26\\Cordialidad\\Ayudar\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\26_ayuda_026.npy",
+      "signer": "26",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\26\\Cordialidad\\Ayudar\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\26_ayuda_027.npy",
+      "signer": "26",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\26\\Cordialidad\\Ayudar\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\26_bien_025.npy",
+      "signer": "26",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\26\\Cordialidad\\Bien\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\26_bien_026.npy",
+      "signer": "26",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\26\\Cordialidad\\Bien\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\26_bien_027.npy",
+      "signer": "26",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\26\\Cordialidad\\Bien\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\26_adios_026.npy",
+      "signer": "26",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\26\\Cordialidad\\Chao\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\26_adios_027.npy",
+      "signer": "26",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\26\\Cordialidad\\Chao\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\26_adios_028.npy",
+      "signer": "26",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\26\\Cordialidad\\Chao\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\26_hola_024.npy",
+      "signer": "26",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\26\\Cordialidad\\Hola\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\26_hola_025.npy",
+      "signer": "26",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\26\\Cordialidad\\Hola\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\26_hola_026.npy",
+      "signer": "26",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\26\\Cordialidad\\Hola\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\26_mal_024.npy",
+      "signer": "26",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\26\\Cordialidad\\Mal\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\26_mal_025.npy",
+      "signer": "26",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\26\\Cordialidad\\Mal\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\26_mal_026.npy",
+      "signer": "26",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\26\\Cordialidad\\Mal\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\26_perdon_024.npy",
+      "signer": "26",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\26\\Cordialidad\\Perdon\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\26_perdon_025.npy",
+      "signer": "26",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\26\\Cordialidad\\Perdon\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\26_perdon_026.npy",
+      "signer": "26",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\26\\Cordialidad\\Perdon\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\26_por_favor_026.npy",
+      "signer": "26",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\26\\Cordialidad\\Por favor\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\26_por_favor_027.npy",
+      "signer": "26",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\26\\Cordialidad\\Por favor\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\26_por_favor_028.npy",
+      "signer": "26",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\26\\Cordialidad\\Por favor\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\27_ayuda_028.npy",
+      "signer": "27",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\27\\Cordialidad\\Ayudar\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\27_ayuda_029.npy",
+      "signer": "27",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\27\\Cordialidad\\Ayudar\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\27_ayuda_030.npy",
+      "signer": "27",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\27\\Cordialidad\\Ayudar\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\27_bien_028.npy",
+      "signer": "27",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\27\\Cordialidad\\Bien\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\27_bien_029.npy",
+      "signer": "27",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\27\\Cordialidad\\Bien\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\27_bien_030.npy",
+      "signer": "27",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\27\\Cordialidad\\Bien\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\27_adios_029.npy",
+      "signer": "27",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\27\\Cordialidad\\Chao\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\27_adios_030.npy",
+      "signer": "27",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\27\\Cordialidad\\Chao\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\27_adios_031.npy",
+      "signer": "27",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\27\\Cordialidad\\Chao\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\27_hola_027.npy",
+      "signer": "27",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\27\\Cordialidad\\Hola\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\27_hola_028.npy",
+      "signer": "27",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\27\\Cordialidad\\Hola\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\27_hola_029.npy",
+      "signer": "27",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\27\\Cordialidad\\Hola\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\27_mal_027.npy",
+      "signer": "27",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\27\\Cordialidad\\Mal\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\27_mal_028.npy",
+      "signer": "27",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\27\\Cordialidad\\Mal\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\27_mal_029.npy",
+      "signer": "27",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\27\\Cordialidad\\Mal\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\27_perdon_027.npy",
+      "signer": "27",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\27\\Cordialidad\\Perdon\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\27_perdon_028.npy",
+      "signer": "27",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\27\\Cordialidad\\Perdon\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\27_perdon_029.npy",
+      "signer": "27",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\27\\Cordialidad\\Perdon\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\27_por_favor_029.npy",
+      "signer": "27",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\27\\Cordialidad\\Por favor\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\27_por_favor_030.npy",
+      "signer": "27",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\27\\Cordialidad\\Por favor\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\27_por_favor_031.npy",
+      "signer": "27",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\27\\Cordialidad\\Por favor\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\28_ayuda_031.npy",
+      "signer": "28",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\28\\Cordialidad\\Ayudar\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\28_ayuda_032.npy",
+      "signer": "28",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\28\\Cordialidad\\Ayudar\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\28_ayuda_033.npy",
+      "signer": "28",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\28\\Cordialidad\\Ayudar\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\28_bien_031.npy",
+      "signer": "28",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\28\\Cordialidad\\Bien\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\28_bien_032.npy",
+      "signer": "28",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\28\\Cordialidad\\Bien\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\28_bien_033.npy",
+      "signer": "28",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\28\\Cordialidad\\Bien\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\28_adios_032.npy",
+      "signer": "28",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\28\\Cordialidad\\Chao\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\28_adios_033.npy",
+      "signer": "28",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\28\\Cordialidad\\Chao\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\28_adios_034.npy",
+      "signer": "28",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\28\\Cordialidad\\Chao\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\28_hola_030.npy",
+      "signer": "28",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\28\\Cordialidad\\Hola\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\28_hola_031.npy",
+      "signer": "28",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\28\\Cordialidad\\Hola\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\28_hola_032.npy",
+      "signer": "28",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\28\\Cordialidad\\Hola\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\28_mal_030.npy",
+      "signer": "28",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\28\\Cordialidad\\Mal\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\28_mal_031.npy",
+      "signer": "28",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\28\\Cordialidad\\Mal\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\28_mal_032.npy",
+      "signer": "28",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\28\\Cordialidad\\Mal\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\28_perdon_030.npy",
+      "signer": "28",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\28\\Cordialidad\\Perdon\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\28_perdon_031.npy",
+      "signer": "28",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\28\\Cordialidad\\Perdon\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\28_perdon_032.npy",
+      "signer": "28",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\28\\Cordialidad\\Perdon\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\28_por_favor_032.npy",
+      "signer": "28",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\28\\Cordialidad\\Por favor\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\28_por_favor_033.npy",
+      "signer": "28",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\28\\Cordialidad\\Por favor\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\28_por_favor_034.npy",
+      "signer": "28",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\28\\Cordialidad\\Por favor\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\29_ayuda_034.npy",
+      "signer": "29",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\29\\Cordialidad\\Ayudar\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\29_ayuda_035.npy",
+      "signer": "29",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\29\\Cordialidad\\Ayudar\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\29_ayuda_036.npy",
+      "signer": "29",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\29\\Cordialidad\\Ayudar\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\29_bien_034.npy",
+      "signer": "29",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\29\\Cordialidad\\Bien\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\29_bien_035.npy",
+      "signer": "29",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\29\\Cordialidad\\Bien\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\29_bien_036.npy",
+      "signer": "29",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\29\\Cordialidad\\Bien\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\29_adios_035.npy",
+      "signer": "29",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\29\\Cordialidad\\Chao\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\29_adios_036.npy",
+      "signer": "29",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\29\\Cordialidad\\Chao\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\29_adios_037.npy",
+      "signer": "29",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\29\\Cordialidad\\Chao\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\29_hola_033.npy",
+      "signer": "29",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\29\\Cordialidad\\Hola\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\29_hola_034.npy",
+      "signer": "29",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\29\\Cordialidad\\Hola\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\29_hola_035.npy",
+      "signer": "29",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\29\\Cordialidad\\Hola\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\29_mal_033.npy",
+      "signer": "29",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\29\\Cordialidad\\Mal\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\29_mal_034.npy",
+      "signer": "29",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\29\\Cordialidad\\Mal\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\29_mal_035.npy",
+      "signer": "29",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\29\\Cordialidad\\Mal\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\29_perdon_033.npy",
+      "signer": "29",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\29\\Cordialidad\\Perdon\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\29_perdon_034.npy",
+      "signer": "29",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\29\\Cordialidad\\Perdon\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\29_perdon_035.npy",
+      "signer": "29",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\29\\Cordialidad\\Perdon\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\29_por_favor_035.npy",
+      "signer": "29",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\29\\Cordialidad\\Por favor\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\29_por_favor_036.npy",
+      "signer": "29",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\29\\Cordialidad\\Por favor\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\29_por_favor_037.npy",
+      "signer": "29",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\29\\Cordialidad\\Por favor\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\3_ayuda_037.npy",
+      "signer": "3",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Ayudar\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\3_ayuda_038.npy",
+      "signer": "3",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Ayudar\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\3_ayuda_039.npy",
+      "signer": "3",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Ayudar\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\3_bano_024.npy",
+      "signer": "3",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Baño\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\3_bano_025.npy",
+      "signer": "3",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Baño\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bano\\3_bano_026.npy",
+      "signer": "3",
+      "word": "bano",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Baño\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\3_bien_037.npy",
+      "signer": "3",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Bien\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\3_bien_038.npy",
+      "signer": "3",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Bien\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\3_bien_039.npy",
+      "signer": "3",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Bien\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\3_adios_038.npy",
+      "signer": "3",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Chao\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\3_adios_039.npy",
+      "signer": "3",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Chao\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\3_adios_040.npy",
+      "signer": "3",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Chao\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\3_como_estas_027.npy",
+      "signer": "3",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Como esta\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\3_como_estas_028.npy",
+      "signer": "3",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Como esta\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\como_estas\\3_como_estas_029.npy",
+      "signer": "3",
+      "word": "como_estas",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Como esta\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\3_gracias_024.npy",
+      "signer": "3",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Gracias\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\3_gracias_025.npy",
+      "signer": "3",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Gracias\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\gracias\\3_gracias_026.npy",
+      "signer": "3",
+      "word": "gracias",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Gracias\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\3_hola_036.npy",
+      "signer": "3",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Hola\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\3_hola_037.npy",
+      "signer": "3",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Hola\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\3_hola_038.npy",
+      "signer": "3",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Hola\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\3_mal_036.npy",
+      "signer": "3",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Mal\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\3_mal_037.npy",
+      "signer": "3",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Mal\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\3_mal_038.npy",
+      "signer": "3",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Mal\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\3_no_026.npy",
+      "signer": "3",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\No\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\3_no_027.npy",
+      "signer": "3",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\No\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\no\\3_no_028.npy",
+      "signer": "3",
+      "word": "no",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\No\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\3_perdon_036.npy",
+      "signer": "3",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Perdon\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\3_perdon_037.npy",
+      "signer": "3",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Perdon\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\3_perdon_038.npy",
+      "signer": "3",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Perdon\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\3_por_favor_038.npy",
+      "signer": "3",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Por favor\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\3_por_favor_039.npy",
+      "signer": "3",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Por favor\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\3_por_favor_040.npy",
+      "signer": "3",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Por favor\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\3_si_024.npy",
+      "signer": "3",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Si\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\3_si_025.npy",
+      "signer": "3",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Si\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\si\\3_si_026.npy",
+      "signer": "3",
+      "word": "si",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\3\\Cordialidad\\Si\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\30_ayuda_040.npy",
+      "signer": "30",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\30\\Cordialidad\\Ayudar\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\30_ayuda_041.npy",
+      "signer": "30",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\30\\Cordialidad\\Ayudar\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\30_ayuda_042.npy",
+      "signer": "30",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\30\\Cordialidad\\Ayudar\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\30_bien_040.npy",
+      "signer": "30",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\30\\Cordialidad\\Bien\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\30_bien_041.npy",
+      "signer": "30",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\30\\Cordialidad\\Bien\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\30_bien_042.npy",
+      "signer": "30",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\30\\Cordialidad\\Bien\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\30_adios_041.npy",
+      "signer": "30",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\30\\Cordialidad\\Chao\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\30_adios_042.npy",
+      "signer": "30",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\30\\Cordialidad\\Chao\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\30_adios_043.npy",
+      "signer": "30",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\30\\Cordialidad\\Chao\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\30_hola_039.npy",
+      "signer": "30",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\30\\Cordialidad\\Hola\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\30_hola_040.npy",
+      "signer": "30",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\30\\Cordialidad\\Hola\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\30_hola_041.npy",
+      "signer": "30",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\30\\Cordialidad\\Hola\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\30_mal_039.npy",
+      "signer": "30",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\30\\Cordialidad\\Mal\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\30_mal_040.npy",
+      "signer": "30",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\30\\Cordialidad\\Mal\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\30_mal_041.npy",
+      "signer": "30",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\30\\Cordialidad\\Mal\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\30_perdon_039.npy",
+      "signer": "30",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\30\\Cordialidad\\Perdon\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\30_perdon_040.npy",
+      "signer": "30",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\30\\Cordialidad\\Perdon\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\30_perdon_041.npy",
+      "signer": "30",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\30\\Cordialidad\\Perdon\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\30_por_favor_041.npy",
+      "signer": "30",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\30\\Cordialidad\\Por favor\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\30_por_favor_042.npy",
+      "signer": "30",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\30\\Cordialidad\\Por favor\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\30_por_favor_043.npy",
+      "signer": "30",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\30\\Cordialidad\\Por favor\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\31_ayuda_043.npy",
+      "signer": "31",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\31\\Cordialidad\\Ayudar\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\31_ayuda_044.npy",
+      "signer": "31",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\31\\Cordialidad\\Ayudar\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\31_ayuda_045.npy",
+      "signer": "31",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\31\\Cordialidad\\Ayudar\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\31_bien_043.npy",
+      "signer": "31",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\31\\Cordialidad\\Bien\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\31_bien_044.npy",
+      "signer": "31",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\31\\Cordialidad\\Bien\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\31_bien_045.npy",
+      "signer": "31",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\31\\Cordialidad\\Bien\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\31_adios_044.npy",
+      "signer": "31",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\31\\Cordialidad\\Chao\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\31_adios_045.npy",
+      "signer": "31",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\31\\Cordialidad\\Chao\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\31_adios_046.npy",
+      "signer": "31",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\31\\Cordialidad\\Chao\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\31_hola_042.npy",
+      "signer": "31",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\31\\Cordialidad\\Hola\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\31_hola_043.npy",
+      "signer": "31",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\31\\Cordialidad\\Hola\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\31_hola_044.npy",
+      "signer": "31",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\31\\Cordialidad\\Hola\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\31_mal_042.npy",
+      "signer": "31",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\31\\Cordialidad\\Mal\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\31_perdon_042.npy",
+      "signer": "31",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\31\\Cordialidad\\Perdon\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\31_perdon_043.npy",
+      "signer": "31",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\31\\Cordialidad\\Perdon\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\31_perdon_044.npy",
+      "signer": "31",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\31\\Cordialidad\\Perdon\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\31_por_favor_044.npy",
+      "signer": "31",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\31\\Cordialidad\\Por favor\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\31_por_favor_045.npy",
+      "signer": "31",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\31\\Cordialidad\\Por favor\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\31_por_favor_046.npy",
+      "signer": "31",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\31\\Cordialidad\\Por favor\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\32_ayuda_046.npy",
+      "signer": "32",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\32\\Cordialidad\\Ayudar\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\32_ayuda_047.npy",
+      "signer": "32",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\32\\Cordialidad\\Ayudar\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\32_ayuda_048.npy",
+      "signer": "32",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\32\\Cordialidad\\Ayudar\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\32_bien_046.npy",
+      "signer": "32",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\32\\Cordialidad\\Bien\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\32_bien_047.npy",
+      "signer": "32",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\32\\Cordialidad\\Bien\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\32_bien_048.npy",
+      "signer": "32",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\32\\Cordialidad\\Bien\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\32_adios_047.npy",
+      "signer": "32",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\32\\Cordialidad\\Chao\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\32_adios_048.npy",
+      "signer": "32",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\32\\Cordialidad\\Chao\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\32_adios_049.npy",
+      "signer": "32",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\32\\Cordialidad\\Chao\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\32_hola_045.npy",
+      "signer": "32",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\32\\Cordialidad\\Hola\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\32_hola_046.npy",
+      "signer": "32",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\32\\Cordialidad\\Hola\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\32_hola_047.npy",
+      "signer": "32",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\32\\Cordialidad\\Hola\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\32_mal_043.npy",
+      "signer": "32",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\32\\Cordialidad\\Mal\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\32_mal_044.npy",
+      "signer": "32",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\32\\Cordialidad\\Mal\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\32_mal_045.npy",
+      "signer": "32",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\32\\Cordialidad\\Mal\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\32_perdon_045.npy",
+      "signer": "32",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\32\\Cordialidad\\Perdon\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\32_perdon_046.npy",
+      "signer": "32",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\32\\Cordialidad\\Perdon\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\32_perdon_047.npy",
+      "signer": "32",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\32\\Cordialidad\\Perdon\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\32_por_favor_047.npy",
+      "signer": "32",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\32\\Cordialidad\\Por favor\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\32_por_favor_048.npy",
+      "signer": "32",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\32\\Cordialidad\\Por favor\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\32_por_favor_049.npy",
+      "signer": "32",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\32\\Cordialidad\\Por favor\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\33_ayuda_049.npy",
+      "signer": "33",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\33\\Cordialidad\\Ayudar\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\33_ayuda_050.npy",
+      "signer": "33",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\33\\Cordialidad\\Ayudar\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\33_ayuda_051.npy",
+      "signer": "33",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\33\\Cordialidad\\Ayudar\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\33_bien_049.npy",
+      "signer": "33",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\33\\Cordialidad\\Bien\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\33_bien_050.npy",
+      "signer": "33",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\33\\Cordialidad\\Bien\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\33_bien_051.npy",
+      "signer": "33",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\33\\Cordialidad\\Bien\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\33_adios_050.npy",
+      "signer": "33",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\33\\Cordialidad\\Chao\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\33_adios_051.npy",
+      "signer": "33",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\33\\Cordialidad\\Chao\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\33_adios_052.npy",
+      "signer": "33",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\33\\Cordialidad\\Chao\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\33_hola_048.npy",
+      "signer": "33",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\33\\Cordialidad\\Hola\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\33_hola_049.npy",
+      "signer": "33",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\33\\Cordialidad\\Hola\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\33_hola_050.npy",
+      "signer": "33",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\33\\Cordialidad\\Hola\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\33_mal_046.npy",
+      "signer": "33",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\33\\Cordialidad\\Mal\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\33_mal_047.npy",
+      "signer": "33",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\33\\Cordialidad\\Mal\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\33_mal_048.npy",
+      "signer": "33",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\33\\Cordialidad\\Mal\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\33_perdon_048.npy",
+      "signer": "33",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\33\\Cordialidad\\Perdon\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\33_perdon_049.npy",
+      "signer": "33",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\33\\Cordialidad\\Perdon\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\33_perdon_050.npy",
+      "signer": "33",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\33\\Cordialidad\\Perdon\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\33_por_favor_050.npy",
+      "signer": "33",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\33\\Cordialidad\\Por favor\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\33_por_favor_051.npy",
+      "signer": "33",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\33\\Cordialidad\\Por favor\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\33_por_favor_052.npy",
+      "signer": "33",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\33\\Cordialidad\\Por favor\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\34_ayuda_052.npy",
+      "signer": "34",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\34\\Cordialidad\\Ayudar\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\34_ayuda_053.npy",
+      "signer": "34",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\34\\Cordialidad\\Ayudar\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\ayuda\\34_ayuda_054.npy",
+      "signer": "34",
+      "word": "ayuda",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\34\\Cordialidad\\Ayudar\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\34_bien_052.npy",
+      "signer": "34",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\34\\Cordialidad\\Bien\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\34_bien_053.npy",
+      "signer": "34",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\34\\Cordialidad\\Bien\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\bien\\34_bien_054.npy",
+      "signer": "34",
+      "word": "bien",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\34\\Cordialidad\\Bien\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\34_adios_053.npy",
+      "signer": "34",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\34\\Cordialidad\\Chao\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\34_adios_054.npy",
+      "signer": "34",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\34\\Cordialidad\\Chao\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\adios\\34_adios_055.npy",
+      "signer": "34",
+      "word": "adios",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\34\\Cordialidad\\Chao\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\34_hola_051.npy",
+      "signer": "34",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\34\\Cordialidad\\Hola\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\34_hola_052.npy",
+      "signer": "34",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\34\\Cordialidad\\Hola\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\hola\\34_hola_053.npy",
+      "signer": "34",
+      "word": "hola",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\34\\Cordialidad\\Hola\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\34_mal_049.npy",
+      "signer": "34",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\34\\Cordialidad\\Mal\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\34_mal_050.npy",
+      "signer": "34",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\34\\Cordialidad\\Mal\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\mal\\34_mal_051.npy",
+      "signer": "34",
+      "word": "mal",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\34\\Cordialidad\\Mal\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\34_perdon_051.npy",
+      "signer": "34",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\34\\Cordialidad\\Perdon\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\34_perdon_052.npy",
+      "signer": "34",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\34\\Cordialidad\\Perdon\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\perdon\\34_perdon_053.npy",
+      "signer": "34",
+      "word": "perdon",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\34\\Cordialidad\\Perdon\\2.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\34_por_favor_053.npy",
+      "signer": "34",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\34\\Cordialidad\\Por favor\\0.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\34_por_favor_054.npy",
+      "signer": "34",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\34\\Cordialidad\\Por favor\\1.avi"
+    },
+    {
+      "file": "data\\sequences\\por_favor\\34_por_favor_055.npy",
+      "signer": "34",
+      "word": "por_favor",
+      "n_frames": 0,
+      "source": "data\\public\\LSC50\\Videos Courtesy\\34\\Cordialidad\\Por favor\\2.avi"
+    }
+  ]
+}

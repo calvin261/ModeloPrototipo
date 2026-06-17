@@ -1,17 +1,21 @@
 # Integracion Frontend Android + Backend FastAPI
 
-Este repositorio ahora contiene ambos proyectos en una sola carpeta:
+Este repositorio contiene ambos proyectos en una sola carpeta:
 
-- `backend/`: API FastAPI de entrenamiento, datos y modelos.
+- `backend/`: API FastAPI de entrenamiento, datos, modelos y scripts.
 - `frontend/`: app Android/Kotlin copiada desde `C:\Users\jeffe\Documents\Proyectos\Prototipo`.
+- `docs/`: documentacion del proyecto (incluyendo este archivo).
 
 ## Backend
 
-Desde la raiz del repositorio:
+Desde la carpeta `backend/`:
 
 ```bash
+cd backend
 python start_backend.py
 ```
+
+O en Windows: `backend\start_backend.bat`.
 
 Endpoints utiles:
 
@@ -21,7 +25,7 @@ http://localhost:8000/docs
 http://localhost:8000/openapi.json
 ```
 
-Si configuras `LSEC_API_KEY` en `.env`, la app Android debe enviar la misma clave desde la pantalla de ajustes.
+Si configuras `LSEC_API_KEY` en `backend/.env`, la app Android debe enviar la misma clave desde la pantalla de ajustes.
 
 ## Frontend Android
 
@@ -38,7 +42,14 @@ La app consume el backend usando rutas como:
 /api/v1/train/classifier
 /api/v1/models/latest/{modelType}
 /api/v1/models/download/{modelType}/{version}
+/api/v1/models/labels/{modelType}
 ```
+
+`{modelType}` acepta los valores `classifier` | `sequence` |
+`transformer`. El `transformer` es el modelo nuevo (SignTransformer
+ONNX, 12 clases LSEC) y se introdujo para que el cliente Android
+pueda descargarlo desde `ModelDownloadManager` con el mismo flujo
+que ya usaba para el MLP y el GRU legacy.
 
 ## URL del servidor
 
@@ -80,7 +91,8 @@ Si necesitas firmar una version release, vuelve a colocar manualmente los archiv
 Backend:
 
 ```bash
-.venv\Scripts\python.exe -m pytest -q
+cd backend
+.venv\Scripts\python.exe -m pytest -q tests
 ```
 
 Frontend:

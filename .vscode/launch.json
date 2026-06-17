@@ -7,53 +7,53 @@
             "request": "launch",
             "module": "uvicorn",
             "args": [
-                "backend.main:app",
+                "api.main:app",
                 "--host", "0.0.0.0",
                 "--port", "8000",
                 "--reload"
             ],
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/backend",
             "python": "${workspaceFolder}/.venv/Scripts/python.exe",
             "console": "integratedTerminal",
             "justMyCode": false,
             "env": {
-                "PYTHONPATH": "${workspaceFolder};${workspaceFolder}/src"
+                "PYTHONPATH": "${workspaceFolder}/backend"
             }
         },
         {
             "name": "Backend: start_backend.py",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/start_backend.py",
-            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/backend/start_backend.py",
+            "cwd": "${workspaceFolder}/backend",
             "python": "${workspaceFolder}/.venv/Scripts/python.exe",
             "console": "integratedTerminal",
             "env": {
-                "PYTHONPATH": "${workspaceFolder};${workspaceFolder}/src"
+                "PYTHONPATH": "${workspaceFolder}/backend"
             }
         },
         {
             "name": "Train: Classifier",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/scripts/train_classifier.py",
-            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/backend/scripts/train_classifier.py",
+            "cwd": "${workspaceFolder}/backend",
             "python": "${workspaceFolder}/.venv/Scripts/python.exe",
             "console": "integratedTerminal",
             "env": {
-                "PYTHONPATH": "${workspaceFolder};${workspaceFolder}/src"
+                "PYTHONPATH": "${workspaceFolder}/backend"
             }
         },
         {
             "name": "Train: Sequence (LSTM)",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/scripts/train_sequence.py",
-            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/backend/scripts/train_sequence.py",
+            "cwd": "${workspaceFolder}/backend",
             "python": "${workspaceFolder}/.venv/Scripts/python.exe",
             "console": "integratedTerminal",
             "env": {
-                "PYTHONPATH": "${workspaceFolder};${workspaceFolder}/src"
+                "PYTHONPATH": "${workspaceFolder}/backend"
             }
         },
         {
@@ -65,11 +65,11 @@
                 "-q",
                 "tests"
             ],
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/backend",
             "python": "${workspaceFolder}/.venv/Scripts/python.exe",
             "console": "integratedTerminal",
             "env": {
-                "PYTHONPATH": "${workspaceFolder};${workspaceFolder}/src"
+                "PYTHONPATH": "${workspaceFolder}/backend"
             }
         },
     ],

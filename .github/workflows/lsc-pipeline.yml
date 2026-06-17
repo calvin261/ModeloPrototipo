@@ -1,0 +1,171 @@
+name: LSC pipeline
+
+on:
+  pull_request:
+    paths:
+      - "backend/**"
+      - ".github/workflows/lsc-pipeline.yml"
+      - "docs/AGENTS.md"
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - ".github/workflows/lsc-pipeline.yml"
+      - "docs/AGENTS.md"
+
+jobs:
+  # -------------------------------------------------------------------------
+  # PR + main: fast unit-test suite (no training, no MediaPipe, no full
+  # pipeline). Skips tests marked `slow`.
+  # -------------------------------------------------------------------------
+  test:
+    name: pytest (not slow)
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~\AppData\Local\pip\Cache
+          key: ${{ runner.os }}-pip-${{ hashFiles('backend/pyproject.toml', 'backend/ml_requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install CPU-only torch
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          # Pin CPU-only torch for reproducibility (matches Dockerfile).
+          python -m pip install `
+            --index-url https://download.pytorch.org/whl/cpu `
+            "torch==2.3.1+cpu" "torchvision==0.18.1+cpu"
+
+      - name: Install project dependencies
+        shell: pwsh
+        working-directory: backend
+        run: |
+          python -m pip install -e .
+          python -m pip install pytest onnxruntime
+
+      - name: Run pytest (not slow)
+        shell: pwsh
+        working-directory: backend
+        run: |
+          .venv\Scripts\python -m pytest -q -m "not slow" tests 2>&1 | Tee-Object -FilePath pytest_notslow.log
+
+      - name: Upload pytest log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-notslow-log
+          path: backend/pytest_notslow.log
+
+  # -------------------------------------------------------------------------
+  # main only: exercise the full_pipeline.bat end-to-end against a tiny
+  # synthetic dataset (so the .bat and the per-stage scripts are
+  # validated in CI without committing the real LSC50 .npy files, which
+  # are gitignored).
+  # -------------------------------------------------------------------------
+  pipeline:
+    name: full_pipeline.bat --fast
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install CPU-only torch
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install `
+            --index-url https://download.pytorch.org/whl/cpu `
+            "torch==2.3.1+cpu" "torchvision==0.18.1+cpu"
+
+      - name: Install project dependencies
+        shell: pwsh
+        working-directory: backend
+        run: |
+          python -m pip install -e .
+          python -m pip install pytest onnxruntime
+
+      - name: Generate synthetic sequence dataset
+        shell: pwsh
+        working-directory: backend
+        run: |
+          # Build a small synthetic .npy dataset so the pipeline can run
+          # end-to-end in CI without needing the gitignored real data.
+          # The synth data is written to tests/fixtures/synth_sequences/
+          # (see scripts/_ci_synth_data.py) so it never overwrites any
+          # developer's real data on disk.
+          .venv\Scripts\python -m scripts._ci_synth_data
+
+      - name: Stage synth data for the pipeline run
+        shell: pwsh
+        working-directory: backend
+        run: |
+          # The pipeline scripts hard-code `data/sequences/`, so we copy
+          # (not symlink) the synthetic data there for the duration of
+          # the run. The real data is gitignored, so this is a fresh
+          # directory in CI.
+          if (Test-Path data\sequences) {
+            Write-Host "[ci] Backing up existing data\sequences to data\sequences.ci-backup"
+            Move-Item -Force data\sequences data\sequences.ci-backup
+          }
+          New-Item -ItemType Directory -Force -Path data\sequences | Out-Null
+          Copy-Item -Recurse -Force tests\fixtures\synth_sequences\* data\sequences\
+
+      - name: Run full_pipeline.bat --fast
+        shell: cmd
+        working-directory: backend
+        run: |
+          scripts\full_pipeline.bat --fast --no-extract > full_pipeline.out.log 2>&1
+          echo pipeline exit code: %ERRORLEVEL%
+
+      - name: Restore original data\sequences
+        if: always()
+        shell: pwsh
+        working-directory: backend
+        run: |
+          if (Test-Path data\sequences) {
+            Remove-Item -Recurse -Force data\sequences
+          }
+          if (Test-Path data\sequences.ci-backup) {
+            Move-Item -Force data\sequences.ci-backup data\sequences
+          }
+
+      - name: Collect reports and logs
+        if: always()
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path pipeline-artifacts | Out-Null
+          Copy-Item -Recurse -Force backend\reports\*.json pipeline-artifacts\ -ErrorAction SilentlyContinue
+          Copy-Item -Force backend\models\exports\*.onnx pipeline-artifacts\ -ErrorAction SilentlyContinue
+          Copy-Item -Force backend\models\exports\*.json pipeline-artifacts\ -ErrorAction SilentlyContinue
+          Copy-Item -Force backend\full_pipeline.out.log pipeline-artifacts\
+          Copy-Item -Force backend\logs\*_pipeline.log pipeline-artifacts\ -ErrorAction SilentlyContinue
+          # Surface the summary table at the end of the run.
+          if (Test-Path backend\full_pipeline.out.log) {
+            Get-Content backend\full_pipeline.out.log -Tail 60 | Out-File pipeline-artifacts\pipeline_summary_tail.txt
+          }
+
+      - name: Upload pipeline metrics artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lsc-pipeline-metrics
+          path: pipeline-artifacts/
+          retention-days: 30
