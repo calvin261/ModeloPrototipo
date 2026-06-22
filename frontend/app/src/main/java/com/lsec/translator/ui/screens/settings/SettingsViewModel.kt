@@ -32,7 +32,7 @@ data class SettingsUiState(
     val darkMode: Boolean = false,
 
     // Servidor
-    val serverUrl: String = "http://192.168.1.1:8000/",
+    val serverUrl: String = "http://192.168.18.4:8000/",
     val apiKey: String = "",
 
     // Datos

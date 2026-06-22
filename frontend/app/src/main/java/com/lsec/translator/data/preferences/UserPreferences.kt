@@ -33,7 +33,7 @@ data class UserPreferencesData(
     val darkMode: Boolean = false,
 
     // Servidor y modelos
-    val serverUrl: String = "http://192.168.1.4:8000/",
+    val serverUrl: String = "http://192.168.18.4:8000/",
     val apiKey: String = "",
     val classifierModelVersion: String = "bundled",
     val sequenceModelVersion: String = "bundled",
@@ -92,7 +92,7 @@ class UserPreferences @Inject constructor(
                 minConfidence = preferences[PreferencesKeys.MIN_CONFIDENCE] ?: 0.70f,
                 batterySaverMode = preferences[PreferencesKeys.BATTERY_SAVER] ?: false,
                 darkMode = preferences[PreferencesKeys.DARK_MODE] ?: false,
-                serverUrl = preferences[PreferencesKeys.SERVER_URL] ?: "https://placeholder-lsec-api.hf.space",
+                serverUrl = preferences[PreferencesKeys.SERVER_URL] ?: "http://192.168.18.4:8000/",
                 apiKey = preferences[PreferencesKeys.API_KEY] ?: "",
                 classifierModelVersion = preferences[PreferencesKeys.CLASSIFIER_MODEL_VERSION] ?: "bundled",
                 sequenceModelVersion = preferences[PreferencesKeys.SEQUENCE_MODEL_VERSION] ?: "bundled",
