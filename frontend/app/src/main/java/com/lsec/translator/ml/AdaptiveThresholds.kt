@@ -38,6 +38,21 @@ data class AdaptiveThresholds(
     val sampleCount: Int = 0,
     val collectedAtMs: Long = System.currentTimeMillis(),
 ) {
+    /**
+     * Persist as a single string in SharedPreferences. Format is
+     * semicolon-separated `key=value` pairs for easy forward compatibility.
+     */
+    fun serialize(): String = listOf(
+        "motionThreshold" to motionThreshold,
+        "stableFramesRequired" to stableFramesRequired,
+        "minFrames" to minFrames,
+        "maxBufferFrames" to maxBufferFrames,
+        "cooldownFrames" to cooldownFrames,
+        "confidenceThreshold" to confidenceThreshold,
+        "sampleCount" to sampleCount,
+        "collectedAtMs" to collectedAtMs,
+    ).joinToString(";") { "${it.first}=${it.second}" }
+
     companion object {
         private const val TAG = "AdaptiveThresholds"
 
@@ -73,8 +88,6 @@ data class AdaptiveThresholds(
             val medMotion = percentile(0.5)
             val medBuffer = sortedBuffers[sortedBuffers.size / 2]
 
-            // Heuristics: 0.5x median motion, 0.1x median buffer for stable,
-            // 0.5x median buffer for min, 2x median buffer for max.
             return AdaptiveThresholds(
                 motionThreshold = (medMotion * 0.5f).coerceIn(0.02f, 0.15f),
                 stableFramesRequired = (medBuffer * 0.1f).toInt().coerceIn(3, 12),
@@ -83,24 +96,7 @@ data class AdaptiveThresholds(
                 sampleCount = min(highMotionLevels.size, bufferSizes.size),
             )
         }
-    }
 
-    /**
-     * Persist as a single string in SharedPreferences. Format is
-     * semicolon-separated `key=value` pairs for easy forward compatibility.
-     */
-    fun serialize(): String = listOf(
-        "motionThreshold" to motionThreshold,
-        "stableFramesRequired" to stableFramesRequired,
-        "minFrames" to minFrames,
-        "maxBufferFrames" to maxBufferFrames,
-        "cooldownFrames" to cooldownFrames,
-        "confidenceThreshold" to confidenceThreshold,
-        "sampleCount" to sampleCount,
-        "collectedAtMs" to collectedAtMs,
-    ).joinToString(";") { "${it.first}=${it.second}" }
-
-    companion object {
         @JvmStatic
         fun deserialize(raw: String?): AdaptiveThresholds {
             if (raw.isNullOrBlank()) return DEFAULT

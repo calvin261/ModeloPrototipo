@@ -3,6 +3,7 @@ package com.lsec.translator.ml
 import android.content.Context
 import android.util.Log
 import ai.onnxruntime.OnnxTensor
+import ai.onnxruntime.OnnxJavaType
 import ai.onnxruntime.OrtEnvironment
 import ai.onnxruntime.OrtSession
 import org.tensorflow.lite.Interpreter
@@ -348,25 +349,30 @@ class SignTransformerClassifier(
             inputs[inputName] = inputTensor
             if (hasPaddingMaskInput) {
                 val maskShape = longArrayOf(1L, maxSeqLen.toLong())
-                // ONNX bool tensor via ByteBuffer; OrtEnvironment supports it.
-                val maskBuffer = ByteBuffer.allocateDirect(mask.size).order(ByteOrder.nativeOrder())
-                for (b in mask) maskBuffer.put(if (b) 1.toByte() else 0.toByte())
-                maskBuffer.rewind()
-                val maskTensor = OnnxTensor.createTensor(env, maskBuffer, maskShape, java.lang.Boolean::class.java)
+                // Bool padding mask via ByteBuffer + OnnxJavaType.BOOL.
+                val maskBytes = ByteArray(mask.size) { if (mask[it]) 1.toByte() else 0.toByte() }
+                val maskTensor = OnnxTensor.createTensor(
+                    env,
+                    ByteBuffer.wrap(maskBytes),
+                    maskShape,
+                    OnnxJavaType.BOOL
+                )
                 inputs[paddingMaskInputName] = maskTensor
             }
 
             val outputs = session.run(inputs)
-            val embRaw = outputs[embeddingOutputName]?.value
+            // session.run(...) returns OrtSession.Result, not a Map. The
+            // indexer delegates to Result.get(String) which is Optional<OnnxValue>.
+            val embRaw: Any? = outputs[embeddingOutputName]?.get()?.getValue()
             // The CLS token output is (1, embed_dim) — pull the first row.
-            val emb: FloatArray = when (embRaw) {
+            val emb: FloatArray = when (val v = embRaw) {
                 is Array<*> -> {
                     @Suppress("UNCHECKED_CAST")
-                    val arr = (embRaw as Array<FloatArray>)
-                    if (arr.isEmpty()) null else arr[0]
+                    val arr = v as Array<FloatArray>
+                    if (arr.isEmpty()) FloatArray(0) else arr[0]
                 }
-                is FloatArray -> embRaw
-                else -> null
+                is FloatArray -> v
+                else -> FloatArray(0)
             }
             outputs.close()
             inputTensor.close()
@@ -486,21 +492,24 @@ class SignTransformerClassifier(
             inputs[inputName] = inputTensor
             if (hasPaddingMaskInput) {
                 val maskShape = longArrayOf(1L, maxSeqLen.toLong())
-                val maskBuffer = ByteBuffer.allocateDirect(mask.size).order(ByteOrder.nativeOrder())
-                for (b in mask) maskBuffer.put(if (b) 1.toByte() else 0.toByte())
-                maskBuffer.rewind()
-                val maskTensor = OnnxTensor.createTensor(env, maskBuffer, maskShape, java.lang.Boolean::class.java)
+                val maskBytes = ByteArray(mask.size) { if (mask[it]) 1.toByte() else 0.toByte() }
+                val maskTensor = OnnxTensor.createTensor(
+                    env,
+                    ByteBuffer.wrap(maskBytes),
+                    maskShape,
+                    OnnxJavaType.BOOL
+                )
                 inputs[paddingMaskInputName] = maskTensor
             }
 
             val outputs = session.run(inputs)
-            val raw = outputs[logitsOutputName]?.value
-            val logits: FloatArray = when (raw) {
+            val raw: Any? = outputs[logitsOutputName]?.get()?.getValue()
+            val logits: FloatArray = when (val v = raw) {
                 is Array<*> -> {
                     @Suppress("UNCHECKED_CAST")
-                    (raw as Array<FloatArray>)[0]
+                    (v as Array<FloatArray>)[0]
                 }
-                is FloatArray -> raw
+                is FloatArray -> v
                 else -> FloatArray(numClasses)
             }
             outputs.close()
