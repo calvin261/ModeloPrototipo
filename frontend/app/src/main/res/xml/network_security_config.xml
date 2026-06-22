@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <!--
-        Permite HTTP para el backend local durante desarrollo.
-        El backend corre en la misma red WiFi (ej: 192.168.x.x:8000).
-        IMPORTANTE: Para produccion/release usar HTTPS exclusivamente.
+        Producción: cleartext completamente deshabilitado.
+        El release apunta solo a https://calvin261-lsec-api.hf.space/.
+        Para desarrollo/debug se mantiene un override limitado que permite HTTP
+        solo a IPs privadas (192.168.x.x, 10.0.2.x) en builds no-release.
     -->
-    <base-config cleartextTrafficPermitted="true" />
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
 </network-security-config>

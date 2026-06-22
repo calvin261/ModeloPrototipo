@@ -1,15 +1,20 @@
 from .config import TrainConfig, ClassifierConfig, SequenceConfig, AppConfig
 from .data import get_processed_paths, LandmarkDataset, SequenceDataset
-from .train import train_model
-from .export import export_model
 from .utils import ensure_dir, augment_landmarks, mirror_landmarks
 from .landmarks import LandmarkExtractor, normalize_landmarks
 from .classifier import SignClassifierMLP, StaticSignRecognizer
 from .sequence_model import SignSequenceModel, DynamicSignRecognizer
-from .tts import TTSEngine
-from .app import SignLanguageApp
-from .collect import DataCollector
 
+# NOTE: training/export/collection helpers (which pull in ultralytics) and the
+# desktop TTS/app helpers (which pull in pyttsx3) are intentionally NOT
+# re-exported here so the FastAPI service can boot in a slim production image
+# without those packages installed. Import them directly when running scripts/
+# or the desktop CLI, e.g.:
+#     from hand_model.train import train_model
+#     from hand_model.export import export_model
+#     from hand_model.collect import DataCollector
+#     from hand_model.tts import TTSEngine
+#     from hand_model.app import SignLanguageApp
 __all__ = [
     # Config
     "TrainConfig",
@@ -20,9 +25,6 @@ __all__ = [
     "get_processed_paths",
     "LandmarkDataset",
     "SequenceDataset",
-    # YOLO pipeline
-    "train_model",
-    "export_model",
     # Landmarks
     "LandmarkExtractor",
     "normalize_landmarks",
@@ -35,8 +37,4 @@ __all__ = [
     "ensure_dir",
     "augment_landmarks",
     "mirror_landmarks",
-    # App
-    "TTSEngine",
-    "SignLanguageApp",
-    "DataCollector",
 ]

@@ -14,6 +14,12 @@ val keystoreProperties = Properties().apply {
     if (keystorePropertiesFile.exists()) load(keystorePropertiesFile.inputStream())
 }
 
+// Default backend URL — overridable from `keystore.properties` via `lsec.defaultBackendUrl`
+// or via the LSEC_DEFAULT_BACKEND_URL env var (used by the release GitHub Actions workflow).
+val defaultBackendUrl: String = (System.getenv("LSEC_DEFAULT_BACKEND_URL")
+    ?: (keystoreProperties["lsec.defaultBackendUrl"] as String?)
+    ?: "https://calvin261-lsec-api.hf.space/")
+
 android {
     namespace = "com.lsec.translator"
     compileSdk = 34
@@ -22,11 +28,12 @@ android {
         applicationId = "com.lsec.translator"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = (project.findProperty("versionCode") as String?)?.toIntOrNull() ?: 1
+        versionName = (project.findProperty("versionName") as String?) ?: "1.0.0"
 
         // URL base del backend. Sobrescrita por buildTypes. Cambiable desde Configuracion > URL del servidor.
-        buildConfigField("String", "LSEC_BASE_URL", "\"http://192.168.1.1:8000/\"")
+        buildConfigField("String", "LSEC_BASE_URL", "\"$defaultBackendUrl\"")
+        buildConfigField("String", "DEFAULT_BACKEND_URL", "\"$defaultBackendUrl\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -42,12 +49,21 @@ android {
 
     signingConfigs {
         create("release") {
-            if (keystorePropertiesFile.exists()) {
-                storeFile = rootProject.file(keystoreProperties["storeFile"] as String)
-                storePassword = keystoreProperties["storePassword"] as String
-                keyAlias = keystoreProperties["keyAlias"] as String
-                keyPassword = keystoreProperties["keyPassword"] as String
-            }
+            // Prefer env vars (GitHub Actions secrets), fall back to keystore.properties (local).
+            val envStoreFile = System.getenv("LSEC_STORE_FILE")
+            val envStorePass = System.getenv("LSEC_STORE_PASS")
+            val envKeyAlias = System.getenv("LSEC_KEY_ALIAS") ?: "lsec"
+            val envKeyPass = System.getenv("LSEC_KEY_PASS")
+
+            val propStoreFile = keystoreProperties["storeFile"] as String?
+            val propStorePass = keystoreProperties["storePassword"] as String?
+            val propKeyAlias = keystoreProperties["keyAlias"] as String?
+            val propKeyPass = keystoreProperties["keyPassword"] as String?
+
+            storeFile = rootProject.file(envStoreFile ?: propStoreFile ?: "keystore/release.keystore")
+            storePassword = envStorePass ?: propStorePass ?: ""
+            keyAlias = envKeyAlias ?: propKeyAlias ?: "lsec"
+            keyPassword = envKeyPass ?: propKeyPass ?: ""
         }
     }
 
@@ -56,7 +72,8 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             signingConfig = signingConfigs.getByName("release")
-            buildConfigField("String", "LSEC_BASE_URL", "\"https://placeholder-lsec-api.hf.space/\"")
+            buildConfigField("String", "LSEC_BASE_URL", "\"$defaultBackendUrl\"")
+            buildConfigField("String", "DEFAULT_BACKEND_URL", "\"$defaultBackendUrl\"")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -67,6 +84,7 @@ android {
             // URL default para debug. Cambiable desde Configuracion > URL del servidor.
             // Dispositivo fisico: usa la IP WiFi de tu PC (ej: 192.168.1.x:8000)
             buildConfigField("String", "LSEC_BASE_URL", "\"http://192.168.1.1:8000/\"")
+            buildConfigField("String", "DEFAULT_BACKEND_URL", "\"http://192.168.1.1:8000/\"")
         }
     }
 

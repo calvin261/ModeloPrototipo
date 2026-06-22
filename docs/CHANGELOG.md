@@ -837,3 +837,93 @@ Camera (Android)
 
 > Para las fuentes específicas (papers, datasets, herramientas),
 > ver `docs/INSTRUCCIONES/FUENTES.md`.
+
+---
+
+## [2026-06-22] · code · config · Despliegue de producción: HF Space + GitHub Actions + APK firmado
+
+**Contexto.** Ejecución end-to-end del plan `docs/PLAN_PRODUCCION_HF_GITHUB.md`.
+Tres repos live en Hugging Face, APK release firmado y pipeline de release
+configurado en GitHub Actions. Costo mensual: **$0**.
+
+### Backend (HF Space `calvin261/lsec-api`)
+
+- **Docker SDK, CPU basic, port 7860, gunicorn + uvicorn workers (×2).**
+- Imagen base `python:3.11-slim` + CPU-only torch 2.3.1 + deps backend.
+- `huggingface_hub.snapshot_download` baja los modelos desde
+  [`calvin261/lsec-models`](https://huggingface.co/calvin261/lsec-models) a
+  `/data/models/` al build (no en runtime → cold start mínimo).
+- Endpoints públicos: `/health`, `/`, `/docs`, `/api/v1/models/list`,
+  `/api/v1/models/latest/{type}`, `/api/v1/models/download/{type}/{version}`
+  (con header `X-Model-SHA256`), `/api/v1/models/labels/{type}`.
+- Auth opcional vía `LSEC_API_KEY` env → middleware `X-API-Key` (plan §6.1).
+
+**Fixes aplicados durante el despliegue** (iterativos, todos en commits
+del Space `calvin261/lsec-api`):
+
+| Commit  | Fix |
+|---------|-----|
+| `a09546d` | `requirements.txt` no incluía pandas/torch/mediapipe/onnxruntime — agregados. |
+| `e805f1f` | Dockerfile ahora instala `torch==2.3.1+cpu --index-url …` antes del resto. |
+| `1ef9ea4` | `hand_model/__init__.py` lazy-import de `train`/`export`/`collect` (evita `ultralytics` en runtime). |
+| `a2d43f9` | Dockerfile instala `libgl1 libglib2.0-0 libgomp1` (cv2 necesita libGL.so.1). |
+| `3058807f` | Idem para `TTSEngine`/`SignLanguageApp` (pyttsx3). |
+| `4754bfc` | Copia `models/exports/registry.json` → `/data/models/registry.json` (rutas absolutas en producción). |
+| `0837dfc` | Quita `_comment` del registry (crash en `list_all`). |
+
+### Modelos (HF Model repo `calvin261/lsec-models`)
+
+Subidos los 3 artefactos activos (ONNX + labels + registry):
+
+| Model      | Version             | SHA-256 (primeros 16) | Size |
+|------------|---------------------|-----------------------|------|
+| classifier | `v20260621_220556`  | `DAE989E88209FC7C`   | 217 KB |
+| sequence   | `v20260607_010151`  | `8FBE3968A6C2055C`   | 1.85 MB |
+| transformer | `20260614_134616` (FP32 + INT8) | `0FC3ADF928CA7FE0` | 407 KB (+ 2.3 MB data) |
+
+URL raw: `https://huggingface.co/calvin261/lsec-models/resolve/main/…`.
+
+### Frontend (Android)
+
+- `BuildConfig.DEFAULT_BACKEND_URL = https://calvin261-lsec-api.hf.space/`
+  (overridable por env `LSEC_DEFAULT_BACKEND_URL` o `lsec.defaultBackendUrl`).
+  `UserPreferences.kt` y `SettingsViewModel.kt` reemplazan el
+  hardcoded `http://192.168.18.4:8000/` por `BuildConfig.DEFAULT_BACKEND_URL`.
+- `network_security_config.xml` deshabilita cleartext en release.
+  Override en `src/debug/res/xml/` mantiene HTTP solo para IPs privadas
+  (192.168.x.x / 10.0.2.2 / localhost) — preserves local dev workflow.
+- ProGuard rules consolidadas (ORT/MediaPipe/Hilt/Moshi/DataStore +
+  `keepattributes *Annotation*`).
+- Keystore release generado: `keystore/release.keystore` (alias `lsec`,
+  RSA 4096, validez 10 000 días, password guardado en
+  `C:\Users\jeffe\AppData\Local\Temp\kilo\lsec-keystore.json`).
+- `frontend/keystore.properties` (gitignored) con las passwords para dev.
+- **APK release construido y verificado**: `app-release.apk` 146 MB,
+  firmado v2 (`apksigner verify` → "Verifies").
+
+### CI/CD (`.github/workflows/release.yml`)
+
+- Trigger: `push` tag `v*` o `workflow_dispatch`.
+- Build APK firmado en `ubuntu-latest` con JDK 17, decodifica keystore
+  desde secret `KEYSTORE_BASE64` y aplica secrets
+  `STORE_PASS` / `KEY_ALIAS` / `KEY_PASS`.
+- Tag → versión: `v1.2.3` → `versionCode=10203`, `versionName="1.2.3"`.
+- Sube el APK a GitHub Release con notas autogeneradas
+  (`softprops/action-gh-release@v2`).
+
+### Métricas
+
+- **Backend**: `GET /health` → `{"status":"ok"}` (verificado).
+- **Backend**: `/api/v1/models/download/classifier/v20260621_220556` →
+  `200`, 217175 bytes, `X-Model-SHA256: DAE989E88209FC7CE695CC3D61067B869788A94624725531EF94F86B09309A0A`
+  (matchea el SHA local).
+- **APK**: 146 MB, R8 minified, verificado v2.
+
+### Riesgos abiertos (siguiente sprint)
+
+- [ ] Rotar `LSEC_API_KEY` y agregar rate-limit (plan §6.2 — pendiente).
+- [ ] Sentry + UptimeRobot (plan §5 — pendiente).
+- [ ] Eliminar las 16 entries stale del registry local en
+      `backend/models/exports/registry.json` (ahora vienen del `registry.json`
+      del Space que solo tiene las 3 activas).
+

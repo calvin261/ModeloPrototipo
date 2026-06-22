@@ -37,3 +37,9 @@ backend/tests/__pycache__/
 
 # Backend log artifacts
 backend/logs/downloads/
+
+# Release signing material (never commit)
+keystore/
+*.keystore
+*.jks
+frontend/keystore.properties

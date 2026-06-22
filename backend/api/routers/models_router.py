@@ -165,6 +165,7 @@ async def download_model(model_type: str, version: str):
             headers={
                 "X-Model-Version": version,
                 "X-Model-Format": "onnx",
+                "X-Model-SHA256": entry.get("sha256", ""),
             },
         )
 
@@ -188,6 +189,7 @@ async def download_model(model_type: str, version: str):
             "X-Model-Version": version,
             "X-Model-Accuracy": str(entry.get("accuracy", 0.0)),
             "X-Model-Format": entry.get("format", "onnx"),
+            "X-Model-SHA256": entry.get("sha256", ""),
         },
     )
 

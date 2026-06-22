@@ -54,8 +54,14 @@
 -dontwarn ai.onnxruntime.**
 
 # Moshi / Retrofit
+-keepattributes *Annotation*
+-keep class kotlin.reflect.jvm.internal.** { *; }
 -keepclassmembers class * {
     @com.squareup.moshi.FromJson <methods>;
     @com.squareup.moshi.ToJson <methods>;
 }
 -keep class com.lsec.translator.data.remote.** { *; }
+
+# DataStore (Preferences proto)
+-keep class androidx.datastore.*.** { *; }
+-keepclassmembers class * extends androidx.datastore.preferences.core.PreferenceKey { *; }

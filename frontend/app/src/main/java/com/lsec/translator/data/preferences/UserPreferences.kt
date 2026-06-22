@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
+import com.lsec.translator.BuildConfig
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -33,7 +34,7 @@ data class UserPreferencesData(
     val darkMode: Boolean = false,
 
     // Servidor y modelos
-    val serverUrl: String = "http://192.168.18.4:8000/",
+    val serverUrl: String = BuildConfig.DEFAULT_BACKEND_URL,
     val apiKey: String = "",
     val classifierModelVersion: String = "bundled",
     val sequenceModelVersion: String = "bundled",
@@ -92,7 +93,7 @@ class UserPreferences @Inject constructor(
                 minConfidence = preferences[PreferencesKeys.MIN_CONFIDENCE] ?: 0.70f,
                 batterySaverMode = preferences[PreferencesKeys.BATTERY_SAVER] ?: false,
                 darkMode = preferences[PreferencesKeys.DARK_MODE] ?: false,
-                serverUrl = preferences[PreferencesKeys.SERVER_URL] ?: "http://192.168.18.4:8000/",
+                serverUrl = preferences[PreferencesKeys.SERVER_URL] ?: BuildConfig.DEFAULT_BACKEND_URL,
                 apiKey = preferences[PreferencesKeys.API_KEY] ?: "",
                 classifierModelVersion = preferences[PreferencesKeys.CLASSIFIER_MODEL_VERSION] ?: "bundled",
                 sequenceModelVersion = preferences[PreferencesKeys.SEQUENCE_MODEL_VERSION] ?: "bundled",

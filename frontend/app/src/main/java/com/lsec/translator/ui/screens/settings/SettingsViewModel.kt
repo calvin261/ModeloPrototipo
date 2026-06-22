@@ -2,6 +2,7 @@ package com.lsec.translator.ui.screens.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lsec.translator.BuildConfig
 import com.lsec.translator.data.preferences.UserPreferences
 import com.lsec.translator.data.repository.SignRepository
 import com.lsec.translator.tts.TTSEngine
@@ -32,7 +33,7 @@ data class SettingsUiState(
     val darkMode: Boolean = false,
 
     // Servidor
-    val serverUrl: String = "http://192.168.18.4:8000/",
+    val serverUrl: String = BuildConfig.DEFAULT_BACKEND_URL,
     val apiKey: String = "",
 
     // Datos
