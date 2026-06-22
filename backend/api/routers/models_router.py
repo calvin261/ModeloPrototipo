@@ -24,11 +24,29 @@ _VALID_MODEL_TYPES = ("classifier", "sequence", "transformer")
 
 
 def _resolve_registry_path(p: str) -> Path:
-    """Resolve a registry path (relative or absolute) to an absolute Path."""
+    """Resolve a registry path (relative or absolute) to an absolute Path.
+
+    If the path was registered without the `backend/` prefix (a known
+    historical bug when models were trained from the repo root), also try
+    the corrected `<repo>/backend/<p>` location before giving up.
+    """
     path = Path(p)
-    if path.is_absolute():
+    if not path.is_absolute():
+        path = _config.resolve(p) if _config else path
+    if path.exists():
         return path
-    return _config.resolve(p) if _config else path
+    # Fallback: if p looks like "<root>/models/exports/..." and missing the
+    # `backend/` segment, also check "<root>/backend/models/exports/...".
+    parts = path.parts
+    if "models" in parts and "exports" in parts:
+        try:
+            mi = parts.index("models")
+            candidate = Path(*parts[:mi], "backend", *parts[mi:])
+            if candidate.exists():
+                return candidate
+        except ValueError:
+            pass
+    return path
 
 
 def _get_transformer_entry():
@@ -156,7 +174,10 @@ async def download_model(model_type: str, version: str):
         raise HTTPException(status_code=404, detail="Model version not found")
 
     model_path = entry.get("tflite_path") or entry.get("onnx_path")
-    if not model_path or not Path(model_path).exists():
+    if not model_path:
+        raise HTTPException(status_code=404, detail="Model file not found on disk")
+    model_path = _resolve_registry_path(model_path)
+    if not model_path.exists():
         raise HTTPException(status_code=404, detail="Model file not found on disk")
 
     return FileResponse(
