@@ -58,6 +58,7 @@ jobs:
           LSEC_KEY_PASS: ${{ secrets.KEY_PASS }}
           LSEC_DEFAULT_BACKEND_URL: https://calvin261-lsec-api.hf.space/
         run: |
+          chmod +x ./gradlew
           ./gradlew \
             -PversionName="${{ steps.tag.outputs.tag }}" \
             -PversionCode=${{ steps.vc.outputs.code }} \
