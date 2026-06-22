@@ -43,6 +43,8 @@ android {
 
         // Configuración para TensorFlow Lite
         ndk {
+            // Default (debug): all 4 ABIs for emulator testing.
+            // Release overrides below to drop x86/x86_64 (emulator-only).
             abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
         }
     }
@@ -74,6 +76,13 @@ android {
             signingConfig = signingConfigs.getByName("release")
             buildConfigField("String", "LSEC_BASE_URL", "\"$defaultBackendUrl\"")
             buildConfigField("String", "DEFAULT_BACKEND_URL", "\"$defaultBackendUrl\"")
+            // Release targets physical phones only — drop emulator ABIs to
+            // roughly halve the APK and shave ~30% off build time. Debug
+            // keeps all 4 (set in defaultConfig above) for local emulator testing.
+            ndk {
+                abiFilters.clear()
+                abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
