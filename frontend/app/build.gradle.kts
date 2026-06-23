@@ -8,10 +8,11 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
-// Lee keystore.properties desde frontend/ (gitignored). NO usar rootProject.file()
-// porque eso apuntaria a la raiz del repo, donde el archivo NO esta en .gitignore
-// y un commit futuro podria filtrar lsec.apiKey / lsec.defaultBackendUrl.
-val keystorePropertiesFile = rootProject.file("frontend/keystore.properties")
+// Lee keystore.properties desde la raíz del proyecto Gradle (frontend/).
+// En este proyecto rootProject == frontend/ (single-module), por lo que
+// `keystore.properties` se resuelve a frontend/keystore.properties,
+// que SI esta en .gitignore (linea 45). NO anteponer "frontend/" al nombre.
+val keystorePropertiesFile = rootProject.file("keystore.properties")
 val keystoreProperties = Properties().apply {
     if (keystorePropertiesFile.exists()) load(keystorePropertiesFile.inputStream())
 }
@@ -109,10 +110,12 @@ android {
         }
         debug {
             isMinifyEnabled = false
-            // URL default para debug. Cambiable desde Configuracion > URL del servidor.
-            // Dispositivo fisico: usa la IP WiFi de tu PC (ej: 192.168.1.x:8000)
-            buildConfigField("String", "LSEC_BASE_URL", "\"http://192.168.1.1:8000/\"")
-            buildConfigField("String", "DEFAULT_BACKEND_URL", "\"http://192.168.1.1:8000/\"")
+            // Debug usa los valores de keystore.properties / env vars; si no hay
+            // ninguno, cae a defaults razonables (PC local). Cambiable desde
+            // Configuracion > URL del servidor en runtime.
+            buildConfigField("String", "LSEC_BASE_URL", "\"$defaultBackendUrl\"")
+            buildConfigField("String", "DEFAULT_BACKEND_URL", "\"$defaultBackendUrl\"")
+            buildConfigField("String", "BUNDLED_API_KEY", "\"$defaultApiKey\"")
         }
     }
 
