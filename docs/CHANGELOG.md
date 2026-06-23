@@ -15,6 +15,37 @@
 
 ---
 
+## [2026-06-22] · code · config · Cliente Android: inyección automática de `X-API-Key` para producción
+
+**Qué.**
+- `frontend/app/build.gradle.kts`: nuevo campo `BuildConfig.BUNDLED_API_KEY`, configurable vía `LSEC_API_KEY` (env var) o `keystore.properties` (`lsec.apiKey`). Vacío en debug, lleno en release.
+- `frontend/app/src/main/java/com/lsec/translator/di/NetworkModule.kt:48-65`: el interceptor ahora prioriza la clave guardada por el usuario en DataStore (`SettingsScreen → Clave API`), y si está vacía usa `BuildConfig.BUNDLED_API_KEY`. Orden de interceptors invertido: `HttpLoggingInterceptor` se registra **antes** que el `apiKeyInterceptor`, así la cabecera `X-API-Key` nunca aparece en logs (`Level.BODY`).
+- `.github/workflows/release.yml`: añade el secret `LSEC_API_KEY` al step de build; optimiza caches (clave con hash de `libs.versions.toml`, cache de Android SDK+NDK, pre-fetch de dependencies, flags `--parallel` + `--configuration-cache`).
+
+**Por qué.**
+El backend en HF Space (`docs/PLAN_PRODUCCION_HF_GITHUB.md` Fase 6.1) rechaza toda llamada que no traiga `X-API-Key` válido cuando `LSEC_API_KEY` está seteado en el Space. Antes el usuario tenía que escribir la key a mano en Settings cada vez que reinstalaba el APK. Ahora la release la lleva embebida y el usuario no necesita hacer nada.
+
+**Optimizaciones de caché en CI.** Primer build: ~15 min (descarga NDK + cache miss). Builds incrementales con cache caliente: ~3-5 min. Estrategia:
+- **Capa 1** (`~/.gradle/caches` + `~/.gradle/wrapper` + `frontend/app/build`): clave hash de `libs.versions.toml` + `build.gradle.kts` + `proguard-rules.pro` → invalida solo cuando cambian versiones.
+- **Capa 2** (`~/Android/Sdk/{build-tools,platforms,ndk,cmdline-tools}`): clave hash de `build.gradle.kts` → evita la descarga de ~1 GB de NDK + build-tools cada job.
+- **Pre-warm** (`gradlew dependencies` antes de la build real): hidrata la cache de dependencias antes de la compilación para que la primera resolución corra caliente.
+- **Flags Gradle**: `--parallel` (compila módulos en paralelo) + `--configuration-cache` (reusa el grafo de configuración entre builds).
+
+**Fuente.** `docs/PLAN_PRODUCCION_HF_GITHUB.md` Fases 3.2, 4.2, 6.1, 6.4.
+
+**Métricas.** Tamaño APK sin cambios (no se añaden clases nuevas; solo cambia un String en `BuildConfig`). Tiempo de build CI esperado: -60% en builds incrementales.
+
+**Riesgo.** La key queda visible si alguien decompila el APK con `apktool` → mitigar con ProGuard + rotación trimestral (ya documentado en el plan).
+
+**Review fixes aplicados (mismo día).** Post-review (`/local-review-uncommitted`):
+- `frontend/app/build.gradle.kts:13` → `keystorePropertiesFile` ahora lee de `frontend/keystore.properties` (que sí está en `.gitignore:45`) en vez de repo-root. Antes un dev que añadiera `lsec.apiKey` a `keystore.properties` en la raíz lo commitearía al repo público.
+- `frontend/app/build.gradle.kts:46-53` → comentario de THREAT MODEL sobre `BUNDLED_API_KEY` para que mantenedores futuros no "arreglen" hardcodeando la key.
+- `.github/workflows/release.yml:68-78` → pre-warm ya no corre `:app:kspDebugKotlin` (no contamina `app/build/` en un job de release) ni usa `|| true` (errores de config ahora aparecen en logs).
+- `.github/workflows/release.yml:122` → removido `--configuration-cache`: nunca fue validado con Hilt+KSP+Compose y `frontend/gradle.properties` no lo activa. Se mantiene `--parallel` + `--build-cache`.
+- `.github/workflows/release.yml:20` → `timeout-minutes: 30` → `45` para margen en el primer cold-cache run tras este cambio.
+
+---
+
 ## [2026-06-15] · fix · eval · Recuperación de integridad de datos: re-extracción rotation-invariant + re-entrenamiento limpio
 
 **Contexto.** El 14-Jun, los 5 sub-agentes del orquestador

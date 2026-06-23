@@ -9,11 +9,15 @@ on:
         description: "Release tag (e.g. v1.0.0)"
         required: true
 
+env:
+  # Backend HF Space — el APK release apunta aquí por defecto.
+  LSEC_DEFAULT_BACKEND_URL: https://calvin261-lsec-api.hf.space/
+
 jobs:
   build:
     name: Build release APK
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     permissions:
       contents: write   # required to create the GitHub Release
 
@@ -26,17 +30,52 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Cache Gradle (dependencies + build cache)
+      # ── Capa 1: cache de Gradle (deps + build cache) ────────────────────
+      # Clave primaria incluye hash de libs.versions.toml y todos los build
+      # scripts para invalidar cuando cambien versiones de dependencias.
+      - name: Cache Gradle
         uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-            frontend/.gradle/buildOutputCleanup
+            ~/.gradle/notifications
+            frontend/.gradle
             frontend/app/build
-          key: ${{ runner.os }}-gradle-${{ hashFiles('frontend/**/*.gradle*', 'frontend/gradle.properties', 'frontend/app/build.gradle.kts') }}
+            frontend/build
+          key: ${{ runner.os }}-gradle-${{ hashFiles('frontend/gradle/libs.versions.toml', 'frontend/**/*.gradle*', 'frontend/gradle.properties', 'frontend/app/build.gradle.kts', 'frontend/app/proguard-rules.pro') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+
+      # ── Capa 2: cache de AVD / SDK de Android (NDK, build-tools) ────────
+      # El primer build descarga ~1 GB de NDK + build-tools; este cache lo evita.
+      - name: Cache Android SDK + NDK
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Android/Sdk/build-tools
+            ~/Android/Sdk/platforms
+            ~/Android/Sdk/ndk
+            ~/Android/Sdk/cmdline-tools
+          key: ${{ runner.os }}-android-sdk-${{ hashFiles('frontend/app/build.gradle.kts') }}
+          restore-keys: |
+            ${{ runner.os }}-android-sdk-
+
+      # ── Pre-cache de Gradle: hidrata la cache de dependencias ───────────
+      # Sin esto, la primera build dentro del job tarda minutos en resolver
+      # el classpath. Con esto, la primera build post-restore corre contra la
+      # cache caliente. Solo KSP de release (no debug) para no contaminar
+      # app/build/ con salidas de debug en un job de release.
+      - name: Warm Gradle cache (dependencies pre-fetch)
+        working-directory: frontend
+        run: |
+          chmod +x ./gradlew
+          ./gradlew \
+            --no-daemon \
+            -q \
+            dependencies \
+            :app:dependencies \
+            :app:kspReleaseKotlin
 
       - name: Decode keystore
         env:
@@ -70,16 +109,20 @@ jobs:
           LSEC_STORE_PASS: ${{ secrets.STORE_PASS }}
           LSEC_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           LSEC_KEY_PASS: ${{ secrets.KEY_PASS }}
-          LSEC_DEFAULT_BACKEND_URL: https://calvin261-lsec-api.hf.space/
+          # Nueva: clave embebida en BuildConfig.BUNDLED_API_KEY para que el
+          # interceptor OkHttp la inyecte en X-API-Key sin intervención del usuario.
+          LSEC_API_KEY: ${{ secrets.LSEC_API_KEY }}
         run: |
           chmod +x ./gradlew
           ./gradlew \
             -PversionName="${{ steps.tag.outputs.tag }}" \
             -PversionCode=${{ steps.vc.outputs.code }} \
             --build-cache \
+            --parallel \
             -x lintVitalRelease \
             -x lintVitalAnalyzeRelease \
             -x lintVitalReportRelease \
+            -x lint \
             assembleRelease
 
       - name: Locate APK

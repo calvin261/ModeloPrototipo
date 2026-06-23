@@ -8,8 +8,10 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
-// Lee keystore.properties desde la raíz del proyecto
-val keystorePropertiesFile = rootProject.file("keystore.properties")
+// Lee keystore.properties desde frontend/ (gitignored). NO usar rootProject.file()
+// porque eso apuntaria a la raiz del repo, donde el archivo NO esta en .gitignore
+// y un commit futuro podria filtrar lsec.apiKey / lsec.defaultBackendUrl.
+val keystorePropertiesFile = rootProject.file("frontend/keystore.properties")
 val keystoreProperties = Properties().apply {
     if (keystorePropertiesFile.exists()) load(keystorePropertiesFile.inputStream())
 }
@@ -19,6 +21,12 @@ val keystoreProperties = Properties().apply {
 val defaultBackendUrl: String = (System.getenv("LSEC_DEFAULT_BACKEND_URL")
     ?: (keystoreProperties["lsec.defaultBackendUrl"] as String?)
     ?: "https://calvin261-lsec-api.hf.space/")
+
+// Default API key baked into release builds. Empty by default — set via LSEC_API_KEY
+// env var (CI/CD) or `keystore.properties` (`lsec.apiKey`). Empty in debug builds.
+val defaultApiKey: String = (System.getenv("LSEC_API_KEY")
+    ?: (keystoreProperties["lsec.apiKey"] as String?)
+    ?: "")
 
 android {
     namespace = "com.lsec.translator"
@@ -34,6 +42,15 @@ android {
         // URL base del backend. Sobrescrita por buildTypes. Cambiable desde Configuracion > URL del servidor.
         buildConfigField("String", "LSEC_BASE_URL", "\"$defaultBackendUrl\"")
         buildConfigField("String", "DEFAULT_BACKEND_URL", "\"$defaultBackendUrl\"")
+        // THREAT MODEL para BUNDLED_API_KEY:
+        //   - Es un String publico final en BuildConfig; apktool + strings lo recupera.
+        //   - Aceptable porque el APK solo se distribuye via GitHub Releases a ~10 usuarios
+        //     de confianza (ver AGENTS.md). El interceptor de NetworkModule prioriza la
+        //     clave guardada por el usuario en DataStore sobre esta baked-in.
+        //   - Mitigaciones: ProGuard + rotacion trimestral re-tagging v1.x.0.
+        //   - NO hardcodear aqui valores reales — siempre via LSEC_API_KEY (env var) o
+        //     frontend/keystore.properties (gitignored).
+        buildConfigField("String", "BUNDLED_API_KEY", "\"$defaultApiKey\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -76,6 +93,8 @@ android {
             signingConfig = signingConfigs.getByName("release")
             buildConfigField("String", "LSEC_BASE_URL", "\"$defaultBackendUrl\"")
             buildConfigField("String", "DEFAULT_BACKEND_URL", "\"$defaultBackendUrl\"")
+            // Release preserva la API key embebida (seteada via env/keystore.properties)
+            buildConfigField("String", "BUNDLED_API_KEY", "\"$defaultApiKey\"")
             // Release targets physical phones only — drop emulator ABIs to
             // roughly halve the APK and shave ~30% off build time. Debug
             // keeps all 4 (set in defaultConfig above) for local emulator testing.

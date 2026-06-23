@@ -46,12 +46,15 @@ object NetworkModule {
         }
 
         // Interceptor que inyecta X-API-Key en cada petición.
-        // Lee la clave guardada en cada request para que cambios surtan efecto sin reiniciar.
+        // Prioridad: (1) clave guardada por el usuario en Settings, (2) clave
+        // embebida en BuildConfig.BUNDLED_API_KEY (release builds), (3) ninguna.
+        // Se registra DESPUES del logging para que la cabecera no aparezca en logs.
         val apiKeyInterceptor = Interceptor { chain ->
-            val key = runBlocking { userPreferences.preferencesFlow.first().apiKey }
-            val request = if (key.isNotBlank()) {
+            val userKey = runBlocking { userPreferences.preferencesFlow.first().apiKey }
+            val effectiveKey = userKey.ifBlank { BuildConfig.BUNDLED_API_KEY }
+            val request = if (effectiveKey.isNotBlank()) {
                 chain.request().newBuilder()
-                    .header("X-API-Key", key)
+                    .header("X-API-Key", effectiveKey)
                     .build()
             } else {
                 chain.request()
@@ -60,8 +63,8 @@ object NetworkModule {
         }
 
         return OkHttpClient.Builder()
-            .addInterceptor(apiKeyInterceptor)
             .addInterceptor(logging)
+            .addInterceptor(apiKeyInterceptor)
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
