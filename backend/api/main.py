@@ -1,6 +1,7 @@
 """FastAPI backend for LSEC model training and management."""
 
 import os
+import subprocess
 import sys
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -101,3 +102,34 @@ async def root():
 @app.get("/health")
 async def health():
     return {"status": "ok"}
+
+
+def _git_meta(field: str) -> str:
+    """Lee un campo del último commit del repo backend. Devuelve 'unknown'
+    si git no está disponible (típico en imágenes Docker mínimas)."""
+    try:
+        return subprocess.check_output(
+            ["git", field, "-1", "HEAD"],
+            cwd=project_root,
+            stderr=subprocess.DEVNULL,
+        ).decode().strip()
+    except Exception:
+        return "unknown"
+
+
+@app.get("/api/v1/version")
+async def version():
+    """Metadatos de despliegue del backend (commit SHA + fecha + mensaje).
+
+    Útil para diagnosticar drift entre código local y HF Space: si el SHA
+    devuelto no coincide con `git rev-parse HEAD` local, el deploy está
+    desactualizado.
+    """
+    return {
+        "api_version": "1.0.0",
+        "git_sha": _git_meta("rev-parse --short"),
+        "git_sha_full": _git_meta("rev-parse"),
+        "commit_message": _git_meta("log -1 --pretty=%s"),
+        "built_at": _git_meta("log -1 --pretty=%ci"),
+        "branch": _git_meta("rev-parse --abbrev-ref"),
+    }
