@@ -1,10 +1,10 @@
 {
   "$schema": "https://opencode.ai/config.json",
-
   "skills": {
-    "paths": [".opencode/skill"]
+    "paths": [
+      ".opencode/skill"
+    ]
   },
-
   "agent": {
     "lsc-baseline-trainer": {
       "description": "Trains the legacy Bi-GRU on the new rotation+handedness-invariant landmark data for fair head-to-head comparison with the SignTransformer.",
@@ -71,5 +71,6 @@
         "webfetch": "deny"
       }
     }
-  }
+  },
+  "snapshot": false
 }

@@ -43,3 +43,6 @@ keystore/
 *.keystore
 *.jks
 frontend/keystore.properties
+
+_hf_deploy/
+check_hf_auth.py
