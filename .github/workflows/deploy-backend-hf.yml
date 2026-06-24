@@ -1,0 +1,115 @@
+name: Deploy backend to HF Space
+
+# Disparadores:
+#  - push a main cuando cambian archivos del backend
+#  - ejecucion manual desde la UI de GitHub Actions
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/deploy-backend-hf.yml'
+  workflow_dispatch:
+
+# OIDC: el token corto lo emite GitHub Actions y lo canjea HF por acceso
+# temporal al Space. Configurar el Trusted Publisher en HF con:
+#   Provider: GitHub Actions
+#   Repository: calvin261/ModeloPrototipo
+#   Branch: main
+#   Workflow: deploy-backend-hf.yml
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install huggingface_hub
+        run: pip install --upgrade "huggingface_hub>=0.24.0"
+
+      - name: Sync backend -> HF Space (OIDC)
+        env:
+          HF_REPO_ID: calvin261/lsec-api
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import os, shutil, sys
+          from pathlib import Path
+          from huggingface_hub import HfApi
+
+          api = HfApi()
+          repo_id = os.environ['HF_REPO_ID']
+          sha = os.environ['GITHUB_SHA']
+
+          # Mapeo backend/ (GitHub) -> raiz del Space (HF)
+          # NO sincronizamos backend/api/Dockerfile ni backend/Dockerfile
+          # porque el HF Space tiene su propio Dockerfile optimizado.
+          mappings = [
+              ("backend/api",          "api"),
+              ("backend/hand_model",   "hand_model"),
+              ("backend/scripts",      "scripts"),
+              ("backend/datasets",     "datasets"),
+              ("backend/requirements-docker.txt", "api/requirements-docker.txt"),
+              ("backend/pyproject.toml", "pyproject.toml"),
+          ]
+
+          staging = Path("hf_staging")
+          if staging.exists():
+              shutil.rmtree(staging)
+          staging.mkdir(parents=True)
+
+          for src, dst in mappings:
+              src_path = Path(src)
+              if not src_path.exists():
+                  print(f"  SKIP {src} (no existe)")
+                  continue
+              dst_path = staging / dst
+              dst_path.parent.mkdir(parents=True, exist_ok=True)
+              if src_path.is_dir():
+                  shutil.copytree(src_path, dst_path)
+              else:
+                  shutil.copy2(src_path, dst_path)
+              print(f"  + {src} -> {dst}")
+
+          # Subir como un unico commit al Space
+          result = api.upload_folder(
+              folder_path=str(staging),
+              repo_id=repo_id,
+              repo_type="space",
+              commit_message=f"Deploy from GitHub Actions (commit {sha[:7]})",
+              ignore_patterns=[
+                  "*.pyc", "__pycache__/**", "data/**",
+                  "models/**", "*.npy", "*.log",
+              ],
+          )
+          print(f"\nOK: {result}")
+          print(f"Space: https://huggingface.co/spaces/{repo_id}")
+          PY
+
+      - name: Verify deploy
+        run: |
+          echo "Esperando 60s para que HF Space rebuilde..."
+          sleep 60
+          echo "Verificar /api/v1/version:"
+          for i in 1 2 3 4 5; do
+            response=$(curl -fsS -m 15 \
+              -H "X-API-Key: ${{ secrets.LSEC_API_KEY }}" \
+              "https://calvin261-lsec-api.hf.space/api/v1/version" 2>&1 || echo "FAIL")
+            if echo "$response" | grep -q '"api_version"'; then
+              echo "$response"
+              exit 0
+            fi
+            echo "Intento $i: $response"
+            sleep 30
+          done
+          echo "WARN: el endpoint no respondio en 5 intentos. Verificar manualmente."
+          exit 1
