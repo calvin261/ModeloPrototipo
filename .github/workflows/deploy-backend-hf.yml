@@ -11,8 +11,8 @@ on:
       - '.github/workflows/deploy-backend-hf.yml'
   workflow_dispatch:
 
-# OIDC: el token corto lo emite GitHub Actions y lo canjea HF por acceso
-# temporal al Space. Configurar el Trusted Publisher en HF con:
+# OIDC: el token corto lo emite GitHub Actions y se canjea por acceso temporal
+# al Space. Configurar el Trusted Publisher en HF con:
 #   Provider: GitHub Actions
 #   Repository: calvin261/ModeloPrototipo
 #   Branch: main
@@ -28,6 +28,16 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Login to Hugging Face (OIDC)
+        # CRITICO: la action must be configured to point at the target space
+        # so it requests the right audience when exchanging the OIDC token.
+        # Sin esto, hf_hub.HfApi() no encuentra credenciales y falla con
+        # "Repository Not Found" (401 disfrazado).
+        uses: huggingface/actions/login@v1
+        with:
+          to: calvin261/lsec-api
+          # Sin "token:" — usa OIDC (Trusted Publisher) automaticamente.
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -36,23 +46,29 @@ jobs:
       - name: Install huggingface_hub
         run: pip install --upgrade "huggingface_hub>=0.24.0"
 
-      - name: Sync backend -> HF Space (OIDC)
+      - name: Sync backend -> HF Space
         env:
           HF_REPO_ID: calvin261/lsec-api
           GITHUB_SHA: ${{ github.sha }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}  # Inyectada por la action de login
         run: |
           python - <<'PY'
-          import os, shutil, sys
+          import os, shutil
           from pathlib import Path
           from huggingface_hub import HfApi
 
-          api = HfApi()
+          # HF_TOKEN lo inyecta la action de login (OIDC o token manual)
+          token = os.environ.get("HF_TOKEN")
+          if not token:
+              raise SystemExit("ERROR: HF_TOKEN no definido (login OIDC fallo)")
+
+          api = HfApi(token=token)
           repo_id = os.environ['HF_REPO_ID']
           sha = os.environ['GITHUB_SHA']
 
           # Mapeo backend/ (GitHub) -> raiz del Space (HF)
-          # NO sincronizamos backend/api/Dockerfile ni backend/Dockerfile
-          # porque el HF Space tiene su propio Dockerfile optimizado.
+          # NO sincronizamos backend/api/Dockerfile porque el HF Space
+          # tiene su propio Dockerfile optimizado.
           mappings = [
               ("backend/api",          "api"),
               ("backend/hand_model",   "hand_model"),
@@ -80,7 +96,6 @@ jobs:
                   shutil.copy2(src_path, dst_path)
               print(f"  + {src} -> {dst}")
 
-          # Subir como un unico commit al Space
           result = api.upload_folder(
               folder_path=str(staging),
               repo_id=repo_id,
@@ -96,13 +111,20 @@ jobs:
           PY
 
       - name: Verify deploy
+        # El verify solo necesita leer un endpoint publico; usa la API key
+        # solo si esta disponible como secret (opcional).
+        env:
+          LSEC_API_KEY: ${{ secrets.LSEC_API_KEY }}
         run: |
-          echo "Esperando 60s para que HF Space rebuilde..."
-          sleep 60
-          echo "Verificar /api/v1/version:"
+          echo "Esperando 90s para que HF Space rebuilde..."
+          sleep 90
+          if [ -n "$LSEC_API_KEY" ]; then
+            auth=(-H "X-API-Key: $LSEC_API_KEY")
+          else
+            auth=()
+          fi
           for i in 1 2 3 4 5; do
-            response=$(curl -fsS -m 15 \
-              -H "X-API-Key: ${{ secrets.LSEC_API_KEY }}" \
+            response=$(curl -fsS -m 15 "${auth[@]}" \
               "https://calvin261-lsec-api.hf.space/api/v1/version" 2>&1 || echo "FAIL")
             if echo "$response" | grep -q '"api_version"'; then
               echo "$response"
