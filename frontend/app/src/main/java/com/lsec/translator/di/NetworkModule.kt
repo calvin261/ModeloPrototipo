@@ -11,6 +11,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import android.util.Log
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -37,12 +38,10 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(userPreferences: UserPreferences): OkHttpClient {
-        val logging = HttpLoggingInterceptor().apply {
-            level = if (BuildConfig.DEBUG) {
-                HttpLoggingInterceptor.Level.BODY
-            } else {
-                HttpLoggingInterceptor.Level.NONE
-            }
+        val logging = HttpLoggingInterceptor { msg ->
+            Log.d("LSECNet", msg)
+        }.apply {
+            level = HttpLoggingInterceptor.Level.BODY
         }
 
         // Interceptor que inyecta X-API-Key en cada petición.

@@ -33,6 +33,7 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import com.lsec.translator.ml.DynamicSignClassifier
+import com.lsec.translator.ui.common.KeepScreenOn
 import java.util.concurrent.Executors
 
 /**
@@ -50,6 +51,7 @@ fun CameraScreen(
     onNavigateToCalibration: () -> Unit = {},
     viewModel: CameraViewModel = hiltViewModel()
 ) {
+    KeepScreenOn()
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

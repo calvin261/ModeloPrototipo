@@ -1,6 +1,9 @@
 package com.lsec.translator.data.repository
 
 import com.lsec.translator.data.remote.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -91,6 +94,33 @@ class TrainingRepository @Inject constructor(
                 bodyOrFailure(response.body(), "Upload")
             } else {
                 Result.failure(Exception("Upload failed: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Sube una secuencia de landmarks como .npy al endpoint multipart.
+     * Cada entrada debe tener shape (T, 63) — T frames, 21 landmarks × xyz.
+     */
+    suspend fun uploadSequence(
+        label: String,
+        npyBytes: ByteArray,
+        filename: String = "sequence_${System.currentTimeMillis()}.npy"
+    ): Result<SequenceUploadResponseDto> {
+        return try {
+            val mediaType = "application/octet-stream".toMediaTypeOrNull()
+            val filePart = MultipartBody.Part.createFormData(
+                "file",
+                filename,
+                npyBytes.toRequestBody(mediaType)
+            )
+            val response = apiService.uploadSequence(filePart, label)
+            if (response.isSuccessful) {
+                bodyOrFailure(response.body(), "Sequence upload")
+            } else {
+                Result.failure(Exception("Sequence upload failed: ${response.code()}"))
             }
         } catch (e: Exception) {
             Result.failure(e)

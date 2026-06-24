@@ -7,9 +7,41 @@
 -keep class org.tensorflow.lite.** { *; }
 -keepclassmembers class org.tensorflow.** { *; }
 
-# Keep MediaPipe classes
+# Keep MediaPipe classes — tasks-vision 0.10.9 native Graph.<clinit> walks the JVM
+# stack reflectively to resolve its caller. If R8 strips/obfuscates the calling
+# class, the native side throws `IllegalStateException: no caller found on the
+# stack for: <obfuscated>` and the app crashes as soon as HandLandmarker is
+# initialized. Keep classes, interfaces, enums and native methods, plus the
+# reflection attributes MediaPipe reads at runtime.
 -keep class com.google.mediapipe.** { *; }
+-keep interface com.google.mediapipe.** { *; }
+-keep enum com.google.mediapipe.** { *; }
 -keepclassmembers class com.google.mediapipe.** { *; }
+-keep,includedescriptorclasses class com.google.mediapipe.framework.** { *; }
+-keep class com.google.mediapipe.proto.** { *; }
+-keep class com.google.protobuf.** { *; }
+-keepclassmembers class * {
+    @com.google.mediapipe.framework.proto.* <fields>;
+}
+# MediaPipe uses Flogger for logging; the native Graph.<clinit> walks the JVM
+# stack and fails if Flogger (or any other transitive com.google.* class) is
+# missing or obfuscated.
+-keep class com.google.common.flogger.** { *; }
+-keep class com.google.common.** { *; }
+-dontwarn com.google.common.flogger.**
+-dontwarn com.google.common.**
+
+# OkHttp — keep HttpLoggingInterceptor (R8 strips it as dead code because the
+# app only references it via Lambda in NetworkModule). Without this, the
+# BODY-level interceptor silently no-ops and we can't see HTTP traffic.
+# (Solo afecta release; debug no usa R8.)
+-keep class okhttp3.logging.** { *; }
+-keep class okhttp3.** { *; }
+-dontwarn okhttp3.logging.**
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+-keepattributes Signature,InnerClasses,EnclosingMethod,Exceptions,AnnotationDefault
 
 # Keep Room entities
 -keep class com.lsec.translator.data.local.entity.** { *; }

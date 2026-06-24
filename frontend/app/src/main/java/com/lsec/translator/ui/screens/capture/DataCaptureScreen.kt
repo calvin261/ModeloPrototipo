@@ -27,6 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.lsec.translator.ui.common.KeepScreenOn
 import com.google.accompanist.permissions.shouldShowRationale
 import java.util.concurrent.Executors
 
@@ -36,6 +37,7 @@ fun DataCaptureScreen(
     onNavigateBack: () -> Unit,
     viewModel: DataCaptureViewModel = hiltViewModel()
 ) {
+    KeepScreenOn()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     DataCaptureContent(
         uiState = uiState,
@@ -63,11 +65,18 @@ private fun DataCaptureContent(
                     }
                 },
                 actions = {
-                    // Contador de muestras
-                    Badge(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    ) {
-                        Text("${uiState.totalCaptured}")
+                    // Contadores separados: estáticas + secuencias
+                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        if (uiState.totalStatic > 0) {
+                            Badge(containerColor = MaterialTheme.colorScheme.primary) {
+                                Text("E:${uiState.totalStatic}")
+                            }
+                        }
+                        if (uiState.totalSequences > 0) {
+                            Badge(containerColor = MaterialTheme.colorScheme.tertiary) {
+                                Text("S:${uiState.totalSequences}")
+                            }
+                        }
                     }
                 }
             )
@@ -112,6 +121,8 @@ private fun DataCaptureContent(
 
             val labels = if (uiState.captureMode == CaptureMode.STATIC)
                 viewModel.staticLabels else viewModel.dynamicLabels
+            val perLabelCounts = if (uiState.captureMode == CaptureMode.STATIC)
+                uiState.capturedStatic else uiState.capturedSequences
 
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -121,8 +132,9 @@ private fun DataCaptureContent(
                         selected = uiState.selectedLabel == label,
                         onClick = { viewModel.selectLabel(label) },
                         label = {
-                            val count = uiState.capturedSamples[label] ?: 0
-                            Text(if (count > 0) "$label ($count)" else label)
+                            val count = perLabelCounts[label] ?: 0
+                            val suffix = if (uiState.captureMode == CaptureMode.SEQUENCE && count > 0) " ($count ${if (count == 1) "vídeo" else "vídeos"})" else if (count > 0) " ($count)" else ""
+                            Text("$label$suffix")
                         }
                     )
                 }
@@ -144,6 +156,9 @@ private fun DataCaptureContent(
                             handsDetected = uiState.handsDetected,
                             isRecording = uiState.isRecording,
                             recordedFrames = uiState.recordedFrames,
+                            recordingTarget = uiState.recordingTargetFrames,
+                            recordingProgress = uiState.recordingProgress,
+                            canStopRecording = uiState.canStopRecording,
                             useFrontCamera = uiState.useFrontCamera,
                             onToggleCamera = { viewModel.toggleCamera() }
                         )
@@ -185,6 +200,11 @@ private fun DataCaptureContent(
                         Text("Capturar")
                     }
                 } else {
+                    val seqLabel = when {
+                        uiState.isRecording && uiState.recordedFrames >= uiState.recordingTargetFrames -> "¡Listo! Detén"
+                        uiState.isRecording -> "Detener (${uiState.recordedFrames})"
+                        else -> "Grabar '${uiState.selectedLabel}'"
+                    }
                     Button(
                         onClick = {
                             if (uiState.isRecording) viewModel.stopRecording()
@@ -193,22 +213,23 @@ private fun DataCaptureContent(
                         modifier = Modifier.weight(1f),
                         colors = if (uiState.isRecording) ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.error
-                        ) else ButtonDefaults.buttonColors()
+                        ) else ButtonDefaults.buttonColors(),
+                        enabled = !uiState.isRecording || uiState.canStopRecording
                     ) {
                         Icon(
                             if (uiState.isRecording) Icons.Default.Stop else Icons.Default.FiberManualRecord,
                             contentDescription = null
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(if (uiState.isRecording) "Detener" else "Grabar")
+                        Text(seqLabel)
                     }
                 }
 
-                // Boton de subir
+                // Boton de subir (cuenta ambas modalidades)
                 Button(
                     onClick = { viewModel.uploadCapturedData() },
                     modifier = Modifier.weight(1f),
-                    enabled = uiState.totalCaptured > 0 && !uiState.isUploading
+                    enabled = uiState.hasContent && !uiState.isUploading
                 ) {
                     if (uiState.isUploading) {
                         CircularProgressIndicator(
@@ -220,7 +241,14 @@ private fun DataCaptureContent(
                         Icon(Icons.Default.CloudUpload, contentDescription = null)
                     }
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Subir (${uiState.totalCaptured})")
+                    val uploadLabel = when {
+                        uiState.totalStatic > 0 && uiState.totalSequences > 0 ->
+                            "Subir (E:${uiState.totalStatic} S:${uiState.totalSequences})"
+                        uiState.totalStatic > 0 -> "Subir (${uiState.totalStatic})"
+                        uiState.totalSequences > 0 -> "Subir (${uiState.totalSequences} vídeos)"
+                        else -> "Subir"
+                    }
+                    Text(uploadLabel)
                 }
             }
 
@@ -261,6 +289,9 @@ private fun DataCaptureCameraPreview(
     handsDetected: Boolean,
     isRecording: Boolean,
     recordedFrames: Int,
+    recordingTarget: Int = 45,
+    recordingProgress: Float = 0f,
+    canStopRecording: Boolean = false,
     useFrontCamera: Boolean = true,
     onToggleCamera: () -> Unit = {}
 ) {
@@ -341,9 +372,19 @@ private fun DataCaptureCameraPreview(
                 )
                 if (isRecording) {
                     Text(
-                        "Grabando: $recordedFrames frames",
-                        color = MaterialTheme.colorScheme.error,
+                        "Grabando: $recordedFrames/$recordingTarget frames" +
+                            if (canStopRecording) " · puedes detener" else "",
+                        color = if (canStopRecording) Color(0xFFB9F6CA) else MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall
+                    )
+                    LinearProgressIndicator(
+                        progress = { recordingProgress },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 4.dp)
+                            .height(3.dp),
+                        color = if (canStopRecording) Color(0xFFB9F6CA) else MaterialTheme.colorScheme.error,
+                        trackColor = Color.White.copy(alpha = 0.3f)
                     )
                 }
             }

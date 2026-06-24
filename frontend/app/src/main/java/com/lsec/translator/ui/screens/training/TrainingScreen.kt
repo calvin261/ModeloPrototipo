@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lsec.translator.data.remote.ModelInfoDto
+import com.lsec.translator.ui.common.KeepScreenOn
 
 private fun sampleText(count: Int) = if (count == 1) "1 muestra" else "$count muestras"
 
@@ -28,6 +29,7 @@ fun TrainingScreen(
     onNavigateBack: () -> Unit,
     viewModel: TrainingViewModel = hiltViewModel()
 ) {
+    KeepScreenOn()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var labelDeleteConfirm by remember { mutableStateOf<Pair<String, String>?>(null) }
 

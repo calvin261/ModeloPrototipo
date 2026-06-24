@@ -41,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.lsec.translator.ui.common.KeepScreenOn
 import com.google.accompanist.permissions.shouldShowRationale
 import java.util.concurrent.Executors
 
@@ -70,6 +71,7 @@ fun CalibrationScreen(
     onNavigateBack: () -> Unit,
     viewModel: CalibrationViewModel = hiltViewModel()
 ) {
+    KeepScreenOn()
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

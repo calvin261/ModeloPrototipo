@@ -89,8 +89,13 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            // F7-validacion 2026-06-23: R8 minifyEnabled=true rompe el cliente
+            // Retrofit (interceptores + Moshi sin manifests consumidos -> "Sin
+            // conexion" sin logs). Debug (minify off) conecta sin tocar nada.
+            // Reactivar solo tras auditar proguard-rules.pro con un build
+            // instrumentado y validar la lista completa de endpoints.
+            isMinifyEnabled = false
+            isShrinkResources = false
             signingConfig = signingConfigs.getByName("release")
             buildConfigField("String", "LSEC_BASE_URL", "\"$defaultBackendUrl\"")
             buildConfigField("String", "DEFAULT_BACKEND_URL", "\"$defaultBackendUrl\"")

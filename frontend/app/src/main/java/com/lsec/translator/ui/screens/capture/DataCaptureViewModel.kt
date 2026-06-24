@@ -21,17 +21,31 @@ data class DataCaptureUiState(
     val handsDetected: Boolean = false,
     val selectedLabel: String = "A",
     val captureMode: CaptureMode = CaptureMode.STATIC,
-    val capturedSamples: Map<String, Int> = emptyMap(),
-    val totalCaptured: Int = 0,
+    val capturedStatic: Map<String, Int> = emptyMap(),
+    val capturedSequences: Map<String, Int> = emptyMap(),
+    val totalStatic: Int = 0,
+    val totalSequences: Int = 0,
     val isUploading: Boolean = false,
     val uploadMessage: String? = null,
     val isRecording: Boolean = false,
     val recordedFrames: Int = 0,
+    val recordingTargetFrames: Int = DEFAULT_SEQUENCE_TARGET_FRAMES,
+    val recordingMinFrames: Int = DEFAULT_SEQUENCE_MIN_FRAMES,
     val useFrontCamera: Boolean = true,
     val error: String? = null
-)
+) {
+    val hasContent: Boolean get() = totalStatic > 0 || totalSequences > 0
+    val recordingProgress: Float
+        get() = (recordedFrames.toFloat() / recordingTargetFrames.coerceAtLeast(1))
+            .coerceIn(0f, 1f)
+    val canStopRecording: Boolean get() = recordedFrames >= recordingMinFrames
+}
 
 enum class CaptureMode { STATIC, SEQUENCE }
+
+private const val DEFAULT_SEQUENCE_MIN_FRAMES = 15
+private const val DEFAULT_SEQUENCE_TARGET_FRAMES = 45
+private const val DEFAULT_SEQUENCE_MAX_FRAMES = 120
 
 @HiltViewModel
 class DataCaptureViewModel @Inject constructor(
@@ -56,16 +70,18 @@ class DataCaptureViewModel @Inject constructor(
         viewModelScope.launch { userPreferences.setUseFrontCamera(newValue) }
     }
 
-    // Buffer local de muestras capturadas (label -> landmarks)
-    private val capturedData = mutableListOf<Pair<String, FloatArray>>()
+    // Buffer local de muestras estáticas (label -> landmarks)
+    private val staticSamples = mutableListOf<Pair<String, FloatArray>>()
 
-    // Buffer de frames para secuencias
+    // Buffer local de secuencias (label -> lista de frames de 63 floats)
+    private val sequenceSamples = mutableListOf<Pair<String, List<FloatArray>>>()
+
+    // Buffer de frames durante grabación activa
     private val sequenceBuffer = mutableListOf<FloatArray>()
 
-    // Ultimos landmarks detectados en tiempo real (para captura estatica)
+    // Últimos landmarks detectados en tiempo real (para captura estática)
     private var lastDetectedLandmarks: FloatArray? = null
 
-    // Labels disponibles para seleccion
     val staticLabels = ('A'..'Z').map { it.toString() } + listOf("SPACE")
     val dynamicLabels = listOf(
         "hola", "gracias", "por_favor", "si", "no", "ayuda", "agua",
@@ -75,6 +91,8 @@ class DataCaptureViewModel @Inject constructor(
 
     /**
      * Procesa un frame para detectar landmarks (preview en tiempo real).
+     * Si estamos grabando una secuencia, agrega el frame al buffer activo.
+     * Si alcanzamos el máximo, auto-detener la grabación.
      */
     fun processFrame(image: Image?) {
         if (_uiState.value.isProcessing) return
@@ -90,18 +108,25 @@ class DataCaptureViewModel @Inject constructor(
                 lastDetectedLandmarks = null
             }
 
+            var autoStop = false
+            if (_uiState.value.isRecording && landmarks != null) {
+                sequenceBuffer.add(landmarks.copyOf())
+                if (sequenceBuffer.size >= DEFAULT_SEQUENCE_MAX_FRAMES) {
+                    autoStop = true
+                }
+            }
+
             _uiState.update {
                 it.copy(
                     isProcessing = false,
                     handsDetected = detected,
+                    recordedFrames = sequenceBuffer.size,
                     error = null
                 )
             }
 
-            // Si estamos grabando secuencia y se detecto mano, agregar al buffer
-            if (_uiState.value.isRecording && landmarks != null) {
-                sequenceBuffer.add(landmarks.copyOf())
-                _uiState.update { it.copy(recordedFrames = sequenceBuffer.size) }
+            if (autoStop) {
+                stopRecording()
             }
         } catch (e: Exception) {
             _uiState.update {
@@ -110,60 +135,69 @@ class DataCaptureViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Captura una muestra estatica (un frame de landmarks + label).
-     */
     fun captureStaticSample() {
         viewModelScope.launch {
             val landmarks = lastDetectedLandmarks?.copyOf() ?: return@launch
             val label = _uiState.value.selectedLabel
 
-            capturedData.add(label to landmarks.copyOf())
-
-            val counts = _uiState.value.capturedSamples.toMutableMap()
+            staticSamples.add(label to landmarks.copyOf())
+            val counts = _uiState.value.capturedStatic.toMutableMap()
             counts[label] = (counts[label] ?: 0) + 1
-
             _uiState.update {
                 it.copy(
-                    capturedSamples = counts,
-                    totalCaptured = capturedData.size
+                    capturedStatic = counts,
+                    totalStatic = staticSamples.size
                 )
             }
         }
     }
 
-    /**
-     * Inicia grabacion de secuencia.
-     */
     fun startRecording() {
+        if (_uiState.value.isRecording) return
         sequenceBuffer.clear()
-        _uiState.update { it.copy(isRecording = true, recordedFrames = 0) }
+        _uiState.update {
+            it.copy(
+                isRecording = true,
+                recordedFrames = 0,
+                error = null
+            )
+        }
     }
 
     /**
-     * Detiene grabacion de secuencia y guarda.
+     * Detiene la grabación y guarda el buffer como UNA secuencia (no múltiples
+     * samples estáticos). Antes del fix (F7-validacion 2026-06-23) este método
+     * aplanaba cada frame en un sample independiente con el mismo label, lo que
+     * destruía la estructura temporal y hacía imposible entrenar el modelo
+     * dinámico.
      */
     fun stopRecording() {
-        if (sequenceBuffer.size > 10) {
-            // Guardar la secuencia como multiples samples con el mismo label
+        val frames = sequenceBuffer.toList()
+        sequenceBuffer.clear()
+
+        if (frames.size >= _uiState.value.recordingMinFrames) {
             val label = _uiState.value.selectedLabel
-            for (frame in sequenceBuffer) {
-                capturedData.add(label to frame)
-            }
+            sequenceSamples.add(label to frames)
 
-            val counts = _uiState.value.capturedSamples.toMutableMap()
-            counts[label] = (counts[label] ?: 0) + sequenceBuffer.size
-
+            val counts = _uiState.value.capturedSequences.toMutableMap()
+            counts[label] = (counts[label] ?: 0) + 1
             _uiState.update {
                 it.copy(
-                    capturedSamples = counts,
-                    totalCaptured = capturedData.size
+                    isRecording = false,
+                    recordedFrames = 0,
+                    capturedSequences = counts,
+                    totalSequences = sequenceSamples.size
+                )
+            }
+        } else {
+            _uiState.update {
+                it.copy(
+                    isRecording = false,
+                    recordedFrames = 0,
+                    error = "Demasiado corta (${frames.size} frames, mínimo ${_uiState.value.recordingMinFrames})"
                 )
             }
         }
-
-        sequenceBuffer.clear()
-        _uiState.update { it.copy(isRecording = false, recordedFrames = 0) }
     }
 
     fun selectLabel(label: String) {
@@ -171,29 +205,93 @@ class DataCaptureViewModel @Inject constructor(
     }
 
     fun setCaptureMode(mode: CaptureMode) {
-        _uiState.update { it.copy(captureMode = mode) }
+        val defaultLabel = if (mode == CaptureMode.SEQUENCE) dynamicLabels.first() else "A"
+        _uiState.update {
+            it.copy(
+                captureMode = mode,
+                // Si el label seleccionado no existe en el vocabulario del modo,
+                // resetear al primero disponible para evitar subir con label
+                // equivocado (ej. "A" cuando se capturan secuencias dinámicas).
+                selectedLabel = if (it.selectedLabel in when (mode) {
+                    CaptureMode.STATIC -> staticLabels
+                    CaptureMode.SEQUENCE -> dynamicLabels
+                }) it.selectedLabel else defaultLabel
+            )
+        }
+    }
+
+    fun discardLastSequence() {
+        if (sequenceSamples.isEmpty()) return
+        val removed = sequenceSamples.removeLast()
+        val counts = _uiState.value.capturedSequences.toMutableMap()
+        counts[removed.first] = (counts[removed.first] ?: 1) - 1
+        if ((counts[removed.first] ?: 0) <= 0) counts.remove(removed.first)
+        _uiState.update {
+            it.copy(
+                capturedSequences = counts,
+                totalSequences = sequenceSamples.size
+            )
+        }
+    }
+
+    fun discardLastStatic() {
+        if (staticSamples.isEmpty()) return
+        val removed = staticSamples.removeLast()
+        val counts = _uiState.value.capturedStatic.toMutableMap()
+        counts[removed.first] = (counts[removed.first] ?: 1) - 1
+        if ((counts[removed.first] ?: 0) <= 0) counts.remove(removed.first)
+        _uiState.update {
+            it.copy(
+                capturedStatic = counts,
+                totalStatic = staticSamples.size
+            )
+        }
     }
 
     /**
-     * Sube todas las muestras capturadas al servidor.
+     * Sube ambos buffers al backend usando endpoints separados:
+     * - estáticas → /api/v1/data/upload/static
+     * - secuencias → /api/v1/data/upload/sequence (multipart .npy)
      */
     fun uploadCapturedData() {
-        if (capturedData.isEmpty()) return
+        if (staticSamples.isEmpty() && sequenceSamples.isEmpty()) return
 
         viewModelScope.launch {
             _uiState.update { it.copy(isUploading = true, uploadMessage = null) }
 
-            val result = uploadLandmarksUseCase(capturedData.toList())
+            val staticSnapshot = staticSamples.toList()
+            val seqSnapshot = sequenceSamples.toList()
+
+            val result = uploadLandmarksUseCase.uploadAll(
+                staticSamples = staticSnapshot,
+                sequences = seqSnapshot
+            )
 
             result.fold(
-                onSuccess = { response ->
-                    capturedData.clear()
+                onSuccess = { summary ->
+                    staticSamples.clear()
+                    sequenceSamples.clear()
+                    val msg = buildString {
+                        if (summary.staticAdded > 0) {
+                            append("Estáticas +${summary.staticAdded} (total ${summary.staticTotal}). ")
+                        }
+                        if (summary.sequencesUploaded > 0) {
+                            append("Secuencias +${summary.sequencesUploaded} (")
+                            append(summary.sequenceFramesByLabel.entries.joinToString(", ") { "${it.key}: ${it.value} frames" })
+                            append(").")
+                        }
+                        if (summary.staticAdded == 0 && summary.sequencesUploaded == 0) {
+                            append("Nada que subir.")
+                        }
+                    }
                     _uiState.update {
                         it.copy(
                             isUploading = false,
-                            uploadMessage = "Subidas ${response.samplesAdded} muestras (total: ${response.totalSamples})",
-                            capturedSamples = emptyMap(),
-                            totalCaptured = 0
+                            uploadMessage = msg.trim(),
+                            capturedStatic = emptyMap(),
+                            capturedSequences = emptyMap(),
+                            totalStatic = 0,
+                            totalSequences = 0
                         )
                     }
                 },
@@ -215,7 +313,8 @@ class DataCaptureViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        capturedData.clear()
+        staticSamples.clear()
+        sequenceSamples.clear()
         sequenceBuffer.clear()
         lastDetectedLandmarks = null
     }
