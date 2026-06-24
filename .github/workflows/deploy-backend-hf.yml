@@ -11,15 +11,21 @@ on:
       - '.github/workflows/deploy-backend-hf.yml'
   workflow_dispatch:
 
-# OIDC: el token corto lo emite GitHub Actions y se canjea por acceso temporal
-# al Space. Configurar el Trusted Publisher en HF con:
-#   Provider: GitHub Actions
-#   Repository: calvin261/ModeloPrototipo
-#   Branch: main
-#   Workflow: deploy-backend-hf.yml
+# No usamos OIDC/Trusted Publisher porque la action oficial
+# `huggingface/actions/login@v1` no existe en GitHub (verificado
+# via api.github.com). Usamos un fine-grained token de HF guardado
+# como GitHub Secret.
+#
+# Para configurarlo:
+#   1. Crear token en https://huggingface.co/settings/tokens/new
+#      - Token type: Fine-grained
+#      - Repository permissions: calvin261/lsec-api (Write)
+#   2. Guardarlo en
+#      https://github.com/calvin261/ModeloPrototipo/settings/secrets/actions/new
+#      - Name:  HF_TOKEN
+#      - Value: hf_xxxxxxxxxxxxxx
 permissions:
   contents: read
-  id-token: write
 
 jobs:
   deploy:
@@ -27,16 +33,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
-      - name: Login to Hugging Face (OIDC)
-        # CRITICO: la action must be configured to point at the target space
-        # so it requests the right audience when exchanging the OIDC token.
-        # Sin esto, hf_hub.HfApi() no encuentra credenciales y falla con
-        # "Repository Not Found" (401 disfrazado).
-        uses: huggingface/actions/login@v1
-        with:
-          to: calvin261/lsec-api
-          # Sin "token:" — usa OIDC (Trusted Publisher) automaticamente.
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -50,17 +46,16 @@ jobs:
         env:
           HF_REPO_ID: calvin261/lsec-api
           GITHUB_SHA: ${{ github.sha }}
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}  # Inyectada por la action de login
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           python - <<'PY'
-          import os, shutil
+          import os, shutil, sys
           from pathlib import Path
           from huggingface_hub import HfApi
 
-          # HF_TOKEN lo inyecta la action de login (OIDC o token manual)
           token = os.environ.get("HF_TOKEN")
           if not token:
-              raise SystemExit("ERROR: HF_TOKEN no definido (login OIDC fallo)")
+              sys.exit("ERROR: HF_TOKEN secret no definido. Crear uno en https://huggingface.co/settings/tokens/new y guardarlo en GitHub Secrets.")
 
           api = HfApi(token=token)
           repo_id = os.environ['HF_REPO_ID']
@@ -111,8 +106,6 @@ jobs:
           PY
 
       - name: Verify deploy
-        # El verify solo necesita leer un endpoint publico; usa la API key
-        # solo si esta disponible como secret (opcional).
         env:
           LSEC_API_KEY: ${{ secrets.LSEC_API_KEY }}
         run: |
