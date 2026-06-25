@@ -139,8 +139,10 @@ def main() -> int:
     int8_path = args.out_dir / f"sign_transformer_v{ts}_int8.onnx"
     labels_path = args.out_dir / f"sign_transformer_labels_v{ts}.json"
 
-    # Dummy input (B=1, T=max_seq_len, n_joints, 3)
-    dummy = torch.randn(1, cfg.max_seq_len, n_joints, 3, dtype=torch.float32)
+    # Dummy input (B=1, T=max_seq_len, n_joints*3). Flat 3D so Android
+    # can feed the raw FloatArray from the classifier buffer without an
+    # explicit reshape step.
+    dummy = torch.randn(1, cfg.max_seq_len, n_joints * 3, dtype=torch.float32)
     _export_fp32(model, dummy, fp32_path)
     diff, rel = _compare_onnx_vs_pt(model, fp32_path, dummy)
     print(f"  ONNX vs PyTorch:  max abs diff = {diff:.6f},  max rel diff = {rel:.6f}")
