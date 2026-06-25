@@ -58,7 +58,7 @@ jobs:
         shell: pwsh
         working-directory: backend
         run: |
-          .venv\Scripts\python -m pytest -q -m "not slow" tests 2>&1 | Tee-Object -FilePath pytest_notslow.log
+          python -m pytest -q -m "not slow" tests 2>&1 | Tee-Object -FilePath pytest_notslow.log
 
       - name: Upload pytest log
         if: always()
@@ -111,7 +111,7 @@ jobs:
           # The synth data is written to tests/fixtures/synth_sequences/
           # (see scripts/_ci_synth_data.py) so it never overwrites any
           # developer's real data on disk.
-          .venv\Scripts\python -m scripts._ci_synth_data
+          python -m scripts._ci_synth_data
 
       - name: Stage synth data for the pipeline run
         shell: pwsh
