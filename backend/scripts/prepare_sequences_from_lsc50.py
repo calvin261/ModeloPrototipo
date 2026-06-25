@@ -78,9 +78,9 @@ def _process_one_video(
     extractor: LandmarkExtractor,
     min_frames: int,
 ) -> Optional[np.ndarray]:
-    """Extract a (T, 63) float16 sequence from a single .avi file.
+    """Extract a (T, 147) float16 sequence from a single .avi file.
 
-    Returns None if fewer than `min_frames` frames had a detected hand.
+    Returns None if fewer than `min_frames` frames had detected landmarks.
     """
     cap = cv2.VideoCapture(str(video_path))
     if not cap.isOpened():
@@ -92,7 +92,7 @@ def _process_one_video(
             if not ok:
                 break
             try:
-                landmarks = extractor.extract(frame)
+                landmarks = extractor.extract_holistic(frame)
             except Exception:  # noqa: BLE001
                 continue
             if landmarks is not None:
@@ -113,7 +113,11 @@ def _process_all_serial(
     word_mapping: dict[str, str],
 ) -> list[dict]:
     """Process all videos sequentially. Returns the manifest list."""
-    extractor = LandmarkExtractor(model_path=str(mediapipe_model))
+    extractor = LandmarkExtractor(
+        model_path=str(mediapipe_model),
+        pose_model_path=str(PROJECT_ROOT / "models" / "mediapipe" / "pose_landmarker.task"),
+        num_hands=2
+    )
     manifest: list[dict] = []
     print_interval = max(50, len(video_jobs) // 20)
     t0 = time.time()
@@ -285,7 +289,11 @@ def main() -> int:
         chunks = [jobs[i::args.workers] for i in range(args.workers)]
 
         def _worker(chunk: list[tuple[Path, str, str]]) -> list[dict]:
-            extractor = LandmarkExtractor(model_path=str(args.mediapipe_model))
+            extractor = LandmarkExtractor(
+                model_path=str(args.mediapipe_model),
+                pose_model_path=str(PROJECT_ROOT / "models" / "mediapipe" / "pose_landmarker.task"),
+                num_hands=2
+            )
             out: list[dict] = []
             try:
                 for video_path, word_display, signer_id in chunk:

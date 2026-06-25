@@ -60,4 +60,79 @@ object LandmarkNormalizer {
         // Aplanar de vuelta a FloatArray(63)
         return FloatArray(63) { idx -> coords[idx / 3][idx % 3] }
     }
+
+    /**
+     * Normaliza los landmarks de mano izquierda, mano derecha y pose superior
+     * usando los hombros como origen de coordenadas.
+     *
+     * @param leftHand raw FloatArray de 63 floats (21 landmarks x 3 coords) o null
+     * @param rightHand raw FloatArray de 63 floats (21 landmarks x 3 coords) o null
+     * @param poseLandmarks raw FloatArray de 99 floats (33 landmarks x 3 coords) o null
+     * @return FloatArray(147) normalizado y aplanado
+     */
+    fun normalizeHolistic(
+        leftHand: FloatArray?,
+        rightHand: FloatArray?,
+        poseLandmarks: FloatArray?
+    ): FloatArray {
+        val result = FloatArray(147)
+        val origin = FloatArray(3)
+        var scale = 1.0f
+
+        // Si la pose superior esta disponible, calculamos el punto medio de los hombros y la escala
+        if (poseLandmarks != null && poseLandmarks.size > 12 * 3) {
+            val lShX = poseLandmarks[11 * 3]
+            val lShY = poseLandmarks[11 * 3 + 1]
+            val lShZ = poseLandmarks[11 * 3 + 2]
+
+            val rShX = poseLandmarks[12 * 3]
+            val rShY = poseLandmarks[12 * 3 + 1]
+            val rShZ = poseLandmarks[12 * 3 + 2]
+
+            origin[0] = (lShX + rShX) / 2.0f
+            origin[1] = (lShY + rShY) / 2.0f
+            origin[2] = (lShZ + rShZ) / 2.0f
+
+            val dx = lShX - rShX
+            val dy = lShY - rShY
+            val dz = lShZ - rShZ
+            scale = sqrt(dx * dx + dy * dy + dz * dz)
+            if (scale < 1e-6f) {
+                scale = 1.0f
+            }
+        }
+
+        // 1. Mano Izquierda (indices 0 a 62)
+        if (leftHand != null && leftHand.size >= 63) {
+            for (i in 0 until 21) {
+                result[i * 3] = (leftHand[i * 3] - origin[0]) / scale
+                result[i * 3 + 1] = (leftHand[i * 3 + 1] - origin[1]) / scale
+                result[i * 3 + 2] = (leftHand[i * 3 + 2] - origin[2]) / scale
+            }
+        }
+
+        // 2. Mano Derecha (indices 63 a 125)
+        if (rightHand != null && rightHand.size >= 63) {
+            for (i in 0 until 21) {
+                result[63 + i * 3] = (rightHand[i * 3] - origin[0]) / scale
+                result[63 + i * 3 + 1] = (rightHand[i * 3 + 1] - origin[1]) / scale
+                result[63 + i * 3 + 2] = (rightHand[i * 3 + 2] - origin[2]) / scale
+            }
+        }
+
+        // 3. Puntos de Pose: nose (0), l_sh (11), r_sh (12), l_el (13), r_el (14), l_wr (15), r_wr (16) (indices 126 a 146)
+        if (poseLandmarks != null) {
+            val keyIndices = intArrayOf(0, 11, 12, 13, 14, 15, 16)
+            for (j in keyIndices.indices) {
+                val idx = keyIndices[j]
+                if (idx * 3 + 2 < poseLandmarks.size) {
+                    result[126 + j * 3] = (poseLandmarks[idx * 3] - origin[0]) / scale
+                    result[126 + j * 3 + 1] = (poseLandmarks[idx * 3 + 1] - origin[1]) / scale
+                    result[126 + j * 3 + 2] = (poseLandmarks[idx * 3 + 2] - origin[2]) / scale
+                }
+            }
+        }
+
+        return result
+    }
 }

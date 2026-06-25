@@ -31,7 +31,7 @@ class ClassifierConfig:
 
 @dataclass
 class SequenceConfig:
-    input_size: int = 63
+    input_size: int = 147
     hidden_size: int = 128
     num_layers: int = 2
     num_classes: int = 50
@@ -41,7 +41,7 @@ class SequenceConfig:
     epochs: int = 120  # More epochs; early stopping (patience=15) prevents overfitting
     batch_size: int = 32
     seed: int = 42
-    model_save_path: str = "models/sequence/sign_gru.pth"
+    model_save_path: str = "models/sequence/sign_transformer.pth"
     vocabulary_path: str = "datasets/lsec_vocabulary.json"
     sequences_dir: str = "data/sequences"
     # --- F2 augmentation pipeline ---
@@ -63,7 +63,7 @@ class SequenceConfig:
     # --- Model selection (F3) ---
     # Which architecture to train. Values: "gru" (legacy Bi-GRU+attention) or
     # "transformer" (SPOTER-style Sign Transformer with joint embeddings).
-    model_type: str = "gru"
+    model_type: str = "transformer"
 
 
 @dataclass

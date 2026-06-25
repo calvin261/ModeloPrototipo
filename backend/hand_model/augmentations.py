@@ -1,26 +1,26 @@
 """Augmentation pipeline for hand-landmark sequences.
 
-Each function takes a (T, 63) numpy array (already wrist-relative + scale
-normalized) and returns an augmented (T, 63) array. The augmentations are
-designed to cover the realistic variance a new user introduces vs the
-training distribution:
+Each function takes a (T, D) numpy array (already wrist-relative + scale
+normalized) and returns an augmented (T, D) array. D = n_joints * 3.
+The augmentations are designed to cover the realistic variance a new user
+introduces vs the training distribution:
 
     1. gaussian_noise          – per-landmark Gaussian noise
     2. joint_jitter            – per-joint independent noise (each finger
-                                 moves slightly independently)
+                                  moves slightly independently)
     3. landmark_dropout        – randomly drop a fraction of landmarks to
-                                 simulate MediaPipe tracking failures
+                                  simulate MediaPipe tracking failures
     4. time_warp               – resample time to a different length
     5. frame_dropout           – drop random frames and re-stitch
     6. speed_change            – play back at 0.7-1.3x speed
     7. cutmix_temporal         – concatenate two halves of two different
-                                 sequences of the SAME class (signer-mixup
-                                 along the time axis)
+                                  sequences of the SAME class (signer-mixup
+                                  along the time axis)
     8. rotation_2d             – rotate all landmarks around wrist
     9. rotation_3d             – small roll/pitch around the wrist
-   10. scale_jitter            – multiply all coordinates by a factor
-   11. translation_xy          – shift the whole sequence in XY
-   12. mirror_x                – flip X coordinates (simulate other hand)
+    10. scale_jitter            – multiply all coordinates by a factor
+    11. translation_xy          – shift the whole sequence in XY
+    12. mirror_x                – flip X coordinates (simulate other hand)
 
 All functions are deterministic given an integer seed, so the same input
 will produce the same augmented output across calls (important for
@@ -34,40 +34,36 @@ from typing import Callable, Sequence
 import numpy as np
 
 
-# ---------------------------------------------------------------------------
-# Individual augmentations
-# ---------------------------------------------------------------------------
-
 def gaussian_noise(seq: np.ndarray, rng: np.random.Generator, sigma: float = 0.02) -> np.ndarray:
     """Per-landmark Gaussian noise (all landmarks, all frames)."""
     return (seq + rng.normal(0, sigma, size=seq.shape)).astype(np.float32)
 
 
-def joint_jitter(seq: np.ndarray, rng: np.random.Generator, sigma: float = 0.015) -> np.ndarray:
-    """Per-joint Gaussian noise: each of the 21 landmarks gets its own
+def joint_jitter(seq: np.ndarray, rng: np.random.Generator, sigma: float = 0.015, n_joints: int = 21) -> np.ndarray:
+    """Per-joint Gaussian noise: each of the n_joints landmarks gets its own
     per-frame random offset. This is more realistic than global noise
     because in real life, the wrist, fingers, and thumb move semi-
     independently."""
     T = seq.shape[0]
-    coords = seq.reshape(T, 21, 3)
+    coords = seq.reshape(T, n_joints, 3)
     noise = rng.normal(0, sigma, size=coords.shape)
     coords = coords + noise
-    return coords.reshape(T, 63).astype(np.float32)
+    return coords.reshape(T, n_joints * 3).astype(np.float32)
 
 
 def landmark_dropout(
     seq: np.ndarray,
     rng: np.random.Generator,
     landmark_drop_prob: float = 0.10,
+    n_joints: int = 21,
 ) -> np.ndarray:
     """Set a fraction of landmarks to the wrist (0,0,0) to simulate
     MediaPipe tracking failures for that joint."""
     T = seq.shape[0]
-    coords = seq.reshape(T, 21, 3).copy()
-    # mask shape (T, 21) — 1 means keep, 0 means dropped (set to 0)
-    keep_mask = rng.random(size=(T, 21)) > landmark_drop_prob
+    coords = seq.reshape(T, n_joints, 3).copy()
+    keep_mask = rng.random(size=(T, n_joints)) > landmark_drop_prob
     coords = coords * keep_mask[:, :, None]
-    return coords.reshape(T, 63).astype(np.float32)
+    return coords.reshape(T, n_joints * 3).astype(np.float32)
 
 
 def time_warp(seq: np.ndarray, rng: np.random.Generator, factor_range: tuple = (0.7, 1.4)) -> np.ndarray:
@@ -83,12 +79,10 @@ def time_warp(seq: np.ndarray, rng: np.random.Generator, factor_range: tuple = (
     new_len = max(2, int(round(T * factor)))
     if new_len == T:
         return seq.copy()
-    # 1. Resample from T -> new_len (stretch or compress)
     idx_in_orig = np.linspace(0, T - 1, new_len)
     out = np.zeros_like(seq)
     for d in range(D):
         warped = np.interp(idx_in_orig, np.arange(T), seq[:, d])
-        # 2. Resample back from new_len -> T
         out[:, d] = np.interp(np.linspace(0, new_len - 1, T), np.arange(new_len), warped)
     return out.astype(np.float32)
 
@@ -145,42 +139,40 @@ def cutmix_temporal(
     return out.astype(np.float32)
 
 
-def rotation_2d(seq: np.ndarray, rng: np.random.Generator, max_deg: float = 35.0) -> np.ndarray:
+def rotation_2d(seq: np.ndarray, rng: np.random.Generator, max_deg: float = 35.0, n_joints: int = 21) -> np.ndarray:
     """Rotate every frame around the Z axis (image plane) by a random
     angle in [-max_deg, +max_deg]."""
     T = seq.shape[0]
-    coords = seq.reshape(T, 21, 3).copy()
+    coords = seq.reshape(T, n_joints, 3).copy()
     angle = rng.uniform(-max_deg, max_deg) * np.pi / 180.0
     cos_a, sin_a = np.cos(angle), np.sin(angle)
     xy = coords[:, :, :2]
     coords[:, :, 0] = xy[:, :, 0] * cos_a - xy[:, :, 1] * sin_a
     coords[:, :, 1] = xy[:, :, 0] * sin_a + xy[:, :, 1] * cos_a
-    return coords.reshape(T, 63).astype(np.float32)
+    return coords.reshape(T, n_joints * 3).astype(np.float32)
 
 
-def rotation_3d(seq: np.ndarray, rng: np.random.Generator, max_deg: float = 25.0) -> np.ndarray:
+def rotation_3d(seq: np.ndarray, rng: np.random.Generator, max_deg: float = 25.0, n_joints: int = 21) -> np.ndarray:
     """Apply small roll and pitch rotations to simulate tilted hands.
 
     Implemented as separate rotations around X and Y axes applied to the
     relative coordinates (wrist at origin).
     """
     T = seq.shape[0]
-    coords = seq.reshape(T, 21, 3).copy()
+    coords = seq.reshape(T, n_joints, 3).copy()
     roll = rng.uniform(-max_deg, max_deg) * np.pi / 180.0
     pitch = rng.uniform(-max_deg, max_deg) * np.pi / 180.0
-    # Roll: rotate around X axis (affects Y, Z)
     cr, sr = np.cos(roll), np.sin(roll)
     y_old = coords[:, :, 1].copy()
     z_old = coords[:, :, 2].copy()
     coords[:, :, 1] = y_old * cr - z_old * sr
     coords[:, :, 2] = y_old * sr + z_old * cr
-    # Pitch: rotate around Y axis (affects X, Z)
     cp, sp = np.cos(pitch), np.sin(pitch)
     x_old = coords[:, :, 0].copy()
     z_old = coords[:, :, 2].copy()
     coords[:, :, 0] = x_old * cp + z_old * sp
     coords[:, :, 2] = -x_old * sp + z_old * cp
-    return coords.reshape(T, 63).astype(np.float32)
+    return coords.reshape(T, n_joints * 3).astype(np.float32)
 
 
 def scale_jitter(seq: np.ndarray, rng: np.random.Generator, factor_range: tuple = (0.7, 1.4)) -> np.ndarray:
@@ -189,14 +181,14 @@ def scale_jitter(seq: np.ndarray, rng: np.random.Generator, factor_range: tuple 
     return (seq * factor).astype(np.float32)
 
 
-def translation_xy(seq: np.ndarray, rng: np.random.Generator, max_shift: float = 0.15) -> np.ndarray:
+def translation_xy(seq: np.ndarray, rng: np.random.Generator, max_shift: float = 0.15, n_joints: int = 21) -> np.ndarray:
     """Shift the whole sequence in XY by the same offset (per sample)."""
     T = seq.shape[0]
-    coords = seq.reshape(T, 21, 3).copy()
+    coords = seq.reshape(T, n_joints, 3).copy()
     shift = rng.uniform(-max_shift, max_shift, size=2)
     coords[:, :, 0] += shift[0]
     coords[:, :, 1] += shift[1]
-    return coords.reshape(T, 63).astype(np.float32)
+    return coords.reshape(T, n_joints * 3).astype(np.float32)
 
 
 def mirror_x(seq: np.ndarray, rng: np.random.Generator | None = None) -> np.ndarray:
@@ -209,13 +201,6 @@ def mirror_x(seq: np.ndarray, rng: np.random.Generator | None = None) -> np.ndar
     return coords.astype(np.float32)
 
 
-# ---------------------------------------------------------------------------
-# Composed pipelines
-# ---------------------------------------------------------------------------
-
-# Ordered list of "default" per-sample augmentations. Each is independent
-# of the others, so they can be reordered without changing the semantics
-# of the union (modulo the order in which they stack on the data).
 DEFAULT_TECHNIQUES: tuple[Callable[[np.ndarray, np.random.Generator], np.ndarray], ...] = (
     gaussian_noise,
     joint_jitter,
@@ -239,12 +224,12 @@ def augment_sequence(
     """Apply every technique in `techniques` once, in order.
 
     Args:
-        seq: (T, 63) float array.
+        seq: (T, D) float array where D = n_joints * 3.
         rng: numpy Generator.
-        techniques: ordered tuple of callables (seq, rng) -> (T, 63).
+        techniques: ordered tuple of callables (seq, rng) -> (T, D).
 
     Returns:
-        (T, 63) float32 augmented array.
+        (T, D) float32 augmented array.
     """
     out = seq.astype(np.float32).copy()
     for tech in techniques:
@@ -262,7 +247,7 @@ def augment_sequence_with_cutmix(
 
     Both sequences must be from the same class. The cutmix step is
     applied first so the rest of the pipeline still operates on a
-    (T, 63) sequence.
+    (T, D) sequence.
     """
     out = cutmix_temporal(seq_a, seq_b, rng, max_seq_len=max_seq_len)
     return augment_sequence(out, rng)

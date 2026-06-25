@@ -44,7 +44,7 @@ def _re_extract_one(
     extractor: LandmarkExtractor,
     min_frames: int,
 ) -> np.ndarray | None:
-    """Read a single video, extract invariant landmarks frame-by-frame."""
+    """Read a single video, extract holistic landmarks frame-by-frame."""
     cap = cv2.VideoCapture(str(video_path))
     if not cap.isOpened():
         return None
@@ -55,14 +55,11 @@ def _re_extract_one(
             if not ok:
                 break
             try:
-                # Use the new path that returns handedness too.
-                raw, handedness = extractor.extract_raw_with_handedness(frame)
+                lm = extractor.extract_holistic(frame)
             except Exception:  # noqa: BLE001
                 continue
-            if raw is None:
+            if lm is None:
                 continue
-            from hand_model.landmarks import normalize_landmarks_invariant
-            lm = normalize_landmarks_invariant(raw, handedness or "Right")
             frames_out.append(lm)
     finally:
         cap.release()
@@ -122,9 +119,11 @@ def main() -> int:
         return 0
 
     extractor = LandmarkExtractor(
-        model_path=str(args.mediapipe_model), rotation_invariant=True
+        model_path=str(args.mediapipe_model),
+        pose_model_path=str(PROJECT_ROOT / "models" / "mediapipe" / "pose_landmarker.task"),
+        num_hands=2
     )
-    print("Initialized MediaPipe with rotation_invariant=True")
+    print("Initialized MediaPipe Holistic (Hands + Pose)")
     print()
 
     t0 = time.time()

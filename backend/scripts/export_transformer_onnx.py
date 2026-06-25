@@ -40,8 +40,9 @@ def _load_transformer(ckpt_path: Path):
     cfg = ckpt["config"]
     vocab = ckpt["vocabulary"]
     n_classes = len(vocab)
+    n_joints = cfg.input_size // 3  # 21 for legacy, 49 for holistic
     model = SignTransformer(
-        n_joints=21, n_channels=3, num_classes=n_classes,
+        n_joints=n_joints, n_channels=3, num_classes=n_classes,
         embed_dim=128, nhead=4, num_layers=4, dim_feedforward=256,
         dropout=0.0, max_seq_len=cfg.max_seq_len + 1, use_cls=True,
     )
@@ -129,7 +130,8 @@ def main() -> int:
 
     model, vocab, cfg = _load_transformer(args.ckpt)
     n_params = sum(p.numel() for p in model.parameters())
-    print(f"Model:    {n_params:,} params, {len(vocab)} classes, max_seq={cfg.max_seq_len}")
+    n_joints = cfg.input_size // 3  # 21 for legacy, 49 for holistic
+    print(f"Model:    {n_params:,} params, {len(vocab)} classes, max_seq={cfg.max_seq_len}, joints={n_joints}")
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -137,8 +139,8 @@ def main() -> int:
     int8_path = args.out_dir / f"sign_transformer_v{ts}_int8.onnx"
     labels_path = args.out_dir / f"sign_transformer_labels_v{ts}.json"
 
-    # Dummy input (B=1, T=max_seq_len, 21, 3)
-    dummy = torch.randn(1, cfg.max_seq_len, 21, 3, dtype=torch.float32)
+    # Dummy input (B=1, T=max_seq_len, n_joints, 3)
+    dummy = torch.randn(1, cfg.max_seq_len, n_joints, 3, dtype=torch.float32)
     _export_fp32(model, dummy, fp32_path)
     diff, rel = _compare_onnx_vs_pt(model, fp32_path, dummy)
     print(f"  ONNX vs PyTorch:  max abs diff = {diff:.6f},  max rel diff = {rel:.6f}")

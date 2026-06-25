@@ -8,13 +8,14 @@ import torch.nn as nn
 class SignSequenceModel(nn.Module):
     """Bidirectional GRU with attention for dynamic sign recognition.
 
-    Takes a sequence of landmark vectors (T, 63) and classifies
-    the sign/word being performed.
+    Takes a sequence of landmark vectors (T, 147) and classifies
+    the sign/word being performed. Uses holistic landmarks (2 hands + pose keypoints)
+    normalized torso-relative.
     """
 
     def __init__(
         self,
-        input_size: int = 63,
+        input_size: int = 147,
         hidden_size: int = 128,
         num_layers: int = 2,
         num_classes: int = 50,
@@ -80,10 +81,11 @@ class DynamicSignRecognizer:
             hidden_size=cfg.hidden_size,
             num_layers=cfg.num_layers,
             num_classes=cfg.num_classes,
-            dropout=0.0,  # No dropout at inference
+            dropout=0.0,
         )
         self.model.load_state_dict(checkpoint["model_state_dict"])
         self.model.eval()
+        self.input_size = cfg.input_size
 
         # Frame buffer
         self.buffer = []
@@ -96,17 +98,15 @@ class DynamicSignRecognizer:
         Returns (word, confidence) when a complete sequence is classified,
         or None while still buffering frames.
         """
-        landmarks = self.extractor.extract(frame)
+        landmarks = self.extractor.extract_holistic(frame)
 
         if landmarks is not None:
             self.no_hand_count = 0
             self.buffer.append(landmarks)
-            # If buffer is full, classify
             if len(self.buffer) >= self.max_seq_len:
                 return self._classify_buffer()
         else:
             self.no_hand_count += 1
-            # If hand disappeared after collecting frames, classify
             if self.no_hand_count >= self.NO_HAND_THRESHOLD and len(self.buffer) > 10:
                 return self._classify_buffer()
 
@@ -118,19 +118,18 @@ class DynamicSignRecognizer:
 
         seq = np.array(self.buffer, dtype=np.float32)
 
-        # Pad or truncate
         if len(seq) > self.max_seq_len:
             seq = seq[: self.max_seq_len]
         elif len(seq) < self.max_seq_len:
             pad = np.zeros(
-                (self.max_seq_len - len(seq), 63), dtype=np.float32
+                (self.max_seq_len - len(seq), self.input_size), dtype=np.float32,
             )
             seq = np.concatenate([seq, pad], axis=0)
 
         self.buffer.clear()
 
         with torch.no_grad():
-            tensor = torch.tensor(seq).unsqueeze(0)  # (1, seq_len, 63)
+            tensor = torch.tensor(seq).unsqueeze(0)  # (1, seq_len, input_size)
             logits = self.model(tensor)
             probs = torch.softmax(logits, dim=1)
             confidence, idx = torch.max(probs, dim=1)

@@ -19,17 +19,33 @@ MODELS = {
         "https://storage.googleapis.com/mediapipe-models/"
         "hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task"
     ),
+    "pose_landmarker.task": (
+        "https://storage.googleapis.com/mediapipe-models/"
+        "pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task"
+    ),
 }
 
 
 def download(name: str, url: str) -> None:
-    dest = ASSETS_DIR / name
-    if dest.exists():
-        print(f"  [OK] {name} ya existe ({dest.stat().st_size // 1024} KB)")
-        return
-    print(f"  Descargando {name} ...")
-    urllib.request.urlretrieve(url, dest)
-    print(f"  [OK] {name} guardado ({dest.stat().st_size // 1024} KB)")
+    # 1. Download to frontend assets
+    dest_frontend = ASSETS_DIR / name
+    if not dest_frontend.exists():
+        print(f"  Descargando {name} para frontend...")
+        urllib.request.urlretrieve(url, dest_frontend)
+        print(f"  [OK] {name} guardado en frontend ({dest_frontend.stat().st_size // 1024} KB)")
+    else:
+        print(f"  [OK] {name} ya existe en frontend ({dest_frontend.stat().st_size // 1024} KB)")
+
+    # 2. Copy/download to backend models
+    dest_backend = REPO_ROOT / "backend" / "models" / "mediapipe" / name
+    dest_backend.parent.mkdir(parents=True, exist_ok=True)
+    if not dest_backend.exists():
+        import shutil
+        print(f"  Copiando {name} a backend...")
+        shutil.copy2(dest_frontend, dest_backend)
+        print(f"  [OK] {name} guardado en backend")
+    else:
+        print(f"  [OK] {name} ya existe en backend")
 
 
 if __name__ == "__main__":

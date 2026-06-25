@@ -15,24 +15,6 @@ import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import kotlin.math.sqrt
 
-/**
- * Clasificador de señas dinámicas (GRU).
- *
- * Estrategia de segmentación (state machine basada en movimiento):
- *   IDLE      → mano visible, sin movimiento significativo → espera
- *   BUFFERING → mano visible, con movimiento significativo → acumula frames
- *   COOLDOWN  → después de clasificar, espera unos frames para no duplicar
- *
- * El trigger de clasificación es la TRANSICIÓN de movimiento→quietud:
- *   - En BUFFERING, si pasan N frames con movimiento bajo, se clasifica
- *   - Esto significa que la seña "terminó" naturalmente
- *   - Más robusto que el trigger anterior (mano desaparece 15 frames)
- *
- * Busca el modelo en este orden:
- *   1. filesDir/models/sign_gru.onnx  (descargado del servidor - preferido)
- *   2. filesDir/models/sign_gru.tflite (descargado, formato legacy)
- *   3. assets/sign_gru.tflite          (bundled en el APK)
- */
 class DynamicSignClassifier(
     private val context: Context,
     private val vocabulary: Map<String, Int> = emptyMap()
@@ -44,11 +26,10 @@ class DynamicSignClassifier(
     private var numClasses: Int = 50
 
     private val maxSeqLen = 60
-    private val featuresPerFrame = 63
+    private val featuresPerFrame = 147
     private val maxBufferFrames = MAX_BUFFER_FRAMES
     private val buffer = ArrayDeque<FloatArray>()
 
-    // === State machine ===
     private var state = State.IDLE
     private var lastLandmarks: FloatArray? = null
     private var stableFrameCount = 0
@@ -68,22 +49,19 @@ class DynamicSignClassifier(
         numClasses = if (vocabulary.isNotEmpty()) vocabulary.size else 50
 
         // Try ONNX first (downloaded from server)
-        val onnxFile = File(context.filesDir, "models/sign_gru.onnx")
+        val onnxFile = File(context.filesDir, "models/sign_transformer.onnx")
         if (onnxFile.exists()) {
             try {
                 val env = OrtEnvironment.getEnvironment()
                 ortEnv = env
-                // Configuracion defensiva: menos threads + sin optimizacion (mas estable)
                 val opts = OrtSession.SessionOptions().apply {
                     setIntraOpNumThreads(2)
-                    // NO_OPT evita optimizaciones que pueden fallar con modelos de GRU variables
                     setOptimizationLevel(ai.onnxruntime.OrtSession.SessionOptions.OptLevel.NO_OPT)
                 }
                 ortSession = env.createSession(onnxFile.absolutePath, opts)
                 Log.i(TAG, "Dynamic classifier loaded via ONNX Runtime ($numClasses classes)")
                 return
             } catch (e: Throwable) {
-                // Throwable (no Exception) para capturar OOM y otros errores fatales
                 Log.w(TAG, "ONNX load failed (${e.javaClass.simpleName}: ${e.message}), falling back to TFLite", e)
                 runCatching { ortSession?.close() }
                 runCatching { ortEnv?.close() }
@@ -92,7 +70,6 @@ class DynamicSignClassifier(
             }
         }
 
-        // Try TFLite (downloaded or bundled in assets)
         try {
             val modelBuffer = loadTfliteModel()
             if (modelBuffer != null) {
@@ -107,39 +84,25 @@ class DynamicSignClassifier(
         }
     }
 
-    /**
-     * Estado observable del clasificador dinámico. La UI puede dibujarlo.
-     */
     enum class State { IDLE, BUFFERING, COOLDOWN }
 
     data class StateInfo(
         val state: State,
         val bufferSize: Int,
-        val motionLevel: Float,           // 0..1, 0=still, 1=high motion
+        val motionLevel: Float,
         val lastSign: String?,
         val lastConfidence: Float,
         val msSinceLastResult: Long,
     )
 
-    /**
-     * Procesa un frame y devuelve un resultado de clasificación SOLO cuando
-     * la state machine decide que una seña dinámica terminó.
-     *
-     * Devuelve null la mayoría de las veces. Devuelve SignClassificationResult
-     * cuando se detecta el fin de una seña (transición movimiento→quietud
-     * o mano desaparece tras suficiente buffer).
-     */
     fun processFrame(landmarks: FloatArray?): SignClassificationResult? {
         if (landmarks == null) {
-            // No hay mano
             noHandCount++
             lastLandmarks = null
             lastMotionLevel = 0f
 
             when (state) {
                 State.BUFFERING -> {
-                    // Si la mano desapareció en medio de un signo y hay suficientes frames,
-                    // clasificamos (signo interrumpido)
                     if (buffer.size >= MIN_FRAMES) {
                         val result = classifyBuffer()
                         if (result != null) emitResult(result)
@@ -147,7 +110,6 @@ class DynamicSignClassifier(
                         cooldownCount = 0
                         return result
                     }
-                    // No hay suficiente, descartar y volver a idle
                     buffer.clear()
                     state = State.IDLE
                 }
@@ -165,18 +127,15 @@ class DynamicSignClassifier(
             return null
         }
 
-        // Hay mano
         noHandCount = 0
         val motion = if (lastLandmarks != null) computeMotion(lastLandmarks!!, landmarks) else 0f
         lastLandmarks = landmarks.copyOf()
-        // Suavizar el nivel de motion (EMA)
         lastMotionLevel = lastMotionLevel * 0.5f + motion * 0.5f
         val isMoving = lastMotionLevel > MOTION_THRESHOLD
 
         when (state) {
             State.IDLE -> {
                 if (isMoving) {
-                    // Inicio de una seña
                     buffer.clear()
                     buffer.addLast(landmarks.copyOf())
                     state = State.BUFFERING
@@ -185,12 +144,10 @@ class DynamicSignClassifier(
             }
             State.BUFFERING -> {
                 if (isMoving) {
-                    // Sigue moviéndose: añadir al buffer (con cap)
                     stableFrameCount = 0
                     if (buffer.size < maxBufferFrames) {
                         buffer.addLast(landmarks.copyOf())
                     } else {
-                        // Buffer lleno, forzar clasificación
                         val result = classifyBuffer()
                         if (result != null) {
                             emitResult(result)
@@ -203,17 +160,13 @@ class DynamicSignClassifier(
                         }
                     }
                 } else {
-                    // No se está moviendo: posible fin de seña
                     if (buffer.size < MIN_FRAMES) {
-                        // Muy poco buffer, probablemente ruido: volver a idle
                         buffer.clear()
                         state = State.IDLE
                     } else {
-                        // Añadir frame al buffer y contar
                         buffer.addLast(landmarks.copyOf())
                         stableFrameCount++
                         if (stableFrameCount >= STABLE_FRAMES_REQUIRED) {
-                            // Fin de seña: clasificar
                             val result = classifyBuffer()
                             if (result != null && result.confidence >= CONFIDENCE_THRESHOLD) {
                                 emitResult(result)
@@ -221,7 +174,6 @@ class DynamicSignClassifier(
                                 cooldownCount = 0
                                 return result
                             } else {
-                                // Baja confianza: descartar y volver a idle
                                 buffer.clear()
                                 state = State.IDLE
                                 stableFrameCount = 0
@@ -247,9 +199,6 @@ class DynamicSignClassifier(
         lastResultTimestamp = System.currentTimeMillis()
     }
 
-    /**
-     * Snapshot del estado actual para que la UI muestre indicadores de progreso.
-     */
     fun getStateInfo(): StateInfo {
         val now = System.currentTimeMillis()
         return StateInfo(
@@ -262,15 +211,11 @@ class DynamicSignClassifier(
         )
     }
 
-    /**
-     * Distancia euclidiana promedio entre landmarks de dos frames consecutivos.
-     * Un valor cercano a 0 = mano quieta. Valor alto = mano en movimiento.
-     * Como los landmarks están normalizados (wrist al origen), las distancias son adimensionales.
-     */
     private fun computeMotion(prev: FloatArray, curr: FloatArray): Float {
         require(prev.size == curr.size)
         var sum = 0.0
         var i = 0
+        val nKeypoints = prev.size / 3
         while (i < prev.size) {
             val dx = (curr[i] - prev[i]).toDouble()
             val dy = (curr[i + 1] - prev[i + 1]).toDouble()
@@ -278,7 +223,7 @@ class DynamicSignClassifier(
             sum += sqrt(dx * dx + dy * dy + dz * dz)
             i += 3
         }
-        return (sum / 21.0).toFloat()
+        return (sum / nKeypoints).toFloat()
     }
 
     private fun classifyBuffer(): SignClassificationResult? {
@@ -378,7 +323,6 @@ class DynamicSignClassifier(
             numClasses = newVocabulary.size
         }
         initialize()
-        // Reset state machine on model change
         state = State.IDLE
         buffer.clear()
         stableFrameCount = 0
@@ -395,18 +339,11 @@ class DynamicSignClassifier(
     companion object {
         private const val TAG = "DynamicSignClassifier"
 
-        // === Tunables (ajustables desde tests) ===
-        /** Distancia euclidiana promedio por landmark para considerar "movimiento significativo". */
         const val MOTION_THRESHOLD = 0.04f
-        /** Frames consecutivos de quietud para disparar clasificación al final de la seña. */
         const val STABLE_FRAMES_REQUIRED = 6
-        /** Mínimo de frames en buffer para considerar una seña válida. ~0.5s a 30fps. */
         const val MIN_FRAMES = 15
-        /** Máximo de frames acumulados antes de forzar clasificación. */
         const val MAX_BUFFER_FRAMES = 90
-        /** Frames de espera entre clasificaciones para evitar duplicados. */
         const val COOLDOWN_FRAMES = 12
-        /** Confianza mínima para emitir un resultado (descarta ruido). */
         const val CONFIDENCE_THRESHOLD = 0.35f
     }
 }

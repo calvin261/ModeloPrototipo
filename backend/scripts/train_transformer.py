@@ -2,7 +2,7 @@
 
 This script is the F3 counterpart of `train_sequence.py` for the new
 architecture. It uses the same dataset loaders and augmentation pipeline
-but routes data through a (B, T, 21, 3) reshape so the transformer can
+but routes data through a (B, T, n_joints, 3) reshape so the transformer can
 use its per-joint embeddings.
 
 Differences vs `train_sequence.py`:
@@ -44,7 +44,7 @@ from hand_model.utils import ensure_dir
 
 
 class ReshapingSequenceDataset(Dataset):
-    """Wraps a SequenceDataset and reshapes each (T, 63) sample to (T, 21, 3).
+    """Wraps a SequenceDataset and reshapes each (T, D) sample to (T, n_joints, 3).
 
     Also returns a padding mask so the transformer can ignore the zero-padded
     tail. The mask is (T,) with True where the value is exactly zero (i.e.
@@ -52,28 +52,28 @@ class ReshapingSequenceDataset(Dataset):
     inside `SequenceDataset.__getitem__`; longer ones are truncated.
     """
 
-    def __init__(self, base: SequenceDataset, eps: float = 1e-6):
+    def __init__(self, base: SequenceDataset, n_joints: int = 49, eps: float = 1e-6):
         self.base = base
+        self.n_joints = n_joints
         self.eps = eps
 
     def __len__(self):
         return len(self.base)
 
     def __getitem__(self, idx):
-        flat, label = self.base[idx]                 # (T, 63), scalar
+        flat, label = self.base[idx]
         T, D = flat.shape
-        reshaped = flat.reshape(T, 21, 3)
-        # Build padding mask: True where ALL 63 dims are ~0 (i.e. pure pad).
-        flat_abs = flat.abs().sum(dim=1)              # (T,)
+        reshaped = flat.reshape(T, self.n_joints, 3)
+        flat_abs = flat.abs().sum(dim=1)
         is_padded = flat_abs < self.eps
         return reshaped, is_padded, label
 
 
 def collate_reshape(batch):
-    """Collate (T, 21, 3) + (T,) mask + label into batched tensors."""
+    """Collate (T, n_joints, 3) + (T,) mask + label into batched tensors."""
     seqs, masks, labels = zip(*batch)
-    seqs = torch.stack(seqs, dim=0)        # (B, T, 21, 3)
-    masks = torch.stack(masks, dim=0)      # (B, T)
+    seqs = torch.stack(seqs, dim=0)
+    masks = torch.stack(masks, dim=0)
     labels = torch.tensor(labels, dtype=torch.long)
     return seqs, masks, labels
 
@@ -152,13 +152,11 @@ def train(
         test_signers_set = None
         print(f"Splits (random 80/20): train={train_size}  val={val_size}")
 
-    # Augmentation. Because the transformer needs (T, 21, 3), we augment the
-    # flat (T, 63) sequence and reshape at the end.
+    n_joints = cfg.input_size // 3
     aug_factor = cfg.aug_factor
     use_extended = cfg.use_extended_augmentations
     cutmix_prob = cfg.cutmix_prob
 
-    # Pre-index by class for cutmix.
     by_class: dict[int, list[np.ndarray]] = {}
     for i in range(len(train_base)):
         seq, lbl = train_base[i]
@@ -191,13 +189,11 @@ def train(
             aug_seqs.append(out)
             aug_labels.append(lbl)
 
-    # Reshape all to (T, 21, 3) and build padding masks.
-    aug_seqs_t = torch.from_numpy(np.stack(aug_seqs)).float()  # (N, T, 63)
-    aug_seqs_t = aug_seqs_t.reshape(len(aug_seqs), cfg.max_seq_len, 21, 3)
-    aug_masks_t = (aug_seqs_t.abs().sum(dim=(2, 3)) < 1e-6)   # (N, T) bool
+    aug_seqs_t = torch.from_numpy(np.stack(aug_seqs)).float()
+    aug_seqs_t = aug_seqs_t.reshape(len(aug_seqs), cfg.max_seq_len, n_joints, 3)
+    aug_masks_t = (aug_seqs_t.abs().sum(dim=(2, 3)) < 1e-6)
     aug_labels_t = torch.tensor(aug_labels, dtype=torch.long)
 
-    # Custom dataset that returns (seq, mask, label) triples.
     class _TensorsDS(Dataset):
         def __init__(self, seqs, masks, labels):
             self.seqs = seqs
@@ -209,7 +205,7 @@ def train(
             return self.seqs[i], self.masks[i], self.labels[i]
 
     train_ds = _TensorsDS(aug_seqs_t, aug_masks_t, aug_labels_t)
-    val_ds = ReshapingSequenceDataset(val_base)
+    val_ds = ReshapingSequenceDataset(val_base, n_joints=n_joints)
 
     train_loader = DataLoader(
         train_ds, batch_size=cfg.batch_size, shuffle=True,
@@ -229,7 +225,7 @@ def train(
     )
 
     model = SignTransformer(
-        n_joints=21,
+        n_joints=n_joints,
         n_channels=3,
         num_classes=num_classes,
         embed_dim=128,
@@ -241,7 +237,7 @@ def train(
         use_cls=True,
     ).to(device)
     n_params = sum(p.numel() for p in model.parameters())
-    print(f"Model: SignTransformer, {n_params:,} params, embed=128, layers=4, nhead=4")
+    print(f"Model: SignTransformer, {n_params:,} params, embed=128, layers=4, nhead=4, joints={n_joints}")
 
     optimizer = torch.optim.AdamW(
         model.parameters(), lr=cfg.learning_rate, weight_decay=1e-4
@@ -286,8 +282,6 @@ def train(
         if progress_callback:
             progress_callback(epoch, cfg.epochs, avg_loss, val_acc, best_acc)
 
-        # Print every epoch (unbuffered) so we can see the trajectory
-        # even if the process gets killed.
         print(
             f"Epoch {epoch:3d}/{cfg.epochs}  "
             f"Loss: {avg_loss:.4f}  "
@@ -318,12 +312,12 @@ def train(
     if evaluate_test and test_base is not None and len(test_base) > 0:
         ckpt = torch.load(cfg.model_save_path, map_location=device, weights_only=False)
         best_model = SignTransformer(
-            n_joints=21, n_channels=3, num_classes=num_classes,
+            n_joints=n_joints, n_channels=3, num_classes=num_classes,
             embed_dim=128, nhead=4, num_layers=4, dim_feedforward=256,
             dropout=0.0, max_seq_len=cfg.max_seq_len + 1, use_cls=True,
         ).to(device)
         best_model.load_state_dict(ckpt["model_state_dict"])
-        test_ds = ReshapingSequenceDataset(test_base)
+        test_ds = ReshapingSequenceDataset(test_base, n_joints=n_joints)
         test_loader = DataLoader(
             test_ds, batch_size=cfg.batch_size, shuffle=False,
             collate_fn=collate_reshape,
@@ -369,13 +363,10 @@ def main():
     args = parser.parse_args()
 
     cfg = SequenceConfig()
-    # Transformer training needs a different default save path
     if args.save_path:
         cfg.model_save_path = args.save_path
     else:
         cfg.model_save_path = "models/sequence/sign_transformer.pth"
-    # Default to the 12-class active vocabulary (overrides the 50-class
-    # default in SequenceConfig) unless the caller explicitly overrides it.
     if not args.vocabulary:
         cfg.vocabulary_path = str(PROJECT_ROOT / "data" / "sequences" / "vocabulary.json")
     if args.epochs:
