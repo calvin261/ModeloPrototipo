@@ -44,6 +44,12 @@ data class UserPreferencesData(
     // LLM post-processor (opcional, off por defecto)
     val llmEnabled: Boolean = false,
     val llmAutoTrigger: Boolean = false,
+
+    // Overlay visual de landmarks (manos + cara) en la cámara.
+    // OFF por defecto para cuidar batería y rendimiento.
+    // El usuario puede activar por separado en modo estático o dinámico.
+    val showLandmarksStatic: Boolean = false,
+    val showLandmarksDynamic: Boolean = false,
 )
 
 /**
@@ -70,6 +76,8 @@ class UserPreferences @Inject constructor(
         val RECOGNITION_MODE = stringPreferencesKey("recognition_mode")
         val LLM_ENABLED = booleanPreferencesKey("llm_enabled")
         val LLM_AUTO_TRIGGER = booleanPreferencesKey("llm_auto_trigger")
+        val SHOW_LANDMARKS_STATIC = booleanPreferencesKey("show_landmarks_static")
+        val SHOW_LANDMARKS_DYNAMIC = booleanPreferencesKey("show_landmarks_dynamic")
     }
 
     /**
@@ -101,6 +109,8 @@ class UserPreferences @Inject constructor(
                 recognitionMode = preferences[PreferencesKeys.RECOGNITION_MODE] ?: "static",
                 llmEnabled = preferences[PreferencesKeys.LLM_ENABLED] ?: false,
                 llmAutoTrigger = preferences[PreferencesKeys.LLM_AUTO_TRIGGER] ?: false,
+                showLandmarksStatic = preferences[PreferencesKeys.SHOW_LANDMARKS_STATIC] ?: false,
+                showLandmarksDynamic = preferences[PreferencesKeys.SHOW_LANDMARKS_DYNAMIC] ?: false,
             )
         }
 
@@ -199,6 +209,18 @@ class UserPreferences @Inject constructor(
     suspend fun setLlmAutoTrigger(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.LLM_AUTO_TRIGGER] = enabled
+        }
+    }
+
+    suspend fun setShowLandmarksStatic(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.SHOW_LANDMARKS_STATIC] = enabled
+        }
+    }
+
+    suspend fun setShowLandmarksDynamic(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.SHOW_LANDMARKS_DYNAMIC] = enabled
         }
     }
 }

@@ -41,7 +41,11 @@ data class SettingsUiState(
 
     // Estados de UI
     val isLoading: Boolean = false,
-    val message: String? = null
+    val message: String? = null,
+
+    // Overlay visual de landmarks (manos + cara) por modo de reconocimiento.
+    val showLandmarksStatic: Boolean = false,
+    val showLandmarksDynamic: Boolean = false,
 )
 
 /**
@@ -76,7 +80,9 @@ class SettingsViewModel @Inject constructor(
                         batterySaverMode = prefs.batterySaverMode,
                         darkMode = prefs.darkMode,
                         serverUrl = prefs.serverUrl,
-                        apiKey = prefs.apiKey
+                        apiKey = prefs.apiKey,
+                        showLandmarksStatic = prefs.showLandmarksStatic,
+                        showLandmarksDynamic = prefs.showLandmarksDynamic,
                     )
                 }
             }
@@ -209,6 +215,38 @@ class SettingsViewModel @Inject constructor(
     fun openHelp() {
         // TODO: Navegar a pantalla de ayuda o abrir URL de documentación
         _uiState.update { it.copy(message = "Próximamente: sección de ayuda") }
+    }
+
+    // ── Overlay de landmarks ──────────────────────────────────────────────
+
+    fun setShowLandmarksStatic(enabled: Boolean) {
+        viewModelScope.launch {
+            userPreferences.setShowLandmarksStatic(enabled)
+            _uiState.update {
+                it.copy(
+                    showLandmarksStatic = enabled,
+                    message = if (enabled)
+                        "Overlay de landmarks activado en modo estático"
+                    else
+                        "Overlay de landmarks desactivado en modo estático",
+                )
+            }
+        }
+    }
+
+    fun setShowLandmarksDynamic(enabled: Boolean) {
+        viewModelScope.launch {
+            userPreferences.setShowLandmarksDynamic(enabled)
+            _uiState.update {
+                it.copy(
+                    showLandmarksDynamic = enabled,
+                    message = if (enabled)
+                        "Overlay de landmarks activado en modo dinámico"
+                    else
+                        "Overlay de landmarks desactivado en modo dinámico",
+                )
+            }
+        }
     }
 
     fun clearMessage() {

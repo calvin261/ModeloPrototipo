@@ -83,6 +83,12 @@ fun CameraScreen(
                             contentDescription = "Toggle voz"
                         )
                     }
+                    LandmarkOverlayToggle(
+                        visible = uiState.landmarkOverlayVisible,
+                        onToggle = { viewModel.toggleLandmarkOverlay() },
+                        faceAvailable = uiState.faceLandmarkerAvailable,
+                        recognitionMode = uiState.recognitionMode,
+                    )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Black.copy(alpha = 0.7f),
@@ -102,8 +108,19 @@ fun CameraScreen(
                 cameraPermissionState.status.isGranted -> {
                     CameraPreviewContent(
                         useFrontCamera = uiState.useFrontCamera,
-                        onFrameAnalyzed = { viewModel.processFrame(it) }
+                        onFrameAnalyzed = { image, rotation -> viewModel.processFrame(image, rotation) }
                     )
+                    // Overlay de landmarks (manos + cara) encima de la cámara.
+                    // Solo se pinta cuando el toggle rápido está activo.
+                    if (uiState.landmarkOverlayVisible) {
+                        LandmarkOverlayView(
+                            data = uiState.landmarkOverlay,
+                            isFrontCamera = uiState.useFrontCamera,
+                            showFace = uiState.faceLandmarkerAvailable,
+                            showHandConnections = true,
+                            modifier = Modifier.matchParentSize(),
+                        )
+                    }
                 }
                 cameraPermissionState.status.shouldShowRationale -> {
                     PermissionRationale(
@@ -167,7 +184,7 @@ fun CameraScreen(
 @Composable
 private fun CameraPreviewContent(
     useFrontCamera: Boolean,
-    onFrameAnalyzed: (android.media.Image?) -> Unit
+    onFrameAnalyzed: (android.media.Image?, Int) -> Unit
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -196,7 +213,13 @@ private fun CameraPreviewContent(
                 .also { analysis ->
                     analysis.setAnalyzer(cameraExecutor) { imageProxy ->
                         try {
-                            onFrameAnalyzed(imageProxy.image)
+                            // Propagamos el rotationDegrees real para que
+                            // HandDetector rote el bitmap al espacio de
+                            // display antes de pasarlo a MediaPipe.
+                            onFrameAnalyzed(
+                                imageProxy.image,
+                                imageProxy.imageInfo.rotationDegrees,
+                            )
                         } finally {
                             imageProxy.close()
                         }
@@ -661,6 +684,42 @@ private fun ActionButtonsRow(
             )
             Spacer(Modifier.width(6.dp))
             Text("Reformular", style = MaterialTheme.typography.labelMedium)
+        }
+    }
+}
+
+@Composable
+private fun LandmarkOverlayToggle(
+    visible: Boolean,
+    onToggle: () -> Unit,
+    faceAvailable: Boolean,
+    recognitionMode: String,
+) {
+    val tint = if (visible) MaterialTheme.colorScheme.primary else Color.White
+    val description = when {
+        visible && faceAvailable ->
+            "Ocultar landmarks (manos + cara activos)"
+        visible && !faceAvailable ->
+            "Ocultar landmarks (solo manos: cara no disponible)"
+        !visible && recognitionMode == "dynamic" ->
+            "Mostrar landmarks en modo dinámico"
+        else ->
+            "Mostrar landmarks en modo estático"
+    }
+    IconButton(onClick = onToggle) {
+        BadgedBox(badge = {
+            if (visible) {
+                Badge(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                ) { Text("ON") }
+            }
+        }) {
+            Icon(
+                imageVector = if (visible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                contentDescription = description,
+                tint = tint,
+            )
         }
     }
 }
