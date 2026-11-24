@@ -232,8 +232,12 @@ def augment_sequence(
         (T, D) float32 augmented array.
     """
     out = seq.astype(np.float32).copy()
+    n_joints = out.shape[1] // 3
     for tech in techniques:
-        out = tech(out, rng)
+        try:
+            out = tech(out, rng, n_joints=n_joints)
+        except TypeError:
+            out = tech(out, rng)
     return out
 
 

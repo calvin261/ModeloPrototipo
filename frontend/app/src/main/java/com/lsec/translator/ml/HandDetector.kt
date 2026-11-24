@@ -6,6 +6,7 @@ import android.media.Image
 import android.util.Log
 import com.google.mediapipe.tasks.core.BaseOptions
 import com.google.mediapipe.tasks.vision.core.RunningMode
+import com.google.mediapipe.tasks.vision.facelandmarker.FaceLandmarker
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarker
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
 import com.google.mediapipe.framework.image.BitmapImageBuilder
@@ -16,11 +17,20 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Detector de manos usando MediaPipe HandLandmarker.
- * Extrae 21 landmarks 3D normalizados por mano detectada.
+ * Detector de manos + pose + cara usando MediaPipe Tasks Vision.
  *
- * Ya no requiere YOLO: MediaPipe HandLandmarker detecta manos
- * y extrae landmarks en un solo paso.
+ * Detecta:
+ *   - Hasta 2 manos  (21 landmarks c/u)
+ *   - 1 cuerpo completo (33 landmarks; solo usamos 7 para el normalizador)
+ *   - 1 cara (478 landmarks, opcional — requiere face_landmarker.task en assets)
+ *
+ * Salidas:
+ *   - [detectAndExtractLandmarks] / [detectFromBitmap]:
+ *       pipeline de clasificación (FloatArray 147 dims, back-compat).
+ *   - [detectRawLandmarks]: solo para el overlay visual, no clasifica.
+ *
+ * Si el modelo de cara no está presente en assets/, [detectRawLandmarks]
+ * devuelve los landmarks de manos/pose sin error (degradación elegante).
  */
 @Singleton
 class HandDetector @Inject constructor(
@@ -28,7 +38,15 @@ class HandDetector @Inject constructor(
 ) {
     private var handLandmarker: HandLandmarker? = null
     private var poseLandmarker: PoseLandmarker? = null
+    private var faceLandmarker: FaceLandmarker? = null
     private var timestampMs: Long = 0
+
+    /**
+     * ¿Está disponible el detector facial?
+     * True solo si el modelo se cargó sin error.
+     */
+    val isFaceLandmarkerReady: Boolean
+        get() = faceLandmarker != null
 
     init {
         initializeMediaPipe()
@@ -36,7 +54,7 @@ class HandDetector @Inject constructor(
 
     private fun initializeMediaPipe() {
         try {
-            // Initialize HandLandmarker
+            // ── HandLandmarker ──────────────────────────────────────────────
             val handBaseOptions = BaseOptions.builder()
                 .setModelAssetPath("hand_landmarker.task")
                 .build()
@@ -44,7 +62,7 @@ class HandDetector @Inject constructor(
             val handOptions = HandLandmarker.HandLandmarkerOptions.builder()
                 .setBaseOptions(handBaseOptions)
                 .setRunningMode(RunningMode.VIDEO)
-                .setNumHands(2) // Detect both hands
+                .setNumHands(2)
                 .setMinHandDetectionConfidence(0.5f)
                 .setMinHandPresenceConfidence(0.5f)
                 .setMinTrackingConfidence(0.5f)
@@ -53,7 +71,7 @@ class HandDetector @Inject constructor(
             handLandmarker = HandLandmarker.createFromOptions(context, handOptions)
             Log.i(TAG, "MediaPipe HandLandmarker initialized")
 
-            // Initialize PoseLandmarker
+            // ── PoseLandmarker ──────────────────────────────────────────────
             val poseBaseOptions = BaseOptions.builder()
                 .setModelAssetPath("pose_landmarker.task")
                 .build()
@@ -69,18 +87,53 @@ class HandDetector @Inject constructor(
             poseLandmarker = PoseLandmarker.createFromOptions(context, poseOptions)
             Log.i(TAG, "MediaPipe PoseLandmarker initialized")
         } catch (e: Exception) {
-            Log.e(TAG, "Error initializing MediaPipe", e)
+            Log.e(TAG, "Error initializing MediaPipe (hands/pose)", e)
+        }
+
+        // ── FaceLandmarker (opcional, separado para no romper si falta el .task) ──
+        try {
+            val faceBaseOptions = BaseOptions.builder()
+                .setModelAssetPath("face_landmarker.task")
+                .build()
+
+            val faceOptions = FaceLandmarker.FaceLandmarkerOptions.builder()
+                .setBaseOptions(faceBaseOptions)
+                .setRunningMode(RunningMode.VIDEO)
+                .setNumFaces(1)
+                .setMinFaceDetectionConfidence(0.5f)
+                .setMinFacePresenceConfidence(0.5f)
+                .setMinTrackingConfidence(0.5f)
+                // Blendshapes y mesh refinements off para cuidar batería.
+                // Activarlos suma ~3 ms/frame.
+                .setOutputFaceBlendshapes(false)
+                .setOutputFacialTransformationMatrixes(false)
+                .build()
+
+            faceLandmarker = FaceLandmarker.createFromOptions(context, faceOptions)
+            Log.i(TAG, "MediaPipe FaceLandmarker initialized")
+        } catch (e: Exception) {
+            // Caso esperado si el archivo face_landmarker.task no está en assets.
+            // El overlay funcionará solo con manos/pose.
+            Log.w(
+                TAG,
+                "FaceLandmarker no disponible (¿falta face_landmarker.task en assets?): ${e.message}",
+            )
+            faceLandmarker = null
         }
     }
 
     /**
-     * Detecta manos y cuerpo en la imagen y extrae landmarks normalizados holísticamente.
+     * Pipeline de clasificación: detecta manos/pose y retorna el vector
+     * normalizado de 147 dims listo para el clasificador.
      *
-     * @return FloatArray(147) normalizado holísticamente, o null si no se detectó nada
+     * El [Image] se decodifica UNA sola vez. Si también quieres los
+     * landmarks crudos para el overlay, usa [detectAll].
+     *
+     * @return FloatArray(147) normalizado, o null si no se detectó nada.
      */
     suspend fun detectAndExtractLandmarks(image: Image): FloatArray? = withContext(Dispatchers.Default) {
         try {
-            val bitmap = imageToBitmap(image)
+            val bitmap = ImageDecoder.imageToBitmap(image)
             return@withContext detectFromBitmap(bitmap)
         } catch (e: Exception) {
             Log.e(TAG, "Error detecting hands/pose", e)
@@ -89,116 +142,203 @@ class HandDetector @Inject constructor(
     }
 
     /**
-     * Detecta landmarks desde un Bitmap directamente.
-     * Extrae 147 valores (2 manos + pose superior).
+     * Detecta manos/pose/cara y devuelve TANTO el vector normalizado (para
+     * el clasificador) COMO los landmarks crudos (para el overlay).
+     *
+     * El [Image] se decodifica UNA SOLA VEZ — fundamental porque los
+     * ByteBuffers de CameraX son de un solo uso y la segunda decodificación
+     * causa SIGSEGV en `Yuv420SpToJpegEncoder::deinterleave`.
+     */
+    suspend fun detectAll(image: Image, imageRotationDegrees: Int = 0): DetectionResult =
+        withContext(Dispatchers.Default) {
+            try {
+                val rawBitmap = ImageDecoder.imageToBitmap(image)
+                // Rotamos el bitmap al espacio de display. Los landmarks
+                // que entregue MediaPipe vendrán directamente en coordenadas
+                // de display (Portrait), listos para mapear al PreviewView.
+                val orientedBitmap = ImageDecoder.rotateBitmap(rawBitmap, imageRotationDegrees)
+                // Una sola pasada MediaPipe alimenta el modelo, el overlay y el MVP.
+                val raw = detectRawLandmarksFromBitmap(orientedBitmap, imageRotationDegrees = 0)
+                val normalized = normalize(raw)
+                if (orientedBitmap !== rawBitmap) orientedBitmap.recycle()
+                rawBitmap.recycle()
+                DetectionResult(normalized, raw)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error in detectAll", e)
+                DetectionResult(normalized = null, raw = EmptyLandmarkOverlay)
+            }
+        }
+
+    /**
+     * Versión síncrona que recibe el bitmap ya convertido.
+     * Usado por [com.lsec.translator.data.upload.NpyWriter] y tests.
      */
     fun detectFromBitmap(bitmap: Bitmap): FloatArray? {
-        val handDetector = handLandmarker ?: return null
-        val poseDetector = poseLandmarker ?: return null
+        return normalize(detectRawLandmarksFromBitmap(bitmap))
+    }
 
-        val mpImage = BitmapImageBuilder(bitmap).build()
-        timestampMs += 33 // ~30 fps
-
-        val handResult = handDetector.detectForVideo(mpImage, timestampMs)
-        val poseResult = poseDetector.detectForVideo(mpImage, timestampMs)
-
-        val hasHands = handResult != null && handResult.landmarks().isNotEmpty()
-        val hasPose = poseResult != null && poseResult.landmarks().isNotEmpty()
-
-        if (!hasHands && !hasPose) {
-            return null
-        }
-
-        // Map hands by handedness
-        var leftHand: FloatArray? = null
-        var rightHand: FloatArray? = null
-
-        if (handResult != null && handResult.landmarks().isNotEmpty()) {
-            val landmarksList = handResult.landmarks()
-            val handednessesList = handResult.handednesses()
-            
-            for (i in landmarksList.indices) {
-                val handLms = landmarksList[i]
-                val handednessCategory = handednessesList.getOrNull(i)?.firstOrNull()
-                val label = handednessCategory?.categoryName() ?: "Right"
-                
-                val rawHand = FloatArray(63)
-                for (j in 0 until 21) {
-                    val lm = handLms[j]
-                    rawHand[j * 3] = lm.x()
-                    rawHand[j * 3 + 1] = lm.y()
-                    rawHand[j * 3 + 2] = lm.z()
-                }
-                
-                if (label.equals("Left", ignoreCase = true)) {
-                    leftHand = rawHand
-                } else {
-                    rightHand = rawHand
-                }
-            }
-        }
-
-        // Map pose landmarks
-        var rawPose: FloatArray? = null
-        if (poseResult != null && poseResult.landmarks().isNotEmpty()) {
-            val poseLms = poseResult.landmarks()[0]
-            rawPose = FloatArray(33 * 3)
-            for (i in 0 until 33) {
-                if (i < poseLms.size) {
-                    val lm = poseLms[i]
-                    rawPose[i * 3] = lm.x()
-                    rawPose[i * 3 + 1] = lm.y()
-                    rawPose[i * 3 + 2] = lm.z()
-                }
-            }
-        }
-
-        // Normalizar usando el algoritmo holístico (147 dimensiones)
-        return LandmarkNormalizer.normalizeHolistic(leftHand, rightHand, rawPose)
+    private fun normalize(raw: LandmarkOverlayData): FloatArray? {
+        if (!raw.hasLeftHand() && !raw.hasRightHand() && raw.pose == null) return null
+        return LandmarkNormalizer.normalizeHolistic(raw.leftHand, raw.rightHand, raw.pose)
     }
 
     /**
-     * Convierte Image (YUV_420_888) a Bitmap RGB.
+     * Wrapper del resultado de [detectAll] que entrega ambos formatos en una
+     * sola llamada, evitando decodificar el [Image] dos veces.
      */
-    private fun imageToBitmap(image: Image): Bitmap {
-        val planes = image.planes
-        val yBuffer = planes[0].buffer
-        val uBuffer = planes[1].buffer
-        val vBuffer = planes[2].buffer
+    data class DetectionResult(
+        /** Vector normalizado de 147 dims para el clasificador, o null si nada detectado. */
+        val normalized: FloatArray?,
+        /** Snapshot crudo para el overlay visual. */
+        val raw: LandmarkOverlayData,
+    )
 
-        val ySize = yBuffer.remaining()
-        val uSize = uBuffer.remaining()
-        val vSize = vBuffer.remaining()
+    /**
+     * Detecta SOLO los landmarks crudos (sin normalizar) para pintar el overlay.
+     *
+     * Más barato que [detectAndExtractLandmarks] porque no construye el
+     * FloatArray(147) ni llama a [LandmarkNormalizer].
+     *
+     * El bitmap debe estar en orientación de display (lo entrega
+     * CameraX con `targetRotation` por defecto).
+     *
+     * @return [LandmarkOverlayData] con coordenadas normalizadas [0,1] en el
+     *         espacio del bitmap, o un objeto "vacío" si no se detectó nada.
+     */
+    suspend fun detectRawLandmarks(image: Image, imageRotationDegrees: Int = 0): LandmarkOverlayData =
+        withContext(Dispatchers.Default) {
+            try {
+                val rawBitmap = ImageDecoder.imageToBitmap(image)
+                val orientedBitmap = ImageDecoder.rotateBitmap(rawBitmap, imageRotationDegrees)
+                val result = detectRawLandmarksFromBitmap(orientedBitmap, imageRotationDegrees = 0)
+                if (orientedBitmap !== rawBitmap) orientedBitmap.recycle()
+                rawBitmap.recycle()
+                return@withContext result
+            } catch (e: Exception) {
+                Log.e(TAG, "Error detecting raw landmarks", e)
+                return@withContext EmptyLandmarkOverlay
+            }
+        }
 
-        val nv21 = ByteArray(ySize + uSize + vSize)
-        yBuffer.get(nv21, 0, ySize)
-        vBuffer.get(nv21, ySize, vSize)
-        uBuffer.get(nv21, ySize + vSize, uSize)
+    /**
+     * Versión síncrona que ya recibe el bitmap.
+     *
+     * @param imageRotationDegrees rotación del bitmap vs display, propagada al
+     *        overlay para que los landmarks se alineen con la imagen en pantalla.
+     */
+    fun detectRawLandmarksFromBitmap(
+        bitmap: Bitmap,
+        imageRotationDegrees: Int = 0,
+    ): LandmarkOverlayData {
+        val handDetector = handLandmarker
+        val poseDetector = poseLandmarker
+        val faceDetector = faceLandmarker
 
-        val yuvImage = android.graphics.YuvImage(
-            nv21,
-            android.graphics.ImageFormat.NV21,
-            image.width,
-            image.height,
-            null
+        // Si ni siquiera hay manos/pose inicializadas, devolvemos vacío.
+        if (handDetector == null && poseDetector == null && faceDetector == null) {
+            return EmptyLandmarkOverlay
+        }
+
+        val mpImage = BitmapImageBuilder(bitmap).build()
+        timestampMs += 33
+        val ts = timestampMs
+
+        var leftHand: FloatArray? = null
+        var rightHand: FloatArray? = null
+
+        // ── Manos ──
+        handDetector?.let { det ->
+            try {
+                val handResult = det.detectForVideo(mpImage, ts)
+                if (handResult != null && handResult.landmarks().isNotEmpty()) {
+                    val landmarksList = handResult.landmarks()
+                    val handednessesList = handResult.handednesses()
+
+                    for (i in landmarksList.indices) {
+                        val handLms = landmarksList[i]
+                        val handednessCategory = handednessesList.getOrNull(i)?.firstOrNull()
+                        val label = handednessCategory?.categoryName() ?: "Right"
+
+                        val rawHand = FloatArray(63)
+                        for (j in 0 until 21) {
+                            val lm = handLms[j]
+                            rawHand[j * 3] = lm.x()
+                            rawHand[j * 3 + 1] = lm.y()
+                            rawHand[j * 3 + 2] = lm.z()
+                        }
+
+                        if (label.equals("Left", ignoreCase = true)) {
+                            leftHand = rawHand
+                        } else {
+                            rightHand = rawHand
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "HandLandmarker falló en este frame", e)
+            }
+        }
+
+        // ── Cara (opcional) ──
+        var face: FloatArray? = null
+        faceDetector?.let { det ->
+            try {
+                val faceResult = det.detectForVideo(mpImage, ts)
+                if (faceResult != null && faceResult.faceLandmarks().isNotEmpty()) {
+                    val faceLms = faceResult.faceLandmarks()[0]
+                    val n = faceLms.size
+                    face = FloatArray(n * 3)
+                    for (i in 0 until n) {
+                        val lm = faceLms[i]
+                        face[i * 3] = lm.x()
+                        face[i * 3 + 1] = lm.y()
+                        face[i * 3 + 2] = lm.z()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "FaceLandmarker falló en este frame", e)
+            }
+        }
+
+        // ── Pose ──
+        var pose: FloatArray? = null
+        poseDetector?.let { det ->
+            try {
+                val poseResult = det.detectForVideo(mpImage, ts)
+                val poseLms = poseResult?.landmarks()?.firstOrNull()
+                if (poseLms != null) {
+                    pose = FloatArray(33 * 3)
+                    for (i in 0 until minOf(poseLms.size, 33)) {
+                        val lm = poseLms[i]
+                        pose[i * 3] = lm.x()
+                        pose[i * 3 + 1] = lm.y()
+                        pose[i * 3 + 2] = lm.z()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "PoseLandmarker falló en este frame", e)
+            }
+        }
+
+        return LandmarkOverlayData(
+            leftHand = leftHand,
+            rightHand = rightHand,
+            face = face,
+            imageWidth = bitmap.width,
+            imageHeight = bitmap.height,
+            timestampMs = ts,
+            imageRotationDegrees = imageRotationDegrees,
+            pose = pose,
         )
-
-        val out = java.io.ByteArrayOutputStream()
-        yuvImage.compressToJpeg(
-            android.graphics.Rect(0, 0, image.width, image.height),
-            100,
-            out
-        )
-        val imageBytes = out.toByteArray()
-        return android.graphics.BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
     }
 
     /**
      * Libera recursos del detector.
      */
     fun close() {
-        handLandmarker?.close()
-        poseLandmarker?.close()
+        try { handLandmarker?.close() } catch (_: Throwable) {}
+        try { poseLandmarker?.close() } catch (_: Throwable) {}
+        try { faceLandmarker?.close() } catch (_: Throwable) {}
     }
 
     companion object {

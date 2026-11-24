@@ -154,6 +154,33 @@ fun SettingsScreen(
                 )
             }
 
+            // Sección de Overlay Visual (landmarks)
+            SettingsSection(title = "Overlay de landmarks") {
+                SettingsSwitch(
+                    icon = Icons.Default.Gesture,
+                    title = "Mostrar landmarks (estático)",
+                    subtitle = "Puntos y conexiones de manos sobre la cámara en modo letras",
+                    checked = uiState.showLandmarksStatic,
+                    onCheckedChange = { viewModel.setShowLandmarksStatic(it) }
+                )
+
+                SettingsSwitch(
+                    icon = Icons.Default.Face,
+                    title = "Mostrar landmarks (dinámico)",
+                    subtitle = "Manos + cara sobre la cámara en modo palabras (recomendado)",
+                    checked = uiState.showLandmarksDynamic,
+                    onCheckedChange = { viewModel.setShowLandmarksDynamic(it) }
+                )
+
+                SettingsItem(
+                    icon = Icons.Default.Info,
+                    title = "Acerca del overlay",
+                    subtitle = "Muestra los 21 puntos de cada mano y hasta 478 puntos faciales " +
+                        "para depurar y mejorar la detección de señas dinámicas. " +
+                        "Consume batería adicional."
+                )
+            }
+
             // Sección de Servidor
             SettingsSection(title = "Servidor Backend") {
                 ServerUrlField(

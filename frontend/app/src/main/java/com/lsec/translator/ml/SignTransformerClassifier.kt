@@ -6,6 +6,7 @@ import ai.onnxruntime.OnnxTensor
 import ai.onnxruntime.OnnxJavaType
 import ai.onnxruntime.OrtEnvironment
 import ai.onnxruntime.OrtSession
+import ai.onnxruntime.TensorInfo
 import org.tensorflow.lite.Interpreter
 import java.io.File
 import java.io.FileInputStream
@@ -63,6 +64,9 @@ class SignTransformerClassifier(
     private var paddingMaskInputName: String = "padding_mask"
     private var logitsOutputName: String = "logits"
     private var embeddingOutputName: String = "embedding"
+    /** El export histórico usa 147 (dos manos + pose); el nuevo usa 63 (una mano). */
+    private var modelFeatureSize: Int = FEATURES_PER_FRAME
+    private var onnxUsesFlatFeatures: Boolean = false
 
     private val buffer = ArrayDeque<FloatArray>()
 
@@ -113,7 +117,7 @@ class SignTransformerClassifier(
         inverseVocabulary = vocabulary.entries.associate { (k, v) -> v to k }
         numClasses = if (vocabulary.isNotEmpty()) vocabulary.size else 12
 
-        val onnxFile = File(context.filesDir, "models/sign_transformer.onnx")
+        val onnxFile = bundledOrDownloadedOnnx()
         if (onnxFile.exists()) {
             try {
                 val env = OrtEnvironment.getEnvironment()
@@ -128,6 +132,15 @@ class SignTransformerClassifier(
                 val inputs = session.inputInfo
                 val outputs = session.outputInfo
                 inputs.keys.firstOrNull()?.let { inputName = it }
+                val inputShape = (inputs[inputName]?.info as? TensorInfo)?.shape ?: longArrayOf()
+                val lastDimension = inputShape.lastOrNull()?.toInt() ?: FEATURES_PER_FRAME
+                if (inputShape.size == 3 && lastDimension in setOf(63, 147)) {
+                    modelFeatureSize = lastDimension
+                    onnxUsesFlatFeatures = true
+                } else {
+                    modelFeatureSize = FEATURES_PER_FRAME
+                    onnxUsesFlatFeatures = false
+                }
                 // Detect optional second input for the padding mask.
                 hasPaddingMaskInput = inputs.keys.any { it == "padding_mask" || it == "src_key_padding_mask" }
                 if (hasPaddingMaskInput) {
@@ -145,7 +158,7 @@ class SignTransformerClassifier(
                     "Loaded sign_transformer ONNX (classes=$numClasses, " +
                         "padding_mask_in=$hasPaddingMaskInput, " +
                         "embedding_out=$hasEmbeddingOutput, " +
-                        "inputs=${inputs.keys}, outputs=${outputs.keys})"
+                        "features=$modelFeatureSize, inputs=${inputs.keys}, outputs=${outputs.keys})"
                 )
                 return
             } catch (e: Throwable) {
@@ -342,7 +355,7 @@ class SignTransformerClassifier(
         val env = ortEnv ?: return null
         return try {
             val (tensorInput, mask) = buildTransformerInputs(sequence)
-            val shape = longArrayOf(1L, maxSeqLen.toLong(), nJoints.toLong(), nChannels.toLong())
+            val shape = onnxInputShape()
             val inputTensor = OnnxTensor.createTensor(env, FloatBuffer.wrap(tensorInput), shape)
 
             val inputs = HashMap<String, OnnxTensor>(2)
@@ -462,13 +475,13 @@ class SignTransformerClassifier(
      * it to count real (non-padded) frames in the buffer.
      */
     private fun buildTransformerInputs(sequence: List<FloatArray>): Pair<FloatArray, BooleanArray> {
-        val tensor = FloatArray(maxSeqLen * nJoints * nChannels)
+        val tensor = FloatArray(maxSeqLen * modelFeatureSize)
         val mask = BooleanArray(maxSeqLen)
         val framesToCopy = minOf(sequence.size, maxSeqLen)
         for (i in 0 until framesToCopy) {
             val frame = sequence[i]
-            val dst = i * featuresPerFrame
-            val n = minOf(frame.size, featuresPerFrame)
+            val dst = i * modelFeatureSize
+            val n = minOf(frame.size, modelFeatureSize)
             System.arraycopy(frame, 0, tensor, dst, n)
             // Mask = True when the frame is "all zero" (padded/empty).
             var sumAbs = 0f
@@ -485,7 +498,7 @@ class SignTransformerClassifier(
         val session = ortSession ?: return null
         return try {
             val (tensor, mask) = buildTransformerInputs(sequence)
-            val shape = longArrayOf(1L, maxSeqLen.toLong(), nJoints.toLong(), nChannels.toLong())
+            val shape = onnxInputShape()
             val inputTensor = OnnxTensor.createTensor(env, FloatBuffer.wrap(tensor), shape)
 
             val inputs = HashMap<String, OnnxTensor>(2)
@@ -548,6 +561,12 @@ class SignTransformerClassifier(
         return SignClassificationResult(word, word, probs[maxIdx], maxIdx)
     }
 
+    private fun onnxInputShape(): LongArray = if (onnxUsesFlatFeatures) {
+        longArrayOf(1L, maxSeqLen.toLong(), modelFeatureSize.toLong())
+    } else {
+        longArrayOf(1L, maxSeqLen.toLong(), nJoints.toLong(), nChannels.toLong())
+    }
+
     private fun softmax(logits: FloatArray): FloatArray {
         val max = logits.maxOrNull() ?: 0f
         val exps = FloatArray(logits.size) {
@@ -561,6 +580,22 @@ class SignTransformerClassifier(
         val downloaded = File(context.filesDir, "models/sign_transformer.tflite")
         if (downloaded.exists()) return loadFromFile(downloaded)
         return try { loadFromAssets("sign_transformer.tflite") } catch (e: Exception) { null }
+    }
+
+    /** ONNX Runtime necesita una ruta de archivo; instalamos el modelo base del APK la primera vez. */
+    private fun bundledOrDownloadedOnnx(): File {
+        val modelDir = File(context.filesDir, "models").apply { mkdirs() }
+        val target = File(modelDir, "sign_transformer.onnx")
+        if (target.exists()) return target
+        return try {
+            context.assets.open("sign_transformer.onnx").use { input ->
+                target.outputStream().use { output -> input.copyTo(output) }
+            }
+            target
+        } catch (e: Exception) {
+            Log.w(tag, "Bundled transformer is not available", e)
+            target
+        }
     }
 
     private fun loadFromFile(file: File): MappedByteBuffer {

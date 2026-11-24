@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Viabilidad · Overlay de Landmarks (Manos + Cara) — LSEC Translator</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --line:#30363d;
+    --text:#e6edf3; --muted:#8b949e; --accent:#58a6ff;
+    --hand:#f78166; --face:#d2a8ff; --pose:#7ee787;
+    --warn:#f0883e; --good:#3fb950; --bad:#f85149;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.55}
+  header{padding:32px 24px 8px;text-align:center;border-bottom:1px solid var(--line)}
+  header h1{margin:0 0 6px;font-size:26px;letter-spacing:.2px}
+  header p{margin:0;color:var(--muted);font-size:14px}
+  main{max-width:1200px;margin:0 auto;padding:24px}
+  h2{margin-top:36px;font-size:20px;border-left:4px solid var(--accent);padding-left:10px}
+  h3{margin-top:22px;font-size:16px;color:var(--accent)}
+  .grid{display:grid;gap:18px}
+  .g2{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px}
+  .card h3{margin-top:0}
+  .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;letter-spacing:.3px}
+  .b-good{background:rgba(63,185,80,.15);color:var(--good);border:1px solid rgba(63,185,80,.4)}
+  .b-mid {background:rgba(240,136,62,.15);color:var(--warn);border:1px solid rgba(240,136,62,.4)}
+  .b-low {background:rgba(248,81,73,.15);color:var(--bad); border:1px solid rgba(248,81,73,.4)}
+  .small{font-size:12px;color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th{color:var(--muted);font-weight:600;background:rgba(255,255,255,.02)}
+  tr:last-child td{border-bottom:none}
+  code{background:rgba(110,118,129,.2);padding:1px 6px;border-radius:4px;font-size:13px;color:#ff7b72}
+  pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:14px;overflow:auto;font-size:12.5px;line-height:1.5}
+  pre .k{color:#ff7b72} pre .s{color:#a5d6ff} pre .c{color:#8b949e;font-style:italic} pre .n{color:#d2a8ff}
+  .stage{position:relative;width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#0a0a0a,#1a1a1a);border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+  .stage svg{width:100%;height:100%;display:block}
+  .stage .label{position:absolute;top:10px;left:12px;background:rgba(0,0,0,.6);padding:4px 10px;border-radius:6px;font-size:12px;color:#fff}
+  .stage .legend{position:absolute;bottom:10px;left:12px;background:rgba(0,0,0,.65);padding:6px 10px;border-radius:6px;font-size:11.5px;display:flex;gap:14px;flex-wrap:wrap}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}
+  ul{margin:6px 0 0 18px;padding:0}
+  li{margin:4px 0}
+  .arrow{display:flex;align-items:center;justify-content:center;gap:10px;margin:14px 0;color:var(--muted);font-size:13px}
+  .arrow::before,.arrow::after{content:"";flex:1;height:1px;background:var(--line)}
+  .toggle{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .toggle button{background:#21262d;color:var(--text);border:1px solid var(--line);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px}
+  .toggle button.active{background:var(--accent);color:#0d1117;border-color:var(--accent);font-weight:600}
+  .meter{height:8px;background:#21262d;border-radius:4px;overflow:hidden;margin-top:4px}
+  .meter > span{display:block;height:100%;background:linear-gradient(90deg,var(--good),var(--warn),var(--bad))}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Viabilidad del Overlay Visual de Landmarks (Manos + Cara) — LSEC Translator</h1>
+  <p>Análisis técnico + visual · Proyecto <code>ModeloPrototipo/frontend</code> · Android (Kotlin + Jetpack Compose + MediaPipe 0.10.9)</p>
+</header>
+
+<main>
+
+<!-- ╔══════════════════════════════════════╗ -->
+<!-- ║   1.  ESTADO ACTUAL vs PROPUESTO     ║ -->
+<!-- ╚══════════════════════════════════════╝ -->
+<h2>1. Antes vs Después (vista de cámara)</h2>
+
+<div class="toggle">
+  <button class="active" data-stage="current">Estado actual (sin overlay)</button>
+  <button data-stage="proposed">Propuesto (overlay manos + cara)</button>
+</div>
+
+<div class="grid g2">
+  <div class="stage" id="stage-current">
+    <span class="label">CameraScreen.kt · PreviewView + columnas inferiores</span>
+    <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid meet">
+      <!-- Silueta de persona -->
+      <g opacity=".25" fill="#58a6ff">
+        <ellipse cx="400" cy="160" rx="70" ry="85"/>
+        <path d="M280 240 Q400 200 520 240 L560 380 L240 380 Z"/>
+      </g>
+      <!-- Sin landmarks -->
+      <text x="400" y="225" text-anchor="middle" fill="#f85149" font-size="18" font-family="monospace">
+        (sin overlay gráfico)
+      </text>
+      <!-- UI inferior real -->
+      <g font-family="sans-serif" font-size="11">
+        <rect x="20" y="395" width="760" height="40" rx="10" fill="rgba(0,0,0,.75)"/>
+        <text x="40"  y="418" fill="#fff">● Estático</text>
+        <text x="170" y="418" fill="#aaa">○ Dinámico</text>
+        <rect x="270" y="408" width="200" height="14" rx="7" fill="#21262d"/>
+        <rect x="270" y="408" width="60"  height="14" rx="7" fill="#3fb950"/>
+        <text x="490" y="418" fill="#aaa">Confianza 32%</text>
+        <rect x="610" y="408" width="160" height="14" rx="7" fill="rgba(0,0,0,.7)"/>
+        <text x="690" y="418" fill="#aaa" text-anchor="middle">Sin manos</text>
+      </g>
+    </svg>
+    <div class="legend">
+      <span><span class="dot" style="background:#f85149"></span>No dibuja landmarks</span>
+      <span><span class="dot" style="background:#8b949e"></span>Solo chips de texto</span>
+    </div>
+  </div>
+
+  <div class="stage" id="stage-proposed">
+    <span class="label">Misma pantalla + Compose Canvas overlay</span>
+    <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <radialGradient id="bg" cx="50%" cy="40%" r="70%">
+          <stop offset="0%" stop-color="#1a1a2a"/>
+          <stop offset="100%" stop-color="#0a0a0f"/>
+        </radialGradient>
+      </defs>
+      <rect width="800" height="450" fill="url(#bg)"/>
+
+      <!-- === CARA (478 landmarks) — malla simplificada === -->
+      <g stroke="#d2a8ff" stroke-width=".6" fill="none" opacity=".75">
+        <!-- Contorno ovalado (jawline) -->
+        <ellipse cx="400" cy="155" rx="62" ry="80" stroke-width="1.4" opacity=".9"/>
+        <!-- Ojos -->
+        <ellipse cx="378" cy="140" rx="12" ry="5"/>
+        <ellipse cx="422" cy="140" rx="12" ry="5"/>
+        <!-- Cejas -->
+        <path d="M362 128 Q378 122 394 128"/>
+        <path d="M406 128 Q422 122 438 128"/>
+        <!-- Nariz -->
+        <path d="M400 145 L400 175"/>
+        <!-- Boca -->
+        <path d="M385 188 Q400 196 415 188"/>
+        <!-- Mejillas -->
+        <path d="M340 165 Q355 180 380 185"/>
+        <path d="M460 165 Q445 180 420 185"/>
+      </g>
+      <!-- Puntos faciales clave (color violeta) -->
+      <g fill="#d2a8ff">
+        <circle cx="400" cy="155" r="2.2"/>     <!-- nariz -->
+        <circle cx="378" cy="140" r="2"/>       <!-- ojo izq -->
+        <circle cx="422" cy="140" r="2"/>       <!-- ojo der -->
+        <circle cx="400" cy="188" r="2"/>       <!-- boca centro -->
+        <circle cx="338" cy="155" r="2"/>       <!-- oreja izq -->
+        <circle cx="462" cy="155" r="2"/>       <!-- oreja der -->
+        <circle cx="400" cy="75"  r="2.4"/>     <!-- frente -->
+        <circle cx="400" cy="235" r="2"/>       <!-- mentón -->
+      </g>
+
+      <!-- === MANOS (21 landmarks c/u) === -->
+      <!-- Mano izquierda (en frente del pecho) -->
+      <g fill="#f78166" stroke="#f78166" stroke-width="2" fill-opacity=".9">
+        <!-- palma -->
+        <ellipse cx="280" cy="300" rx="28" ry="32" opacity=".35" stroke-width="1.2"/>
+        <!-- 21 landmarks -->
+        <circle cx="280" cy="330" r="2.5"/>  <!-- 0 wrist -->
+        <circle cx="268" cy="318" r="2"/>    <!-- 1 thumb_cmc -->
+        <circle cx="258" cy="306" r="2"/>    <!-- 2 thumb_mcp -->
+        <circle cx="252" cy="292" r="2"/>    <!-- 3 thumb_ip -->
+        <circle cx="248" cy="280" r="2"/>    <!-- 4 thumb_tip -->
+        <circle cx="272" cy="302" r="2"/>    <!-- 5 index_mcp -->
+        <circle cx="270" cy="285" r="2"/>    <!-- 6 index_pip -->
+        <circle cx="268" cy="270" r="2"/>    <!-- 7 index_dip -->
+        <circle cx="266" cy="258" r="2"/>    <!-- 8 index_tip -->
+        <circle cx="282" cy="300" r="2"/>    <!-- 9 middle_mcp -->
+        <circle cx="280" cy="282" r="2"/>    <!-- 10 middle_pip -->
+        <circle cx="278" cy="268" r="2"/>    <!-- 11 middle_dip -->
+        <circle cx="276" cy="256" r="2"/>    <!-- 12 middle_tip -->
+        <circle cx="292" cy="300" r="2"/>    <!-- 13 ring_mcp -->
+        <circle cx="290" cy="283" r="2"/>    <!-- 14 ring_pip -->
+        <circle cx="288" cy="270" r="2"/>    <!-- 15 ring_dip -->
+        <circle cx="286" cy="258" r="2"/>    <!-- 16 ring_tip -->
+        <circle cx="302" cy="304" r="2"/>    <!-- 17 pinky_mcp -->
+        <circle cx="300" cy="290" r="2"/>    <!-- 18 pinky_pip -->
+        <circle cx="298" cy="278" r="2"/>    <!-- 19 pinky_dip -->
+        <circle cx="296" cy="266" r="2"/>    <!-- 20 pinky_tip -->
+      </g>
+      <g stroke="#f78166" stroke-width="1.2" fill="none" opacity=".75">
+        <!-- conexiones mano izq -->
+        <path d="M280 330 L268 318 L258 306 L252 292 L248 280"/>
+        <path d="M280 330 L272 302 L270 285 L268 270 L266 258"/>
+        <path d="M280 330 L282 300 L280 282 L278 268 L276 256"/>
+        <path d="M280 330 L292 300 L290 283 L288 270 L286 258"/>
+        <path d="M280 330 L302 304 L300 290 L298 278 L296 266"/>
+        <!-- palma -->
+        <path d="M272 302 L282 300 L292 300 L302 304" stroke-width="1.4"/>
+      </g>
+
+      <!-- Mano derecha (cerca de la cara → seña "papá"/"mamá") -->
+      <g fill="#f78166" stroke="#f78166" stroke-width="2" fill-opacity=".9">
+        <ellipse cx="400" cy="100" rx="22" ry="26" opacity=".35" stroke-width="1.2"/>
+        <circle cx="400" cy="125" r="2.5"/>  <!-- 0 wrist -->
+        <circle cx="412" cy="116" r="2"/>    <!-- 1 thumb -->
+        <circle cx="420" cy="106" r="2"/>
+        <circle cx="424" cy="95"  r="2"/>
+        <circle cx="426" cy="86"  r="2"/>
+        <circle cx="408" cy="105" r="2"/>
+        <circle cx="410" cy="92"  r="2"/>
+        <circle cx="411" cy="80"  r="2"/>
+        <circle cx="412" cy="70"  r="2"/>
+        <circle cx="398" cy="105" r="2"/>
+        <circle cx="398" cy="92"  r="2"/>
+        <circle cx="398" cy="80"  r="2"/>
+        <circle cx="398" cy="70"  r="2"/>
+        <circle cx="388" cy="105" r="2"/>
+        <circle cx="388" cy="92"  r="2"/>
+        <circle cx="388" cy="80"  r="2"/>
+        <circle cx="388" cy="70"  r="2"/>
+        <circle cx="378" cy="108" r="2"/>
+        <circle cx="378" cy="95"  r="2"/>
+        <circle cx="378" cy="83"  r="2"/>
+        <circle cx="378" cy="73"  r="2"/>
+      </g>
+      <g stroke="#f78166" stroke-width="1.2" fill="none" opacity=".75">
+        <path d="M400 125 L412 116 L420 106 L424 95 L426 86"/>
+        <path d="M400 125 L408 105 L410 92 L411 80 L412 70"/>
+        <path d="M400 125 L398 105 L398 92 L398 80 L398 70"/>
+        <path d="M400 125 L388 105 L388 92 L388 80 L388 70"/>
+        <path d="M400 125 L378 108 L378 95 L378 83 L378 73"/>
+        <path d="M408 105 L398 105 L388 105 L378 108" stroke-width="1.4"/>
+      </g>
+
+      <!-- === HUESOS (pose, sigue funcionando) === -->
+      <g stroke="#7ee787" stroke-width="1.6" fill="none" opacity=".5" stroke-dasharray="4 3">
+        <line x1="400" y1="235" x2="360" y2="290"/>
+        <line x1="400" y1="235" x2="440" y2="290"/>
+        <line x1="360" y1="290" x2="280" y2="330"/>
+        <line x1="440" y1="290" x2="400" y2="125"/>
+      </g>
+      <g fill="#7ee787">
+        <circle cx="400" cy="235" r="2.5"/>
+        <circle cx="360" cy="290" r="2"/>
+        <circle cx="440" cy="290" r="2"/>
+        <circle cx="280" cy="330" r="2"/>
+        <circle cx="400" cy="125" r="2"/>
+      </g>
+
+      <!-- UI inferior -->
+      <g font-family="sans-serif" font-size="11">
+        <rect x="20" y="395" width="760" height="40" rx="10" fill="rgba(0,0,0,.75)"/>
+        <text x="40"  y="418" fill="#aaa">○ Estático</text>
+        <text x="170" y="418" fill="#fff">● Dinámico · buffer 42/60</text>
+        <rect x="380" y="408" width="200" height="14" rx="7" fill="#21262d"/>
+        <rect x="380" y="408" width="148" height="14" rx="7" fill="#58a6ff"/>
+        <text x="600" y="418" fill="#aaa">Confianza 74%</text>
+        <rect x="690" y="408" width="80"  height="14" rx="7" fill="rgba(63,185,80,.3)"/>
+        <text x="730" y="418" fill="#fff" text-anchor="middle">2 manos</text>
+      </g>
+    </svg>
+    <div class="legend">
+      <span><span class="dot" style="background:#f78166"></span>Manos (21×2)</span>
+      <span><span class="dot" style="background:#d2a8ff"></span>Cara (478)</span>
+      <span><span class="dot" style="background:#7ee787"></span>Huesos</span>
+    </div>
+  </div>
+</div>
+
+<p class="small">
+  La pantalla <strong>CameraScreen.kt</strong> usa hoy <code>PreviewView</code> sin ningún <code>Canvas</code> encima. El usuario solo recibe un chip “Manos detectadas / Sin manos”. La propuesta añade un <code>Canvas { }</code> superpuesto que pinta puntos + aristas topológicas en tiempo real.
+</p>
+
+<!-- ╔══════════════════════════════════════╗ -->
+<!-- ║   2.  TOPOLOGÍA DE LANDMARKS         ║ -->
+<!-- ╚══════════════════════════════════════╝ -->
+<h2>2. Topología de landmarks (lo que se dibujaría)</h2>
+
+<div class="grid g3">
+  <div class="card">
+    <h3 style="color:var(--hand)">🖐️ Mano · 21 puntos</h3>
+    <p class="small">MediaPipe HandLandmarker · ya integrado en <code>HandDetector.kt:44</code></p>
+    <table>
+      <tr><th>#</th><th>Nombre</th></tr>
+      <tr><td>0</td><td>WRIST (muñeca)</td></tr>
+      <tr><td>1–4</td><td>THUMB (pulgar · CMC/MCP/IP/TIP)</td></tr>
+      <tr><td>5–8</td><td>INDEX (índice)</td></tr>
+      <tr><td>9–12</td><td>MIDDLE (medio)</td></tr>
+      <tr><td>13–16</td><td>RING (anular)</td></tr>
+      <tr><td>17–20</td><td>PINKY (meñique)</td></tr>
+    </table>
+    <p class="small">Conexiones: pulgar (4) + 4 dedos × 4 falanges + palma (1) ≈ <strong>20 aristas por mano</strong>. Color naranja en la app.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="color:var(--face)">🙂 Cara · 478 puntos</h3>
+    <p class="small">MediaPipe <strong>FaceLandmarker</strong> · <em>NO integrado aún</em> — mismo paquete <code>tasks-vision:0.10.9</code></p>
+    <table>
+      <tr><th>Grupo</th><th>Cant.</th></tr>
+      <tr><td>Contorno (oval cara)</td><td>~36</td></tr>
+      <tr><td>Cejas (izq + der)</td><td>~22</td></tr>
+      <tr><td>Ojos (iris + párpados)</td><td>~110</td></tr>
+      <tr><td>Nariz + puente + fosas</td><td>~30</td></tr>
+      <tr><td>Boca (labios + interior)</td><td>~80</td></tr>
+      <tr><td>Malla <em>tesselation</em></td><td>resto</td></tr>
+    </table>
+    <p class="small">Para overlay bastan <strong>FACEMESH_TESSELATION</strong> (10 conexiones por landmark) o solo <strong>CONTOURS</strong> (mucho más ligero). Color violeta en la propuesta.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="color:var(--pose)">🦴 Pose · 33 puntos</h3>
+    <p class="small">MediaPipe PoseLandmarker · ya integrado en <code>HandDetector.kt:61</code></p>
+    <table>
+      <tr><th>#</th><th>Nombre</th></tr>
+      <tr><td>0</td><td>NOSE (único punto facial hoy)</td></tr>
+      <tr><td>11, 12</td><td>SHOULDERS L/R (origen normalización)</td></tr>
+      <tr><td>13, 14</td><td>ELBOWS</td></tr>
+      <tr><td>15, 16</td><td>WRISTS</td></tr>
+      <tr><td>resto</td><td>cuerpo completo (no usado)</td></tr>
+    </table>
+    <p class="small">Solo 7 puntos llegan al modelo (<code>LandmarkNormalizer.kt:125</code>). Color verde, líneas punteadas — opcional en el overlay.</p>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════╗ -->
+<!-- ║   3.  POR QUÉ ES NECESARIO           ║ -->
+<!-- ╚══════════════════════════════════════╝ -->
+<h2>3. ¿Por qué es <em>muy necesario</em> para modo dinámico?</h2>
+
+<div class="grid g2">
+  <div class="card">
+    <h3 style="color:var(--good)">✔️ Marcadores no-manuales (NMM)</h3>
+    <p>En LSEC y otras LSE, las señas se distinguen por la <strong>expresión facial</strong> tanto como por la mano:</p>
+    <ul>
+      <li>Cejas levantadas → pregunta (sube cejas + signo manual)</li>
+      <li>Cejas fruncidas → negación / afirmación enfática</li>
+      <li>Forma de boca (boca cerrada = adverbio, abierta = verbo)</li>
+      <li>Dirección de mirada → apunta al referente</li>
+      <li>Movimiento de cabeza → afirmación/negación sin manos</li>
+    </ul>
+    <p class="small">El modelo de 147 dims actual solo tiene <code>nose (0,0,0)</code> → <strong>ceguera total a NMM</strong>.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="color:var(--warn)">📍 Contacto mano-cara</h3>
+    <p>Muchas señas dinámicas de LSEC se definen por <em>dónde</em> toca la mano la cara:</p>
+    <ul>
+      <li><strong>MAMÁ</strong>: pulgar en mejilla</li>
+      <li><strong>PAPÁ</strong>: pulgar en frente</li>
+      <li><strong>CASA</strong>: mejillas (boca abierta)</li>
+      <li><strong>BEBER</strong>: mano en boca</li>
+      <li><strong>NOMBRE</strong>: dedo medio cruza el pecho</li>
+    </ul>
+    <p class="small">Sin landmarks faciales, el modelo no puede medir la distancia mano→frente vs mano→mejilla.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="color:var(--accent)">🔄 Trayectorias en el espacio facial</h3>
+    <p>Las señas dinámicas son <strong>recorridos</strong>, no poses. Necesitas puntos de referencia estables:</p>
+    <ul>
+      <li>Ojos fijos (para medir desviación de cabeza)</li>
+      <li>Nariz fija (para medir trayectoria)</li>
+      <li>Orejas (para calcular rotación 3D de la cabeza)</li>
+      <li>Borde de la mandíbula (límite inferior del espacio de señas)</li>
+    </ul>
+    <p>Con FaceLandmarker obtienes ~10 puntos rígidos en el cráneo + 4 en mandíbula.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="color:var(--bad)">⚠️ Falso negativo actual</h3>
+    <p>Durante las pruebas F7 (sub-agente <code>lsc-user-validator</code>) las señas cerca de la cara fallan porque:</p>
+    <ol>
+      <li>La mano <strong>ocluye</strong> parte de la cara → PoseLandmarker pierde el hombro/nariz.</li>
+      <li>Sin rostro detectado, <code>normalizeHolistic()</code> <em>usa solo mano</em> y la seña se vuelve ambigua.</li>
+      <li>El usuario no sabe <em>por qué</em> falló: hoy no ve nada en pantalla.</li>
+    </ol>
+    <p class="small">Un overlay mostraría en vivo: <em>"Cara no detectada, aléjate 30 cm"</em>.</p>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════╗ -->
+<!-- ║   4.  PIPELINE PROPUESTO             ║ -->
+<!-- ╚══════════════════════════════════════╝ -->
+<h2>4. Pipeline propuesto (integración mínima)</h2>
+
+<div class="card">
+<pre><span class="c">// ─── 1) HandDetector.kt — añadir FaceLandmarker ───</span>
+<span class="k">import</span> com.google.mediapipe.tasks.vision.facelandmarker.<span class="n">FaceLandmarker</span>
+
+<span class="k">private</span> <span class="k">var</span> faceLandmarker: FaceLandmarker? = <span class="k">null</span>
+
+<span class="c">// init(): mismo `tasks-vision:0.10.9` ya en libs.versions.toml</span>
+faceLandmarker = FaceLandmarker.createFromOptions(context,
+    FaceLandmarkerOptions.builder()
+        .setBaseOptions(BaseOptions.builder()
+            .setModelAssetPath(<span class="s">"face_landmarker.task"</span>).build())
+        .setRunningMode(RunningMode.VIDEO)
+        .setNumFaces(1)
+        .setOutputFaceBlendshapes(<span class="k">true</span>)   <span class="c">// 52 expresiones → NMM</span>
+        .build())
+
+<span class="c">// ─── 2) Nuevo retorno “raw” para overlay (sin romper el modelo) ───</span>
+<span class="k">data class</span> <span class="n">LandmarkFrame</span>(
+    <span class="k">val</span> leftHand:  List&lt;List&lt;Float&gt;&gt;,   <span class="c">// 21×3</span>
+    <span class="k">val</span> rightHand: List&lt;List&lt;Float&gt;&gt;,   <span class="c">// 21×3</span>
+    <span class="k">val</span> face:      List&lt;List&lt;Float&gt;&gt;,   <span class="c">// 478×3</span>
+    <span class="k">val</span> blendshapes: FloatArray,         <span class="c">// 52 (NMM)</span>
+    <span class="k">val</span> pose:      List&lt;List&lt;Float&gt;&gt;    <span class="c">// 33×3</span>
+)
+
+<span class="c">// ─── 3) CameraScreen.kt — overlay Compose Canvas ───</span>
+Box(Modifier.fillMaxSize()) {
+    AndroidView({ previewView })                <span class="c">// cámara debajo</span>
+    Canvas(Modifier.fillMaxSize()) {             <span class="c">// overlay arriba</span>
+        drawHandConnections(leftHand, color = Orange)
+        drawFaceContours(face, color = Violet)
+        drawPoseSkeleton(pose, color = Green)
+    }
+    ResultsOverlay(uiState)                     <span class="c">// UI inferior</span>
+}</pre>
+</div>
+
+<!-- ╔══════════════════════════════════════╗ -->
+<!-- ║   5.  MATRIZ DE VIABILIDAD            ║ -->
+<!-- ╚══════════════════════════════════════╝ -->
+<h2>5. Matriz de viabilidad</h2>
+
+<table>
+  <tr><th>Componente</th><th>Viabilidad</th><th>Esfuerzo</th><th>Riesgo</th></tr>
+  <tr>
+    <td>Añadir <code>face_landmarker.task</code> (~3.4 MB) a <code>app/src/main/assets/</code></td>
+    <td><span class="badge b-good">ALTA</span></td>
+    <td>Bajo (curl + copiar)</td>
+    <td>Sin riesgo — modelo oficial Google</td>
+  </tr>
+  <tr>
+    <td>Crear instancia <code>FaceLandmarker</code> en <code>HandDetector</code></td>
+    <td><span class="badge b-good">ALTA</span></td>
+    <td>Bajo — mismo paquete <code>tasks-vision:0.10.9</code></td>
+    <td>Sin cambios en Gradle</td>
+  </tr>
+  <tr>
+    <td>Refactorizar retorno: <code>FloatArray(147)</code> → <code>LandmarkFrame</code> con listas por articulación</td>
+    <td><span class="badge b-good">ALTA</span></td>
+    <td>Medio (toca <code>LandmarkNormalizer</code>, <code>DynamicSignClassifier</code>, <code>UseCase</code>)</td>
+    <td>Riesgo bajo si se conserva <code>FloatArray(147)</code> como vista derivada</td>
+  </tr>
+  <tr>
+    <td>Compose Canvas encima de <code>PreviewView</code></td>
+    <td><span class="badge b-good">ALTA</span></td>
+    <td>Medio (mapeo coordenadas + mirror de cámara frontal)</td>
+    <td>Bien documentado en docs oficiales de CameraX</td>
+  </tr>
+  <tr>
+    <td>Latencia sigue &lt; 33 ms / frame</td>
+    <td><span class="badge b-mid">MEDIA-ALTA</span></td>
+    <td>Medio (perfil con <code>androidx.tracing</code>)</td>
+    <td>FaceLandmarker Lite añade ~6–10 ms en gama media; considerar <code>enableFaceLandmarksDepthZ=false</code></td>
+  </tr>
+  <tr>
+    <td>Sustituir PoseLandmarker por FaceLandmarker (solo para dinámico)</td>
+    <td><span class="badge b-good">ALTA</span></td>
+    <td>Medio — FaceLandmarker devuelve nariz, ojos, boca, orejas (cubre lo que daba PoseLandmarker)</td>
+    <td>Reduce ~5 ms y libera 5.8 MB de APK</td>
+  </tr>
+  <tr>
+    <td>Re-entrenar modelo con cara (147 dims → 147 + 478*3 = 1581 dims)</td>
+    <td><span class="badge b-mid">MEDIA</span></td>
+    <td>Alto (sub-agente <code>lsc-baseline-trainer</code> + <code>lsc-pipeline-engineer</code>)</td>
+    <td>Hay que re-capturar dataset o fusionar con el actual</td>
+  </tr>
+  <tr>
+    <td>Guardar blendshapes (52 dims) como canal auxiliar del clasificador</td>
+    <td><span class="badge b-good">ALTA</span></td>
+    <td>Medio — entrada barata (52 floats) que mejora enormemente NMM</td>
+    <td>Sin re-captura: se calcula del frame existente</td>
+  </tr>
+</table>
+
+<!-- ╔══════════════════════════════════════╗ -->
+<!-- ║   6.  RENDIMIENTO ESPERADO            ║ -->
+<!-- ╚══════════════════════════════════════╝ -->
+<h2>6. Impacto en rendimiento (estimado)</h2>
+
+<div class="grid g3">
+  <div class="card">
+    <h3>Hoy (sin cara)</h3>
+    <div class="meter"><span style="width:35%"></span></div>
+    <p class="small">~12 ms/frame en Pixel 5 · 30 fps estable</p>
+    <ul>
+      <li>HandLandmarker · 2 manos · ~7 ms</li>
+      <li>PoseLandmarker · ~5 ms</li>
+      <li>Dibujo Compose · &lt; 1 ms</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Propuesto (con cara)</h3>
+    <div class="meter"><span style="width:62%"></span></div>
+    <p class="small">~20 ms/frame en Pixel 5 · 30 fps aún estable</p>
+    <ul>
+      <li>HandLandmarker · ~7 ms</li>
+      <li>PoseLandmarker · ~5 ms</li>
+      <li>FaceLandmarker Lite · ~6 ms</li>
+      <li>Canvas (478 pts + 2×21 pts) · &lt; 2 ms</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Si quieres ultra-ligero</h3>
+    <div class="meter"><span style="width:42%"></span></div>
+    <p class="small">~15 ms/frame · ahorra 5.8 MB de APK</p>
+    <ul>
+      <li>Drop <strong>PoseLandmarker</strong></li>
+      <li>Usar solo nariz/ojos/boca de <strong>FaceLandmarker</strong> como anclas de pose</li>
+      <li>Modo <code>refineLandmarks=false</code></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════╗ -->
+<!-- ║   7.  RECOMENDACIÓN                   ║ -->
+<!-- ╚══════════════════════════════════════╝ -->
+<h2>7. Veredicto final</h2>
+
+<div class="grid g2">
+  <div class="card">
+    <h3 style="color:var(--good)">✅ Recomendación</h3>
+    <p><strong>SÍ, es viable y muy recomendable.</strong> La librería ya está en el proyecto (<code>tasks-vision:0.10.9</code>); solo falta:</p>
+    <ol>
+      <li>Bajar <code>face_landmarker.task</code> a <code>assets/</code>.</li>
+      <li>Refactorizar <code>HandDetector</code> para exponer landmarks crudos.</li>
+      <li>Añadir un <code>Canvas { }</code> sobre el <code>PreviewView</code>.</li>
+      <li>(Opcional) Re-entrenar el clasificador con NMM para subir accuracy en modo dinámico.</li>
+    </ol>
+    <p class="small">Sin cambios en Gradle. Sin nuevas dependencias. Sin riesgo de regresión mayor si conservas el <code>FloatArray(147)</code>.</p>
+  </div>
+  <div class="card">
+    <h3 style="color:var(--accent)">📅 Roadmap sugerido</h3>
+    <table>
+      <tr><th>Sprint</th><th>Acción</th></tr>
+      <tr><td>S1 (1 día)</td><td>Descargar face_landmarker.task + instancia FaceLandmarker</td></tr>
+      <tr><td>S2 (2 días)</td><td>Refactor HandDetector → LandmarkFrame (back-compat 147)</td></tr>
+      <tr><td>S3 (1 día)</td><td>Compose Canvas overlay + mapeo coords + toggle en Settings</td></tr>
+      <tr><td>S4 (1 día)</td><td>Añadir blendshapes al modelo (52 dims)</td></tr>
+      <tr><td>S5 (1 sem)</td><td>Re-entrenar SignTransformer con dataset extendido (sub-agentes lsc-*)</td></tr>
+    </table>
+  </div>
+</div>
+
+<p class="small" style="text-align:center;margin-top:32px;color:var(--muted)">
+  Documento generado el 2026-07-14 · Basado en <code>HandDetector.kt</code>, <code>LandmarkNormalizer.kt</code>, <code>CameraScreen.kt</code>, <code>CameraViewModel.kt</code>, <code>build.gradle.kts</code> y <code>libs.versions.toml</code>
+</p>
+
+</main>
+
+<script>
+  // Toggle entre estados "current" / "proposed"
+  document.querySelectorAll('.toggle button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.toggle button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const stage = btn.dataset.stage;
+      document.getElementById('stage-current').style.display = stage === 'current' ? 'block' : 'none';
+      document.getElementById('stage-proposed').style.display = stage === 'proposed' ? 'block' : 'none';
+    });
+  });
+</script>
+
+</body>
+</html>
