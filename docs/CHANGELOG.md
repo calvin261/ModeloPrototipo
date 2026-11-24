@@ -15,6 +15,16 @@
 
 ---
 
+## [2026-07-18] · fix · code · MVP de gestos: inferencia unica y captura estricta
+
+**Que.** El pipeline de camara ahora ejecuta MediaPipe una sola vez por frame y reutiliza manos, pose y cara para normalizacion, overlay y el MVP. El clasificador de gestos exige una mano abierta durante al menos el 80% de la trayectoria, una duracion minima y recorridos mas definidos. La carga de ONNX/GRU es diferida, por lo que el modo MVP no intenta abrir el Transformer incompatible al iniciar la camara.
+
+**Por que.** La implementacion previa inferia manos dos veces por frame y aceptaba cualquier trayectoria amplia de muneca. En SM_X510, el ONNX bundled tambien fallaba al inicializar por usar IR version 10 con un runtime que soporta IR version 9.
+
+**Verificacion.** `:app:testDebugUnitTest --tests com.lsec.translator.ml.GestureCommandClassifierTest` pasa con casos de ausencia de rostro, mano cerrada y swipe horizontal valido.
+
+---
+
 ## [2026-06-22] · code · config · Cliente Android: inyección automática de `X-API-Key` para producción
 
 **Qué.**
@@ -957,4 +967,3 @@ URL raw: `https://huggingface.co/calvin261/lsec-models/resolve/main/…`.
 - [ ] Eliminar las 16 entries stale del registry local en
       `backend/models/exports/registry.json` (ahora vienen del `registry.json`
       del Space que solo tiene las 3 activas).
-

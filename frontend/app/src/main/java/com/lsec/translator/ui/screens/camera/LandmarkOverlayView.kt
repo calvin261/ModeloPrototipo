@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import com.lsec.translator.ml.LandmarkConnections
 import com.lsec.translator.ml.LandmarkOverlayData
+import com.lsec.translator.ml.GestureCommandClassifier
 
 /**
  * Capa Compose que dibuja los landmarks (manos + cara + pose) sobre el
@@ -47,6 +48,7 @@ import com.lsec.translator.ml.LandmarkOverlayData
 fun LandmarkOverlayView(
     data: LandmarkOverlayData,
     isFrontCamera: Boolean,
+    gestureTrail: List<GestureCommandClassifier.Point> = emptyList(),
     showFace: Boolean = true,
     showHandConnections: Boolean = true,
     modifier: Modifier = Modifier,
@@ -115,7 +117,51 @@ fun LandmarkOverlayView(
                 pointBuffer = pointBuffer,
             )
         }
+
+        if (gestureTrail.size > 1) {
+            drawGestureTrail(
+                trail = gestureTrail,
+                imageW = imgW,
+                imageH = imgH,
+                viewW = viewW,
+                viewH = viewH,
+                isFrontCamera = isFrontCamera,
+                imageRotationDegrees = rotation,
+            )
+        }
     }
+}
+
+private fun DrawScope.drawGestureTrail(
+    trail: List<GestureCommandClassifier.Point>,
+    imageW: Int,
+    imageH: Int,
+    viewW: Float,
+    viewH: Float,
+    isFrontCamera: Boolean,
+    imageRotationDegrees: Int,
+) {
+    val raw = FloatArray(trail.size * 3)
+    trail.forEachIndexed { index, point ->
+        raw[index * 3] = point.x
+        raw[index * 3 + 1] = point.y
+    }
+    val mapped = FloatArray(trail.size * 2)
+    CoordinateMapper.mapMany(raw, 0, trail.size, imageW, imageH, viewW, viewH, isFrontCamera, imageRotationDegrees, mapped)
+    for (index in 1 until trail.size) {
+        drawLine(
+            color = Color(0xFFFFD54F),
+            start = Offset(mapped[(index - 1) * 2], mapped[(index - 1) * 2 + 1]),
+            end = Offset(mapped[index * 2], mapped[index * 2 + 1]),
+            strokeWidth = 5f,
+            cap = StrokeCap.Round,
+        )
+    }
+    drawCircle(
+        color = Color(0xFFFFF59D),
+        radius = 8f,
+        center = Offset(mapped[mapped.size - 2], mapped[mapped.size - 1]),
+    )
 }
 
 // ════════════════════════════════════════════════════════════════════════════

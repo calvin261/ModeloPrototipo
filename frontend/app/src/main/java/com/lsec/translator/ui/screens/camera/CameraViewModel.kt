@@ -9,6 +9,7 @@ import com.lsec.translator.domain.usecase.DetectHandsUseCase
 import com.lsec.translator.domain.usecase.SynthesizeSpeechUseCase
 import com.lsec.translator.ml.DynamicSignClassifier
 import com.lsec.translator.ml.EmptyLandmarkOverlay
+import com.lsec.translator.ml.GestureCommandClassifier
 import com.lsec.translator.ml.HandDetector
 import com.lsec.translator.ml.LandmarkOverlayData
 import com.lsec.translator.ml.SignClassificationResult
@@ -61,6 +62,7 @@ data class CameraUiState(
     val landmarkOverlayVisible: Boolean = false,
     /** ¿El detector facial está disponible? (face_landmarker.task cargado). */
     val faceLandmarkerAvailable: Boolean = false,
+    val gestureTrail: List<GestureCommandClassifier.Point> = emptyList(),
 )
 
 /**
@@ -89,7 +91,7 @@ class CameraViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val prefs = userPreferences.preferencesFlow.first()
-            val visibleForMode = isOverlayEnabledForMode(
+            val visibleForMode = prefs.recognitionMode == "dynamic" || isOverlayEnabledForMode(
                 mode = prefs.recognitionMode,
                 prefs = prefs,
             )
@@ -110,6 +112,7 @@ class CameraViewModel @Inject constructor(
     // ───────────────────────────────────────────────────────────────────────
 
     private val landmarkBuffer = ArrayDeque<FloatArray>()
+    private val gestureClassifier = GestureCommandClassifier()
     private val ttsMutex = Mutex()
     private var lastSignSpoken: String = ""
     private var lastSpeakTime: Long = 0
@@ -165,17 +168,13 @@ class CameraViewModel @Inject constructor(
         handsDetected: Boolean,
         overlayData: LandmarkOverlayData,
     ) {
-        val result = signClassifier.processDynamicFrame(handLandmarks)
-        val stateInfo = signClassifier.dynamicStateInfo()
-
-        val statusMessage = when {
-            !handsDetected -> "Acerca una mano a la cámara"
-            stateInfo.state == DynamicSignClassifier.State.BUFFERING ->
-                "Capturando seña (${stateInfo.bufferSize} frames)"
-            stateInfo.state == DynamicSignClassifier.State.COOLDOWN ->
-                "Listo, realiza otra seña"
-            stateInfo.motionLevel > 0.04f -> "Detectando movimiento..."
-            else -> "Mueve la mano para iniciar una seña"
+        val gesture = gestureClassifier.process(overlayData)
+        val result = gesture.result
+        val trail = toCameraTrail(gesture.trail, overlayData)
+        val dynamicState = when (gesture.state) {
+            GestureCommandClassifier.State.CAPTURING -> DynamicSignClassifier.State.BUFFERING
+            GestureCommandClassifier.State.COOLDOWN -> DynamicSignClassifier.State.COOLDOWN
+            else -> DynamicSignClassifier.State.IDLE
         }
 
         if (result != null) {
@@ -187,12 +186,13 @@ class CameraViewModel @Inject constructor(
                     ecuadorianTranslation = result.ecuadorianVariant,
                     confidence = result.confidence,
                     latencyMs = System.currentTimeMillis() - startTime,
-                    dynamicState = stateInfo.state,
-                    motionLevel = stateInfo.motionLevel,
-                    bufferFill = (stateInfo.bufferSize.toFloat() / 60f).coerceIn(0f, 1f),
+                    dynamicState = dynamicState,
+                    motionLevel = (trail.size / GestureCommandClassifier.MAX_SAMPLES.toFloat()).coerceIn(0f, 1f),
+                    bufferFill = (trail.size / GestureCommandClassifier.MAX_SAMPLES.toFloat()).coerceIn(0f, 1f),
                     statusMessage = "Detectado: ${result.signName} (${(result.confidence * 100).toInt()}%)",
                     error = null,
                     landmarkOverlay = overlayData,
+                    gestureTrail = trail,
                 )
             }
             viewModelScope.launch { speakIfNeeded(result) }
@@ -201,15 +201,31 @@ class CameraViewModel @Inject constructor(
                 it.copy(
                     isProcessing = false,
                     handsDetected = handsDetected,
-                    dynamicState = stateInfo.state,
-                    motionLevel = stateInfo.motionLevel,
-                    bufferFill = (stateInfo.bufferSize.toFloat() / 60f).coerceIn(0f, 1f),
-                    statusMessage = statusMessage,
+                    dynamicState = dynamicState,
+                    motionLevel = (trail.size / GestureCommandClassifier.MAX_SAMPLES.toFloat()).coerceIn(0f, 1f),
+                    bufferFill = (trail.size / GestureCommandClassifier.MAX_SAMPLES.toFloat()).coerceIn(0f, 1f),
+                    statusMessage = gesture.status,
                     error = null,
                     landmarkOverlay = overlayData,
+                    gestureTrail = trail,
                 )
             }
         }
+    }
+
+    private fun toCameraTrail(
+        trail: List<GestureCommandClassifier.Point>,
+        overlay: LandmarkOverlayData,
+    ): List<GestureCommandClassifier.Point> {
+        val face = overlay.face ?: return emptyList()
+        if (face.size < 264 * 3) return emptyList()
+        fun point(index: Int) = GestureCommandClassifier.Point(face[index * 3], face[index * 3 + 1])
+        val nose = point(1)
+        val leftEye = point(33)
+        val rightEye = point(263)
+        val scale = kotlin.math.hypot(leftEye.x - rightEye.x, leftEye.y - rightEye.y)
+        if (scale < 0.01f) return emptyList()
+        return trail.map { GestureCommandClassifier.Point(nose.x + it.x * scale, nose.y + it.y * scale) }
     }
 
     private fun processFrameStatic(
@@ -320,6 +336,7 @@ class CameraViewModel @Inject constructor(
             userPreferences.setRecognitionMode(mode)
             landmarkBuffer.clear()
             signClassifier.clearDynamicBuffer()
+            gestureClassifier.clear()
             // Re-leer la pref correspondiente al nuevo modo para el overlay
             val prefs = userPreferences.preferencesFlow.first()
             val visible = isOverlayEnabledForMode(mode, prefs)

@@ -42,6 +42,8 @@ data class LandmarkOverlayData(
      * Sirve para reducir dibujo en modo batería baja.
      */
     val faceContoursOnly: Boolean = false,
+    /** Pose completo (33 x 3) para normalizar el clasificador sin re-inferirlo. */
+    val pose: FloatArray? = null,
 ) {
     /**
      * Devuelve el número de landmarks de cara, o 0 si no hay.
@@ -79,6 +81,9 @@ data class LandmarkOverlayData(
         if (face != null && other.face != null) {
             if (!face.contentEquals(other.face)) return false
         } else if (face != other.face) return false
+        if (pose != null && other.pose != null) {
+            if (!pose.contentEquals(other.pose)) return false
+        } else if (pose != other.pose) return false
         return true
     }
 
@@ -91,6 +96,7 @@ data class LandmarkOverlayData(
         result = 31 * result + imageRotationDegrees
         result = 31 * result + timestampMs.hashCode()
         result = 31 * result + faceContoursOnly.hashCode()
+        result = 31 * result + (pose?.contentHashCode() ?: 0)
         return result
     }
 }

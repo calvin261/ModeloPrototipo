@@ -33,6 +33,7 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import com.lsec.translator.ml.DynamicSignClassifier
+import com.lsec.translator.ml.GestureCommandClassifier
 import com.lsec.translator.ui.common.KeepScreenOn
 import java.util.concurrent.Executors
 
@@ -83,12 +84,14 @@ fun CameraScreen(
                             contentDescription = "Toggle voz"
                         )
                     }
-                    LandmarkOverlayToggle(
-                        visible = uiState.landmarkOverlayVisible,
-                        onToggle = { viewModel.toggleLandmarkOverlay() },
-                        faceAvailable = uiState.faceLandmarkerAvailable,
-                        recognitionMode = uiState.recognitionMode,
-                    )
+                    if (uiState.recognitionMode != "dynamic") {
+                        LandmarkOverlayToggle(
+                            visible = uiState.landmarkOverlayVisible,
+                            onToggle = { viewModel.toggleLandmarkOverlay() },
+                            faceAvailable = uiState.faceLandmarkerAvailable,
+                            recognitionMode = uiState.recognitionMode,
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Black.copy(alpha = 0.7f),
@@ -112,10 +115,11 @@ fun CameraScreen(
                     )
                     // Overlay de landmarks (manos + cara) encima de la cámara.
                     // Solo se pinta cuando el toggle rápido está activo.
-                    if (uiState.landmarkOverlayVisible) {
+                    if (uiState.landmarkOverlayVisible || uiState.recognitionMode == "dynamic") {
                         LandmarkOverlayView(
                             data = uiState.landmarkOverlay,
                             isFrontCamera = uiState.useFrontCamera,
+                            gestureTrail = uiState.gestureTrail,
                             showFace = uiState.faceLandmarkerAvailable,
                             showHandConnections = true,
                             modifier = Modifier.matchParentSize(),
@@ -276,7 +280,7 @@ private fun RecognitionModeSelector(
                 modifier = Modifier.weight(1f),
             )
             ModeChip(
-                label = "Dinámico (palabras)",
+                label = "Gestos básicos (MVP)",
                 icon = Icons.Default.Timeline,
                 selected = currentMode == "dynamic",
                 onClick = { onSelect("dynamic") },
@@ -370,7 +374,7 @@ private fun DynamicStateIndicator(
                 )
                 Spacer(Modifier.weight(1f))
                 Text(
-                    "buffer ${(uiState.bufferFill * 60).toInt()}/60",
+                    "buffer ${(uiState.bufferFill * GestureCommandClassifier.MAX_SAMPLES).toInt()}/${GestureCommandClassifier.MAX_SAMPLES}",
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.White.copy(alpha = 0.6f),
                 )

@@ -42,6 +42,7 @@ class SignClassifier @Inject constructor(
     private var dynamicClassifier: DynamicSignClassifier? = null
     private var transformerClassifier: SignTransformerClassifier? = null
     private var centroidClassifier: CentroidClassifier? = null
+    private var sequenceLabels: Map<String, Int> = emptyMap()
 
     // Mapeo de ecuatorianismos para enriquecer resultados
     private val ecuadorianVariants = mapOf(
@@ -83,25 +84,28 @@ class SignClassifier @Inject constructor(
         // Cargar vocabulario del clasificador dinamico.
         // Acepta tanto `sequence_labels.json` (legacy GRU) como
         // `sign_transformer_labels.json` (nuevo transformer).
-        val sequenceLabels = loadLabelsJson("sequence_labels.json")
+        sequenceLabels = loadLabelsJson("sequence_labels.json")
             ?: loadLabelsJson("sign_transformer_labels.json")
             ?: defaultSequenceLabels()
 
-        dynamicClassifier = DynamicSignClassifier(context, sequenceLabels)
-        transformerClassifier = SignTransformerClassifier(context, sequenceLabels)
-
-        // Centroid: solo se activa si el usuario hizo calibracion.
-        // El embedding dim debe coincidir con el del transformer (128).
-        centroidClassifier = CentroidClassifier(
-            context = context,
-            vocabulary = sequenceLabels,
-            embeddingDim = SignTransformerClassifier.EMBEDDING_DIM,
-        )
         Log.i(
             TAG,
             "SignClassifier facade initialized (static=${classifierLabels.size}, " +
                 "dynamic=${sequenceLabels.size}, " +
-                "centroid_calibrated=${centroidClassifier?.isCalibrated()})"
+                "dynamic_models=lazy)"
+        )
+    }
+
+    /** Evita cargar ONNX/GRU cuando la app esta en letras o Gestos basicos MVP. */
+    @Synchronized
+    private fun ensureDynamicModels() {
+        if (transformerClassifier != null || dynamicClassifier != null) return
+        dynamicClassifier = DynamicSignClassifier(context, sequenceLabels)
+        transformerClassifier = SignTransformerClassifier(context, sequenceLabels)
+        centroidClassifier = CentroidClassifier(
+            context = context,
+            vocabulary = sequenceLabels,
+            embeddingDim = SignTransformerClassifier.EMBEDDING_DIM,
         )
     }
 
@@ -161,6 +165,7 @@ class SignClassifier @Inject constructor(
      * bufferea.
      */
     fun processDynamicFrame(landmarks: FloatArray?): SignClassificationResult? {
+        ensureDynamicModels()
         val tx = transformerClassifier
         val baseResult = if (tx != null) {
             tx.processFrame(landmarks)
@@ -195,6 +200,7 @@ class SignClassifier @Inject constructor(
      * Snapshot del estado de la state machine para la UI.
      */
     fun dynamicStateInfo(): DynamicSignClassifier.StateInfo {
+        ensureDynamicModels()
         val tx = transformerClassifier
         if (tx != null) {
             val s = tx.getStateInfo()
@@ -238,15 +244,22 @@ class SignClassifier @Inject constructor(
         newSequenceLabels: Map<String, Int>? = null
     ) {
         staticClassifier?.reload(newClassifierLabels)
+        if (newSequenceLabels != null) sequenceLabels = newSequenceLabels
         dynamicClassifier?.reload(newSequenceLabels)
         transformerClassifier?.reload(newSequenceLabels)
     }
 
     /** Acceso al transformer (usado por la pantalla de calibracion). */
-    fun transformer(): SignTransformerClassifier? = transformerClassifier
+    fun transformer(): SignTransformerClassifier? {
+        ensureDynamicModels()
+        return transformerClassifier
+    }
 
     /** Acceso al centroide (usado por la pantalla de calibracion). */
-    fun centroids(): CentroidClassifier? = centroidClassifier
+    fun centroids(): CentroidClassifier? {
+        ensureDynamicModels()
+        return centroidClassifier
+    }
 
     // ------------------------------------------------------------------
     // Internals

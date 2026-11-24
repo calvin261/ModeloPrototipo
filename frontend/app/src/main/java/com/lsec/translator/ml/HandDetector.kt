@@ -157,8 +157,9 @@ class HandDetector @Inject constructor(
                 // que entregue MediaPipe vendrán directamente en coordenadas
                 // de display (Portrait), listos para mapear al PreviewView.
                 val orientedBitmap = ImageDecoder.rotateBitmap(rawBitmap, imageRotationDegrees)
-                val normalized = detectFromBitmap(orientedBitmap)
+                // Una sola pasada MediaPipe alimenta el modelo, el overlay y el MVP.
                 val raw = detectRawLandmarksFromBitmap(orientedBitmap, imageRotationDegrees = 0)
+                val normalized = normalize(raw)
                 if (orientedBitmap !== rawBitmap) orientedBitmap.recycle()
                 rawBitmap.recycle()
                 DetectionResult(normalized, raw)
@@ -173,65 +174,12 @@ class HandDetector @Inject constructor(
      * Usado por [com.lsec.translator.data.upload.NpyWriter] y tests.
      */
     fun detectFromBitmap(bitmap: Bitmap): FloatArray? {
-        val handDetector = handLandmarker ?: return null
-        val poseDetector = poseLandmarker ?: return null
+        return normalize(detectRawLandmarksFromBitmap(bitmap))
+    }
 
-        val mpImage = BitmapImageBuilder(bitmap).build()
-        timestampMs += 33
-
-        val handResult = handDetector.detectForVideo(mpImage, timestampMs)
-        val poseResult = poseDetector.detectForVideo(mpImage, timestampMs)
-
-        val hasHands = handResult != null && handResult.landmarks().isNotEmpty()
-        val hasPose = poseResult != null && poseResult.landmarks().isNotEmpty()
-
-        if (!hasHands && !hasPose) {
-            return null
-        }
-
-        var leftHand: FloatArray? = null
-        var rightHand: FloatArray? = null
-
-        if (handResult != null && handResult.landmarks().isNotEmpty()) {
-            val landmarksList = handResult.landmarks()
-            val handednessesList = handResult.handednesses()
-
-            for (i in landmarksList.indices) {
-                val handLms = landmarksList[i]
-                val handednessCategory = handednessesList.getOrNull(i)?.firstOrNull()
-                val label = handednessCategory?.categoryName() ?: "Right"
-
-                val rawHand = FloatArray(63)
-                for (j in 0 until 21) {
-                    val lm = handLms[j]
-                    rawHand[j * 3] = lm.x()
-                    rawHand[j * 3 + 1] = lm.y()
-                    rawHand[j * 3 + 2] = lm.z()
-                }
-
-                if (label.equals("Left", ignoreCase = true)) {
-                    leftHand = rawHand
-                } else {
-                    rightHand = rawHand
-                }
-            }
-        }
-
-        var rawPose: FloatArray? = null
-        if (poseResult != null && poseResult.landmarks().isNotEmpty()) {
-            val poseLms = poseResult.landmarks()[0]
-            rawPose = FloatArray(33 * 3)
-            for (i in 0 until 33) {
-                if (i < poseLms.size) {
-                    val lm = poseLms[i]
-                    rawPose[i * 3] = lm.x()
-                    rawPose[i * 3 + 1] = lm.y()
-                    rawPose[i * 3 + 2] = lm.z()
-                }
-            }
-        }
-
-        return LandmarkNormalizer.normalizeHolistic(leftHand, rightHand, rawPose)
+    private fun normalize(raw: LandmarkOverlayData): FloatArray? {
+        if (!raw.hasLeftHand() && !raw.hasRightHand() && raw.pose == null) return null
+        return LandmarkNormalizer.normalizeHolistic(raw.leftHand, raw.rightHand, raw.pose)
     }
 
     /**
@@ -352,10 +300,25 @@ class HandDetector @Inject constructor(
             }
         }
 
-        // Suprimimos warnings de poseDetector (de momento no se usa en overlay,
-        // pero conservamos la referencia por si se añaden huesos después).
-        @Suppress("UNUSED_VARIABLE")
-        val _pose = poseDetector
+        // ── Pose ──
+        var pose: FloatArray? = null
+        poseDetector?.let { det ->
+            try {
+                val poseResult = det.detectForVideo(mpImage, ts)
+                val poseLms = poseResult?.landmarks()?.firstOrNull()
+                if (poseLms != null) {
+                    pose = FloatArray(33 * 3)
+                    for (i in 0 until minOf(poseLms.size, 33)) {
+                        val lm = poseLms[i]
+                        pose[i * 3] = lm.x()
+                        pose[i * 3 + 1] = lm.y()
+                        pose[i * 3 + 2] = lm.z()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "PoseLandmarker falló en este frame", e)
+            }
+        }
 
         return LandmarkOverlayData(
             leftHand = leftHand,
@@ -365,6 +328,7 @@ class HandDetector @Inject constructor(
             imageHeight = bitmap.height,
             timestampMs = ts,
             imageRotationDegrees = imageRotationDegrees,
+            pose = pose,
         )
     }
 
